@@ -1,7 +1,7 @@
 <?php require APPROOT . '/views/inc/admin_header.php'; ?>
 
 <h1 class="mt-4 mb-2 page-title">Dashboard</h1>
-<p class="lead mb-5 text-muted">Overview of your system performance.</p>
+<p class="lead mb-5 text-muted">Overview of your system performance. <span class="badge badge-primary">Live Push Test v1</span></p>
 
 <div class="row">
     <div class="col-md-3 mb-4">
