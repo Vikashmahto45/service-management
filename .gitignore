@@ -1,0 +1,11 @@
+.DS_Store
+Thumbs.db
+*.log
+vendor/
+node_modules/
+.env
+.phpintel/
+.vscode/
+.idea/
+*.swp
+*.bak
