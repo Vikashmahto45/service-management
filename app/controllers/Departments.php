@@ -1,7 +1,7 @@
 <?php
   class Departments extends Controller {
     public function __construct(){
-      if(!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 1){
+      if(!isLoggedIn() || $_SESSION['role_id'] != 1){
         redirect('users/login');
       }
       $this->departmentModel = $this->model('Department');
