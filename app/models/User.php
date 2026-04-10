@@ -200,6 +200,117 @@
         return $row->count;
     }
 
+    // ========== PHASE 7: PROFILE & PAYROLL METHODS ==========
+
+    // Get Extended Profile Data
+    public function getUserProfile($user_id){
+        $this->db->query('SELECT * FROM user_profiles WHERE user_id = :user_id');
+        $this->db->bind(':user_id', $user_id);
+        
+        $row = $this->db->single();
+        
+        // If no profile exists yet, return empty object with default structure
+        if(!$row){
+            return (object)[
+                'designation' => '',
+                'joining_date' => '',
+                'phone_alt' => '',
+                'address' => '',
+                'emergency_contact' => '',
+                'account_holder_name' => '',
+                'bank_name' => '',
+                'account_no' => '',
+                'ifsc_code' => '',
+                'upi_id' => '',
+                'pan_no' => '',
+                'aadhar_no' => '',
+                'driving_license' => '',
+                'basic_salary' => 0.00,
+                'hra_allowance' => 0.00,
+                'travel_allowance' => 0.00,
+                'other_allowances' => 0.00,
+                'tds_deduction' => 0.00,
+                'pf_deduction' => 0.00,
+                'payroll_status' => 'active'
+            ];
+        }
+        return $row;
+    }
+
+    // Update or Create Extended Profile
+    public function updateUserProfile($data){
+        // Check if exists
+        $this->db->query('SELECT id FROM user_profiles WHERE user_id = :user_id');
+        $this->db->bind(':user_id', $data['user_id']);
+        $exists = $this->db->single();
+
+        if($exists){
+            // Update
+            $this->db->query('UPDATE user_profiles SET 
+                designation = :designation,
+                joining_date = :joining_date,
+                phone_alt = :phone_alt,
+                address = :address,
+                emergency_contact = :emergency_contact,
+                account_holder_name = :account_holder_name,
+                bank_name = :bank_name,
+                account_no = :account_no,
+                ifsc_code = :ifsc_code,
+                upi_id = :upi_id,
+                pan_no = :pan_no,
+                aadhar_no = :aadhar_no,
+                driving_license = :driving_license,
+                basic_salary = :basic_salary,
+                hra_allowance = :hra_allowance,
+                travel_allowance = :travel_allowance,
+                other_allowances = :other_allowances,
+                tds_deduction = :tds_deduction,
+                pf_deduction = :pf_deduction,
+                payroll_status = :payroll_status
+                WHERE user_id = :user_id');
+        } else {
+            // Insert
+            $this->db->query('INSERT INTO user_profiles (
+                user_id, designation, joining_date, phone_alt, address, 
+                emergency_contact, account_holder_name, bank_name, account_no, 
+                ifsc_code, upi_id, pan_no, aadhar_no, driving_license, 
+                basic_salary, hra_allowance, travel_allowance, other_allowances, 
+                tds_deduction, pf_deduction, payroll_status
+            ) VALUES (
+                :user_id, :designation, :joining_date, :phone_alt, :address, 
+                :emergency_contact, :account_holder_name, :bank_name, :account_no, 
+                :ifsc_code, :upi_id, :pan_no, :aadhar_no, :driving_license, 
+                :basic_salary, :hra_allowance, :travel_allowance, :other_allowances, 
+                :tds_deduction, :pf_deduction, :payroll_status
+            )');
+        }
+
+        // Bind all
+        $this->db->bind(':user_id', $data['user_id']);
+        $this->db->bind(':designation', $data['designation']);
+        $this->db->bind(':joining_date', $data['joining_date']);
+        $this->db->bind(':phone_alt', $data['phone_alt']);
+        $this->db->bind(':address', $data['address']);
+        $this->db->bind(':emergency_contact', $data['emergency_contact']);
+        $this->db->bind(':account_holder_name', $data['account_holder_name']);
+        $this->db->bind(':bank_name', $data['bank_name']);
+        $this->db->bind(':account_no', $data['account_no']);
+        $this->db->bind(':ifsc_code', $data['ifsc_code']);
+        $this->db->bind(':upi_id', $data['upi_id']);
+        $this->db->bind(':pan_no', $data['pan_no']);
+        $this->db->bind(':aadhar_no', $data['aadhar_no']);
+        $this->db->bind(':driving_license', $data['driving_license']);
+        $this->db->bind(':basic_salary', $data['basic_salary']);
+        $this->db->bind(':hra_allowance', $data['hra_allowance']);
+        $this->db->bind(':travel_allowance', $data['travel_allowance']);
+        $this->db->bind(':other_allowances', $data['other_allowances']);
+        $this->db->bind(':tds_deduction', $data['tds_deduction']);
+        $this->db->bind(':pf_deduction', $data['pf_deduction']);
+        $this->db->bind(':payroll_status', $data['payroll_status']);
+
+        return $this->db->execute();
+    }
+
     // Get User by Email (returns full user row)
     public function getUserByEmail($email){
       $this->db->query('SELECT * FROM users WHERE email = :email');

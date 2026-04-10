@@ -16,6 +16,14 @@
       $this->expenseModel = $this->model('Expense');
     }
 
+    // Role Guard for internal staff only
+    private function internalOnly(){
+        if($_SESSION['role_id'] != 3){
+            flash('dashboard_message', 'Access Denied: Internal Staff Only', 'alert alert-danger');
+            redirect('employees/dashboard');
+        }
+    }
+
     public function index(){
         $this->dashboard();
     }
@@ -65,6 +73,7 @@
 
     // Attendance Actions
     public function check_in(){
+        $this->internalOnly();
         if($this->attendanceModel->checkIn($_SESSION['user_id'])){
             flash('dashboard_message', 'Checked In Successfully');
         } else {
@@ -74,6 +83,7 @@
     }
 
     public function check_out(){
+        $this->internalOnly();
         if($this->attendanceModel->checkOut($_SESSION['user_id'])){
             flash('dashboard_message', 'Checked Out Successfully');
         } else {
@@ -84,6 +94,7 @@
 
     // Expense Management
     public function expenses(){
+        $this->internalOnly();
         $expenses = $this->expenseModel->getUserExpenses($_SESSION['user_id']);
         
         $data = [
@@ -128,6 +139,7 @@
 
     // ========== ATTENDANCE HISTORY ==========
     public function attendance(){
+        $this->internalOnly();
         $month = $_GET['month'] ?? date('n');
         $year = $_GET['year'] ?? date('Y');
 
@@ -173,6 +185,7 @@
 
     // ========== LEAVE MANAGEMENT ==========
     public function apply_leave(){
+        $this->internalOnly();
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_SPECIAL_CHARS);
 
@@ -205,6 +218,7 @@
     }
 
     public function my_leaves(){
+        $this->internalOnly();
         $leaves = $this->attendanceModel->getUserLeaves($_SESSION['user_id']);
         $leaveCount = $this->attendanceModel->getLeaveCount($_SESSION['user_id']);
 

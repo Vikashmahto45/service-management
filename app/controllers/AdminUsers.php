@@ -1,5 +1,7 @@
 <?php
   class AdminUsers extends Controller {
+    private $userModel;
+
     public function __construct(){
       if(!isLoggedIn() || $_SESSION['role_id'] != 1){
         redirect('users/login');
@@ -15,6 +17,89 @@
       ];
 
       $this->view('admin/users/index', $data);
+    }
+
+    // View Detailed Profile (Phase 7)
+    public function details($id){
+        $user = $this->userModel->getUserById($id);
+        if(!$user){
+            redirect('adminUsers');
+        }
+
+        $profile = $this->userModel->getUserProfile($id);
+
+        $data = [
+            'user' => $user,
+            'profile' => $profile
+        ];
+
+        $this->view('admin/users/details', $data);
+    }
+
+    // Update Profile POST (Phase 7)
+    public function update_profile($id){
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_SPECIAL_CHARS);
+
+            $data = [
+                'user_id' => $id,
+                'designation' => trim($_POST['designation']),
+                'joining_date' => trim($_POST['joining_date']),
+                'phone_alt' => trim($_POST['phone_alt']),
+                'address' => trim($_POST['address']),
+                'emergency_contact' => trim($_POST['emergency_contact']),
+                'account_holder_name' => trim($_POST['account_holder_name']),
+                'bank_name' => trim($_POST['bank_name']),
+                'account_no' => trim($_POST['account_no']),
+                'ifsc_code' => trim($_POST['ifsc_code']),
+                'upi_id' => trim($_POST['upi_id']),
+                'pan_no' => strtoupper(trim($_POST['pan_no'])),
+                'aadhar_no' => trim($_POST['aadhar_no']),
+                'driving_license' => trim($_POST['driving_license']),
+                'basic_salary' => floatval($_POST['basic_salary']),
+                'hra_allowance' => floatval($_POST['hra_allowance']),
+                'travel_allowance' => floatval($_POST['travel_allowance'] ?? 0),
+                'other_allowances' => floatval($_POST['other_allowances']),
+                'tds_deduction' => floatval($_POST['tds_deduction']),
+                'pf_deduction' => floatval($_POST['pf_deduction']),
+                'payroll_status' => $_POST['payroll_status'] ?? 'active'
+            ];
+
+            if($this->userModel->updateUserProfile($data)){
+                flash('user_message', 'Staff Profile Updated Successfully');
+                redirect('adminUsers/details/' . $id);
+            } else {
+                die('Something went wrong');
+            }
+        } else {
+            redirect('adminUsers/details/' . $id);
+        }
+    }
+
+    // Generate Pay Slip (Phase 7)
+    public function payslip($id){
+        $user = $this->userModel->getUserById($id);
+        if(!$user){
+            redirect('adminUsers');
+        }
+
+        $profile = $this->userModel->getUserProfile($id);
+
+        // Calculate Totals
+        $total_allowances = $profile->hra_allowance + $profile->travel_allowance + $profile->other_allowances;
+        $total_deductions = $profile->tds_deduction + $profile->pf_deduction;
+        $net_salary = ($profile->basic_salary + $total_allowances) - $total_deductions;
+
+        $data = [
+            'user' => $user,
+            'profile' => $profile,
+            'total_allowances' => $total_allowances,
+            'total_deductions' => $total_deductions,
+            'net_salary' => $net_salary,
+            'current_month' => date('F Y')
+        ];
+
+        $this->view('admin/users/payslip', $data);
     }
 
     public function verify($id){

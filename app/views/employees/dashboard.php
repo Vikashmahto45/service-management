@@ -4,9 +4,11 @@
         <div class="list-group mb-4">
             <a href="<?php echo URLROOT; ?>/employees/dashboard" class="list-group-item list-group-item-action active">Dashboard</a>
             <a href="<?php echo URLROOT; ?>/employees/tasks" class="list-group-item list-group-item-action">My Tasks</a>
-            <a href="<?php echo URLROOT; ?>/employees/attendance" class="list-group-item list-group-item-action">My Attendance</a>
-            <a href="<?php echo URLROOT; ?>/employees/my_leaves" class="list-group-item list-group-item-action">My Leaves</a>
-            <a href="<?php echo URLROOT; ?>/employees/expenses" class="list-group-item list-group-item-action">My Expenses</a>
+            <?php if($_SESSION['role_id'] == 3): // Only internal employees ?>
+                <a href="<?php echo URLROOT; ?>/employees/attendance" class="list-group-item list-group-item-action">My Attendance</a>
+                <a href="<?php echo URLROOT; ?>/employees/my_leaves" class="list-group-item list-group-item-action">My Leaves</a>
+                <a href="<?php echo URLROOT; ?>/employees/expenses" class="list-group-item list-group-item-action">My Expenses</a>
+            <?php endif; ?>
             <a href="<?php echo URLROOT; ?>/users/logout" class="list-group-item list-group-item-action text-danger">Logout</a>
         </div>
     </div>
@@ -17,24 +19,35 @@
         <div class="row mb-4">
             <div class="col-md-8">
                 <h2>Welcome, <?php echo $_SESSION['user_name']; ?></h2>
-                <p class="text-muted">Here is your daily overview.</p>
+                <p class="text-muted">Role: <span class="badge badge-info"><?php echo ($_SESSION['role_id'] == 4) ? 'Service Partner / Vendor' : 'Employee'; ?></span></p>
             </div>
-            <div class="col-md-4 text-right">
-                <div class="card shadow-sm">
-                    <div class="card-body p-3 text-center">
-                        <h5 class="card-title">Attendance</h5>
-                        <?php if(empty($data['today_attendance'])): ?>
-                            <a href="<?php echo URLROOT; ?>/employees/check_in" class="btn btn-success btn-lg btn-block">Check In</a>
-                        <?php elseif(empty($data['today_attendance']->check_out)): ?>
-                            <p class="text-success font-weight-bold">Checked In: <?php echo date('h:i A', strtotime($data['today_attendance']->check_in)); ?></p>
-                            <a href="<?php echo URLROOT; ?>/employees/check_out" class="btn btn-danger btn-block">Check Out</a>
-                        <?php else: ?>
-                            <p class="text-secondary">Checked Out: <?php echo date('h:i A', strtotime($data['today_attendance']->check_out)); ?></p>
-                            <button class="btn btn-secondary btn-block" disabled>Day Complete</button>
-                        <?php endif; ?>
+            <?php if($_SESSION['role_id'] == 3): // Show attendance for internal staff only ?>
+                <div class="col-md-4 text-right">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-3 text-center bg-light rounded">
+                            <h6 class="card-title text-muted font-weight-bold">TODAY'S ATTENDANCE</h6>
+                            <?php if(empty($data['today_attendance'])): ?>
+                                <a href="<?php echo URLROOT; ?>/employees/check_in" class="btn btn-success btn-sm btn-block shadow-sm">Check In Now</a>
+                            <?php elseif(empty($data['today_attendance']->check_out)): ?>
+                                <div class="text-success small font-weight-bold mb-2">Checked In: <?php echo date('h:i A', strtotime($data['today_attendance']->check_in)); ?></div>
+                                <a href="<?php echo URLROOT; ?>/employees/check_out" class="btn btn-danger btn-sm btn-block shadow-sm">Check Out</a>
+                            <?php else: ?>
+                                <div class="text-secondary small">Checked Out: <?php echo date('h:i A', strtotime($data['today_attendance']->check_out)); ?></div>
+                                <button class="btn btn-secondary btn-sm btn-block mt-1" disabled>Day Marked</button>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
-            </div>
+            <?php else: ?>
+                <div class="col-md-4 text-right">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-3 text-center bg-primary text-white rounded">
+                            <h6 class="m-0">Partner Portal Access</h6>
+                            <small>Verified Partner Status</small>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
 
         <!-- Stats -->

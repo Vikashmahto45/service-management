@@ -171,6 +171,8 @@
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-toggle="dropdown">Action</button>
                                     <div class="dropdown-menu">
+                                        <a class="dropdown-item text-primary" href="<?php echo URLROOT; ?>/adminUsers/details/<?php echo $user->id; ?>"><i class="fas fa-eye mr-2"></i> View Profile</a>
+                                        <div class="dropdown-divider"></div>
                                         <?php if($user->status == 'active') : ?>
                                             <a class="dropdown-item text-danger" href="<?php echo URLROOT; ?>/adminUsers/ban/<?php echo $user->id; ?>">Ban User</a>
                                         <?php else : ?>
@@ -254,6 +256,8 @@
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-toggle="dropdown">Action</button>
                                     <div class="dropdown-menu">
+                                        <a class="dropdown-item text-primary" href="<?php echo URLROOT; ?>/adminUsers/details/<?php echo $user->id; ?>"><i class="fas fa-eye mr-2"></i> View Profile</a>
+                                        <div class="dropdown-divider"></div>
                                         <?php if($user->status == 'active') : ?>
                                             <a class="dropdown-item text-danger" href="<?php echo URLROOT; ?>/adminUsers/ban/<?php echo $user->id; ?>">Ban User</a>
                                         <?php else : ?>
