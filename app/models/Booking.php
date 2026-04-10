@@ -99,6 +99,50 @@
         }
     }
 
+    public function getStatsByStatus(){
+        $this->db->query("SELECT 
+            COUNT(*) as total,
+            SUM(CASE WHEN status IN ('pending', 'confirmed', 'assigned') THEN 1 ELSE 0 END) as ongoing,
+            SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress,
+            SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
+            SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) as cancelled
+            FROM bookings");
+        return $this->db->single();
+    }
+
+    public function getMonthlyPerformance(){
+        // Get counts for each day of the current month
+        $this->db->query("SELECT DATE(booking_date) as date, COUNT(*) as count 
+                          FROM bookings 
+                          WHERE MONTH(booking_date) = MONTH(CURRENT_DATE()) AND YEAR(booking_date) = YEAR(CURRENT_DATE())
+                          GROUP BY DATE(booking_date)
+                          ORDER BY date ASC");
+        return $this->db->resultSet();
+    }
+
+    public function getTopStaff($limit = 5){
+        $this->db->query("SELECT u.name, COUNT(b.id) as jobs_done 
+                          FROM users u
+                          JOIN bookings b ON u.id = b.assigned_to
+                          WHERE b.status = 'completed'
+                          GROUP BY u.id
+                          ORDER BY jobs_done DESC
+                          LIMIT :limit");
+        $this->db->bind(':limit', $limit);
+        return $this->db->resultSet();
+    }
+
+    public function getTodaySchedule(){
+        $this->db->query("SELECT b.*, s.name as service_name, u.name as customer_name, staff.name as staff_name 
+                          FROM bookings b 
+                          JOIN services s ON b.service_id = s.id
+                          JOIN users u ON b.user_id = u.id
+                          LEFT JOIN users staff ON b.assigned_to = staff.id
+                          WHERE b.booking_date = CURRENT_DATE()
+                          ORDER BY b.booking_time ASC");
+        return $this->db->resultSet();
+    }
+
     public function cancelBooking($id, $user_id){
         // Ensure user owns the booking before cancelling
         $this->db->query('UPDATE bookings SET status = "cancelled" WHERE id = :id AND user_id = :user_id');

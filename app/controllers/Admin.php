@@ -5,14 +5,6 @@
         redirect('users/login');
       }
 
-      // Check for Admin Role (ID = 1)
-      // Assuming 'role_id' is stored in session, need to update Users controller to store it
-      // For now, let's fetch user to be safe or update session 
-      // But wait, session only has id, name, email.
-      // We should probably add role_id to session in Users.php
-      // For now, I will add a check here by fetching the user again or trusting the session if I update it.
-      
-      // Let's rely on session. I will update Users.php to store role_id.
       if($_SESSION['role_id'] != 1){
         redirect('pages/index');
       }
@@ -24,29 +16,38 @@
       $this->bookingModel = $this->model('Booking');
       $this->complaintModel = $this->model('Complaint');
       $this->expenseModel = $this->model('Expense');
+      $this->attendanceModel = $this->model('Attendance');
     }
 
     public function index(){
-      $userCount = $this->userModel->getUserCount();
-      $serviceCount = $this->serviceModel->getServiceCount();
-      $inventoryCount = $this->inventoryModel->getInventoryCount();
+      // Ticket Stats
+      $ticketStats = $this->bookingModel->getStatsByStatus();
+      
+      // Business Summary
       $totalRevenue = $this->invoiceModel->getTotalRevenue();
       $totalExpenses = $this->expenseModel->getTotalExpenses();
+      $todayAttendance = $this->attendanceModel->getTodayStats();
+      $staffCount = $this->userModel->getStaffCount();
       
-      $recentBookings = $this->bookingModel->getRecentBookings(3);
-      $recentComplaints = $this->complaintModel->getRecentComplaints(2);
-
-      // We'll format the array to make it easy to loop through mixed items chronologically if needed,
-      // or just pass them separately. Let's pass them separately and handle display in the view.
+      $attendancePercent = ($staffCount > 0) ? round(($todayAttendance->present / $staffCount) * 100) : 0;
+      
+      // Performance Chart Data
+      $performanceData = $this->bookingModel->getMonthlyPerformance();
+      
+      // Right Side Widgets
+      $topStaff = $this->bookingModel->getTopStaff(5);
+      $todaySchedule = $this->bookingModel->getTodaySchedule();
       
       $data = [
-        'user_count' => $userCount,
-        'service_count' => $serviceCount,
-        'inventory_count' => $inventoryCount,
+        'ticket_stats' => $ticketStats,
         'total_revenue' => $totalRevenue,
         'total_expenses' => $totalExpenses,
-        'recent_bookings' => $recentBookings,
-        'recent_complaints' => $recentComplaints
+        'attendance_percent' => $attendancePercent,
+        'avg_rating' => 4.8, // Placeholder until rating system is implemented
+        'performance_data' => $performanceData,
+        'top_staff' => $topStaff,
+        'today_schedule' => $todaySchedule,
+        'recent_bookings' => $this->bookingModel->getRecentBookings(5)
       ];
 
       $this->view('admin/index', $data);

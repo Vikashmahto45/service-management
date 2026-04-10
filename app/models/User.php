@@ -194,6 +194,12 @@
       return $row->count;
     }
 
+    public function getStaffCount(){
+        $this->db->query('SELECT count(*) as count FROM users WHERE role_id IN (3, 4) AND status = "active"');
+        $row = $this->db->single();
+        return $row->count;
+    }
+
     // Get User by Email (returns full user row)
     public function getUserByEmail($email){
       $this->db->query('SELECT * FROM users WHERE email = :email');

@@ -22,7 +22,7 @@
         </ul>
 
         <!-- Customer Products -->
-        <a href="<?php echo URLROOT; ?>/items" class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
+        <a href="<?php echo URLROOT; ?>/customerProducts" class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
             <i class="fas fa-box-open mr-2"></i> Customer Products
         </a>
 
