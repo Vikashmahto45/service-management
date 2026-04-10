@@ -77,6 +77,19 @@
             </li>
         </ul>
 
+        <!-- AMC & Maintenance (Phase 9) -->
+        <a href="#amcSubmenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action bg-transparent second-text fw-bold dropdown-toggle text-warning">
+            <i class="fas fa-file-contract mr-2"></i> AMC & Maintenance
+        </a>
+        <ul class="collapse list-unstyled pl-4" id="amcSubmenu">
+            <li>
+                <a href="<?php echo URLROOT; ?>/adminAmc" class="list-group-item list-group-item-action bg-transparent second-text fw-normal small">AMC Dashboard</a>
+            </li>
+            <li>
+                <a href="<?php echo URLROOT; ?>/adminAmc/add" class="list-group-item list-group-item-action bg-transparent second-text fw-normal small">Register New AMC</a>
+            </li>
+        </ul>
+
         <!-- All Reports -->
         <a href="<?php echo URLROOT; ?>/reports" class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
             <i class="fas fa-chart-line mr-2"></i> All Reports
