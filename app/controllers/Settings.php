@@ -1,5 +1,8 @@
 <?php
   class Settings extends Controller {
+    private $slotModel;
+    private $typeModel;
+    private $serviceModel;
     public function __construct(){
       if(!isLoggedIn() || $_SESSION['role_id'] != 1){
         redirect('users/login');

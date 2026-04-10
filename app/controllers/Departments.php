@@ -1,5 +1,6 @@
 <?php
   class Departments extends Controller {
+    private $departmentModel;
     public function __construct(){
       if(!isLoggedIn() || $_SESSION['role_id'] != 1){
         redirect('users/login');
