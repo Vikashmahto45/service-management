@@ -14,7 +14,7 @@
         </a>
         <ul class="collapse list-unstyled pl-4" id="customerSubmenu">
             <li>
-                <a href="<?php echo URLROOT; ?>/parties/add_view" class="list-group-item list-group-item-action bg-transparent second-text fw-normal small">Add New Customer</a>
+                <a href="<?php echo URLROOT; ?>/parties/add" class="list-group-item list-group-item-action bg-transparent second-text fw-normal small">Add New Customer</a>
             </li>
             <li>
                 <a href="<?php echo URLROOT; ?>/parties" class="list-group-item list-group-item-action bg-transparent second-text fw-normal small">All Customers</a>
@@ -32,7 +32,7 @@
         </a>
         <ul class="collapse list-unstyled pl-4" id="ticketSubmenu">
             <li>
-                <a href="<?php echo URLROOT; ?>/bookings/add_view" class="list-group-item list-group-item-action bg-transparent second-text fw-normal small">Add New Ticket</a>
+                <a href="<?php echo URLROOT; ?>/bookings/add" class="list-group-item list-group-item-action bg-transparent second-text fw-normal small">Add New Ticket</a>
             </li>
             <li>
                 <a href="<?php echo URLROOT; ?>/bookings/manage" class="list-group-item list-group-item-action bg-transparent second-text fw-normal small">All Tickets</a>

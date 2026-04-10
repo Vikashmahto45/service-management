@@ -1,5 +1,7 @@
 <?php
   class Parties extends Controller {
+    private $partyModel;
+
     public function __construct(){
       if(!isLoggedIn() || $_SESSION['role_id'] != 1){
         redirect('users/login');
@@ -20,7 +22,7 @@
       $this->view('parties/index', $data);
     }
 
-    // Add party (POST)
+    // Add party (GET shows form, POST handles save)
     public function add(){
       if($_SERVER['REQUEST_METHOD'] == 'POST'){
         $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_SPECIAL_CHARS);
@@ -76,18 +78,22 @@
               $this->partyModel->addAddress($shipData);
             }
 
-            flash('party_message', 'Party Added Successfully');
+            flash('party_message', 'Customer Added Successfully');
             redirect('parties');
           } else {
             flash('party_message', 'Something went wrong', 'alert alert-danger');
             redirect('parties');
           }
         } else {
-          flash('party_message', 'Party Name is required', 'alert alert-danger');
+          flash('party_message', 'Customer Name is required', 'alert alert-danger');
           redirect('parties');
         }
       } else {
-        redirect('parties');
+        $groups = $this->partyModel->getPartyGroups();
+        $data = [
+          'groups' => $groups
+        ];
+        $this->view('parties/add', $data);
       }
     }
 
@@ -236,8 +242,7 @@
       $response = curl_exec($curl);
       $err = curl_error($curl);
       $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-      curl_close($curl);
-
+      
       if ($err) {
           echo json_encode([
               'success' => false,
