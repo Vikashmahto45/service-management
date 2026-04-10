@@ -1,6 +1,7 @@
 <?php
   class AdminUsers extends Controller {
     private $userModel;
+    private $financeModel;
 
     public function __construct(){
       if(!isLoggedIn() || ($_SESSION['role_id'] != 1 && $_SESSION['role_id'] != 2)){

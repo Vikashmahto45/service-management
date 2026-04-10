@@ -1,5 +1,8 @@
 <?php
   class AdminFinance extends Controller {
+    private $financeModel;
+    private $userModel;
+
     public function __construct(){
       if(!isLoggedIn() || ($_SESSION['role_id'] != 1 && $_SESSION['role_id'] != 2)){
         redirect('users/login');
