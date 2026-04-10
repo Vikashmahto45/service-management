@@ -61,6 +61,22 @@
             </li>
         </ul>
 
+        <!-- Finance & Accounts (Phase 8) -->
+        <a href="#financeSubmenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action bg-transparent second-text fw-bold dropdown-toggle">
+            <i class="fas fa-wallet mr-2"></i> Finance & Accounts
+        </a>
+        <ul class="collapse list-unstyled pl-4" id="financeSubmenu">
+            <li>
+                <a href="<?php echo URLROOT; ?>/adminFinance" class="list-group-item list-group-item-action bg-transparent second-text fw-normal small">Finance Dashboard</a>
+            </li>
+            <li>
+                <a href="<?php echo URLROOT; ?>/adminFinance/payouts" class="list-group-item list-group-item-action bg-transparent second-text fw-normal small">Vendor Payouts</a>
+            </li>
+            <li>
+                <a href="<?php echo URLROOT; ?>/adminFinance/ledgers" class="list-group-item list-group-item-action bg-transparent second-text fw-normal small">All Ledgers</a>
+            </li>
+        </ul>
+
         <!-- All Reports -->
         <a href="<?php echo URLROOT; ?>/reports" class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
             <i class="fas fa-chart-line mr-2"></i> All Reports

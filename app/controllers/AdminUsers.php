@@ -3,10 +3,11 @@
     private $userModel;
 
     public function __construct(){
-      if(!isLoggedIn() || $_SESSION['role_id'] != 1){
+      if(!isLoggedIn() || ($_SESSION['role_id'] != 1 && $_SESSION['role_id'] != 2)){
         redirect('users/login');
       }
       $this->userModel = $this->model('User');
+      $this->financeModel = $this->model('Finance'); // Phase 8
     }
 
     public function index(){
@@ -27,10 +28,12 @@
         }
 
         $profile = $this->userModel->getUserProfile($id);
+        $ledger = $this->financeModel->getAccountLedger($id); // Phase 8
 
         $data = [
             'user' => $user,
-            'profile' => $profile
+            'profile' => $profile,
+            'ledger' => $ledger // Phase 8
         ];
 
         $this->view('admin/users/details', $data);

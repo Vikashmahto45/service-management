@@ -78,6 +78,9 @@
                     <li class="nav-item">
                         <a class="nav-link" id="security-tab" data-toggle="tab" href="#security">Account Security</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary font-weight-bold" id="ledger-tab" data-toggle="tab" href="#ledger"><i class="fas fa-history mr-1"></i> Financial Ledger</a>
+                    </li>
                 </ul>
 
                 <div class="tab-content p-4">
@@ -231,6 +234,57 @@
                                 <button type="button" class="btn btn-outline-danger btn-sm">Force Password Reset</button>
                             </div>
                         </div>
+                    <!-- Tab 5: Financial Ledger (Phase 8) -->
+                    <div class="tab-pane fade" id="ledger">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="section-title mb-0 text-primary">Transaction History & Ledger</h5>
+                            <button type="button" onclick="window.print()" class="btn btn-sm btn-light border shadow-sm">
+                                <i class="fas fa-print mr-1"></i> Print Statement
+                            </button>
+                        </div>
+                        
+                        <?php if(empty($data['ledger'])): ?>
+                            <div class="text-center py-5 bg-lightest rounded">
+                                <i class="fas fa-file-invoice fa-3x text-light mb-3"></i>
+                                <h6 class="text-muted">No financial records found for this account.</h6>
+                            </div>
+                        <?php else: ?>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover border">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th class="px-3 py-2 small font-weight-bold">Date</th>
+                                            <th class="py-2 small font-weight-bold">Activity Type</th>
+                                            <th class="py-2 small font-weight-bold">Description</th>
+                                            <th class="px-3 py-2 small font-weight-bold text-right">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($data['ledger'] as $entry): ?>
+                                            <tr class="<?php echo ($entry->direction == 'in') ? 'bg-soft-success' : 'bg-soft-white'; ?>">
+                                                <td class="px-3 py-2 small"><?php echo date('d M Y', strtotime($entry->date)); ?></td>
+                                                <td class="py-2 small">
+                                                    <span class="badge <?php 
+                                                        echo ($entry->type == 'Invoice') ? 'badge-primary' : 
+                                                            (($entry->type == 'Salary') ? 'badge-info' : 'badge-warning'); 
+                                                    ?>">
+                                                        <?php echo $entry->type; ?>
+                                                    </span>
+                                                </td>
+                                                <td class="py-2 small text-muted"><?php echo $entry->description; ?></td>
+                                                <td class="px-3 py-2 small text-right font-weight-bold <?php echo ($entry->direction == 'in') ? 'text-success' : 'text-danger'; ?>">
+                                                    <?php echo ($entry->direction == 'in') ? '+' : '-'; ?> ₹<?php echo number_format($entry->amount, 2); ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mt-3 p-3 bg-light rounded text-right">
+                                <span class="small text-muted mr-2 font-weight-bold uppercase">Account Insight:</span>
+                                <span class="badge badge-primary px-3 py-2">Total Activities: <?php echo count($data['ledger']); ?></span>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
