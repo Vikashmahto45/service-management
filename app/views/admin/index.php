@@ -1,226 +1,150 @@
 <?php require APPROOT . '/views/inc/admin_header.php'; ?>
 
-<div class="row mb-4">
-    <div class="col-md-6">
-        <h1 class="page-title font-weight-bold">Command Center</h1>
-        <p class="text-muted">Real-time Service & Operational Intelligence</p>
+<h1 class="mt-4 mb-2 page-title">Dashboard</h1>
+<p class="lead mb-5 text-muted">Overview of your system performance.</p>
+
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="stat-card stat-success h-100">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-uppercase text-muted mb-2" style="font-size: 0.75rem; letter-spacing: 1px;">Services</h6>
+                    <h2 class="font-weight-bold mb-0" style="color: #11998e;"><?php echo $data['service_count']; ?></h2>
+                </div>
+            </div>
+            <div class="stat-icon">
+                <i class="fas fa-tools"></i>
+            </div>
+            <a href="<?php echo URLROOT; ?>/services/manage" class="btn btn-sm btn-light mt-4 font-weight-bold stretched-link" style="border-radius: 8px;">Manage <i class="fas fa-arrow-right ml-1"></i></a>
+        </div>
     </div>
-    <div class="col-md-6 text-right">
-        <div class="d-inline-block bg-white shadow-sm rounded-pill px-4 py-2 border">
-            <span class="text-muted small text-uppercase font-weight-bold mr-2">System Status:</span>
-            <span class="text-success blink-status"><i class="fas fa-circle mr-1"></i> LIVE</span>
+
+    <div class="col-md-3 mb-4">
+        <div class="stat-card stat-warning h-100">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-uppercase text-muted mb-2" style="font-size: 0.75rem; letter-spacing: 1px;">Inventory</h6>
+                    <h2 class="font-weight-bold mb-0" style="color: #f7971e;"><?php echo $data['inventory_count']; ?></h2>
+                </div>
+            </div>
+            <div class="stat-icon">
+                <i class="fas fa-boxes"></i>
+            </div>
+            <a href="<?php echo URLROOT; ?>/inventories" class="btn btn-sm btn-light mt-4 font-weight-bold stretched-link" style="border-radius: 8px;">Stock <i class="fas fa-arrow-right ml-1"></i></a>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="stat-card h-100" style="border-top: 4px solid #8b5cf6;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-uppercase text-muted mb-2" style="font-size: 0.75rem; letter-spacing: 1px;">Expenses</h6>
+                    <h2 class="font-weight-bold mb-0" style="color: #8b5cf6;">₹<?php echo number_format($data['total_expenses'], 2); ?></h2>
+                </div>
+            </div>
+            <div class="stat-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            <a href="<?php echo URLROOT; ?>/adminexpenses" class="btn btn-sm btn-light mt-4 font-weight-bold stretched-link" style="border-radius: 8px;">Review <i class="fas fa-arrow-right ml-1"></i></a>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="stat-card stat-danger h-100">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-uppercase text-muted mb-2" style="font-size: 0.75rem; letter-spacing: 1px;">Revenue</h6>
+                    <h2 class="font-weight-bold mb-0" style="color: #eb3349;">₹<?php echo number_format($data['total_revenue'], 2); ?></h2>
+                </div>
+            </div>
+            <div class="stat-icon">
+                <i class="fas fa-rupee-sign"></i>
+            </div>
+            <a href="<?php echo URLROOT; ?>/reports" class="btn btn-sm btn-light mt-4 font-weight-bold stretched-link" style="border-radius: 8px;">Report <i class="fas fa-arrow-right ml-1"></i></a>
         </div>
     </div>
 </div>
 
-<!-- Ticket Statistics Cards -->
-<div class="row">
+<div class="row mt-4">
     <div class="col-md-3 mb-4">
-        <div class="card border-0 shadow-sm h-100 rounded-lg overflow-hidden">
-            <div class="card-body p-4 border-left-lg border-dark">
-                <h6 class="text-muted text-uppercase mb-3 small font-weight-bold">Total Tickets</h6>
-                <div class="d-flex align-items-center justify-content-between">
-                    <h2 class="mb-0 font-weight-bold"><?php echo $data['stats']['total']; ?></h2>
-                    <div class="icon-shape bg-light rounded-circle text-dark p-3">
-                        <i class="fas fa-ticket-alt"></i>
-                    </div>
+        <div class="stat-card stat-primary h-100">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-uppercase text-muted mb-2" style="font-size: 0.75rem; letter-spacing: 1px;">Total Users</h6>
+                    <h2 class="font-weight-bold mb-0 gradient-text"><?php echo $data['user_count']; ?></h2>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-4">
-        <div class="card border-0 shadow-sm h-100 rounded-lg overflow-hidden">
-            <div class="card-body p-4 border-left-lg border-warning">
-                <h6 class="text-muted text-uppercase mb-3 small font-weight-bold text-warning">Ongoing</h6>
-                <div class="d-flex align-items-center justify-content-between">
-                    <h2 class="mb-0 font-weight-bold"><?php echo $data['stats']['ongoing']; ?></h2>
-                    <div class="icon-shape bg-warning-light rounded-circle text-warning p-3">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                </div>
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
             </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-4">
-        <div class="card border-0 shadow-sm h-100 rounded-lg overflow-hidden">
-            <div class="card-body p-4 border-left-lg border-primary">
-                <h6 class="text-muted text-uppercase mb-3 small font-weight-bold text-primary">In Progress</h6>
-                <div class="d-flex align-items-center justify-content-between">
-                    <h2 class="mb-0 font-weight-bold"><?php echo $data['stats']['in_progress']; ?></h2>
-                    <div class="icon-shape bg-primary-light rounded-circle text-primary p-3">
-                        <i class="fas fa-tools"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-4">
-        <div class="card border-0 shadow-sm h-100 rounded-lg overflow-hidden">
-            <div class="card-body p-4 border-left-lg border-success">
-                <h6 class="text-muted text-uppercase mb-3 small font-weight-bold text-success">Completed Today</h6>
-                <div class="d-flex align-items-center justify-content-between">
-                    <h2 class="mb-0 font-weight-bold"><?php echo $data['stats']['completed_today']; ?></h2>
-                    <div class="icon-shape bg-success-light rounded-circle text-success p-3">
-                        <i class="fas fa-check-double"></i>
-                    </div>
-                </div>
-            </div>
+            <a href="<?php echo URLROOT; ?>/admin/users" class="btn btn-sm btn-light mt-4 font-weight-bold stretched-link" style="border-radius: 8px;">Details <i class="fas fa-arrow-right ml-1"></i></a>
         </div>
     </div>
 </div>
 
-<div class="row">
-    <!-- Monthly Performance Chart Card -->
-    <div class="col-md-8 mb-4">
-        <div class="card border-0 shadow-sm h-100 rounded-lg">
-            <div class="card-header bg-white border-0 py-4 px-4 d-flex justify-content-between align-items-center">
-                <h5 class="m-0 font-weight-bold">Monthly Service Performance</h5>
-                <div class="btn-group btn-group-sm rounded shadow-none border">
-                    <button class="btn btn-white active">Week</button>
-                    <button class="btn btn-white">Month</button>
-                    <button class="btn btn-white">Year</button>
-                </div>
-            </div>
-            <div class="card-body px-4">
-                <div class="chart-container" style="height: 300px; background: #f8fbff; border-radius: 12px; display: flex; align-items: flex-end; justify-content: space-around; padding: 20px;">
-                    <!-- Placeholder for Chart.js implementation in Phase 3 -->
-                    <div class="bar-mock" style="width: 30px; height: 40%; background: #4e73df; border-radius: 4px 4px 0 0;"></div>
-                    <div class="bar-mock" style="width: 30px; height: 60%; background: #4e73df; border-radius: 4px 4px 0 0;"></div>
-                    <div class="bar-mock" style="width: 30px; height: 50%; background: #4e73df; border-radius: 4px 4px 0 0;"></div>
-                    <div class="bar-mock" style="width: 30px; height: 80%; background: #4e73df; border-radius: 4px 4px 0 0;"></div>
-                    <div class="bar-mock" style="width: 30px; height: 65%; background: #4e73df; border-radius: 4px 4px 0 0;"></div>
-                    <div class="bar-mock" style="width: 30px; height: 90%; background: #2ecc71; border-radius: 4px 4px 0 0;"></div>
-                </div>
-                <div class="d-flex justify-content-center mt-3">
-                    <div class="small text-muted mr-4"><i class="fas fa-square text-primary mr-1"></i> Requested</div>
-                    <div class="small text-muted"><i class="fas fa-square text-success mr-1"></i> Completed</div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="glass-panel p-4">
+            <h4 class="mb-4"><i class="fas fa-stream mr-2 text-muted"></i>Recent Activity</h4>
+            <div class="list-group list-group-flush">
+                <?php 
+                    // Combine bookings and complaints into a unified activity array
+                    $activities = [];
+                    
+                    if(!empty($data['recent_bookings'])) {
+                        foreach($data['recent_bookings'] as $b) {
+                            $activities[] = [
+                                'type' => 'booking',
+                                'title' => 'New booking for <strong>' . htmlspecialchars($b->service_name) . '</strong>',
+                                'subtitle' => 'By ' . htmlspecialchars($b->customer_name),
+                                'icon' => 'fa-calendar-check',
+                                'color' => '#11998e',
+                                'time' => strtotime($b->created_at),
+                                'time_str' => date('M j, g:i a', strtotime($b->created_at))
+                            ];
+                        }
+                    }
 
-    <!-- Business Summary Card -->
-    <div class="col-md-4 mb-4">
-        <div class="card border-0 shadow-sm h-100 rounded-lg bg-dark text-white p-2">
-            <div class="card-body">
-                <h5 class="font-weight-bold mb-4">Business Summary</h5>
-                
-                <div class="summary-item mb-4">
-                    <div class="text-muted small text-uppercase mb-1">Monthly Revenue</div>
-                    <h3 class="font-weight-bold text-success">₹<?php echo number_format($data['monthly_revenue'], 2); ?></h3>
-                </div>
+                    if(!empty($data['recent_complaints'])) {
+                        foreach($data['recent_complaints'] as $c) {
+                            $activities[] = [
+                                'type' => 'complaint',
+                                'title' => 'Complaint Logged: <strong>' . htmlspecialchars($c->subject) . '</strong>',
+                                'subtitle' => 'By ' . htmlspecialchars($c->user_name),
+                                'icon' => 'fa-exclamation-circle',
+                                'color' => '#eb3349',
+                                'time' => strtotime($c->created_at),
+                                'time_str' => date('M j, g:i a', strtotime($c->created_at))
+                            ];
+                        }
+                    }
 
-                <div class="summary-item mb-4">
-                    <div class="text-muted small text-uppercase mb-1">Customer Rating</div>
-                    <div class="d-flex align-items-center">
-                        <h3 class="font-weight-bold mb-0 mr-2"><?php echo $data['customer_rating']; ?></h3>
-                        <div class="text-warning">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
-                        </div>
-                    </div>
-                </div>
+                    // Sort combined activities by time descending
+                    usort($activities, function($a, $b) {
+                        return $b['time'] - $a['time'];
+                    });
 
-                <div class="summary-item mb-4">
-                    <div class="text-muted small text-uppercase mb-1">Attendance Snapshot</div>
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="small font-weight-bold">Present Today</span>
-                        <span class="small font-weight-bold text-info"><?php echo $data['attendance_percentage']; ?>%</span>
-                    </div>
-                    <div class="progress" style="height: 6px; border-radius: 3px;">
-                        <div class="progress-bar bg-info shadow-none" role="progressbar" style="width: <?php echo $data['attendance_percentage']; ?>%"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                    // Limit to top 5
+                    $activities = array_slice($activities, 0, 5);
+                ?>
 
-<div class="row">
-    <!-- Recent Activity -->
-    <div class="col-md-6 mb-4">
-        <div class="card border-0 shadow-sm h-100 rounded-lg">
-            <div class="card-header bg-white border-0 py-3 px-4 pt-4">
-                <h5 class="m-0 font-weight-bold">Recent Live Activity</h5>
-            </div>
-            <div class="card-body px-4">
-                <div class="activity-feed">
-                    <?php if(empty($data['recent_bookings'])): ?>
-                        <p class="text-muted">No recent activity.</p>
-                    <?php else: ?>
-                        <?php foreach($data['recent_bookings'] as $b): ?>
-                            <div class="d-flex mb-3 align-items-start border-bottom pb-3">
-                                <div class="bg-primary-light text-primary rounded-circle p-2 mr-3" style="width: 40px; height: 40px; text-align: center;">
-                                    <i class="fas fa-calendar-check mt-1"></i>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <div class="font-weight-bold text-dark small"><?php echo $b->service_name; ?></div>
-                                    <div class="text-muted extra-small">Booking #<?php echo $b->id; ?> by <?php echo $b->customer_name; ?></div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="badge badge-light"><?php echo date('h:i A', strtotime($b->created_at)); ?></div>
-                                </div>
+                <?php if(empty($activities)): ?>
+                    <div class="list-group-item bg-transparent px-0 text-muted">No recent activity found.</div>
+                <?php else: ?>
+                    <?php foreach($activities as $activity): ?>
+                        <div class="list-group-item d-flex justify-content-between align-items-center bg-transparent px-0">
+                            <div>
+                                <i class="fas <?php echo $activity['icon']; ?> mr-2" style="color: <?php echo $activity['color']; ?>;"></i> 
+                                <?php echo $activity['title']; ?>
+                                <span class="d-block text-muted small ml-4"><?php echo $activity['subtitle']; ?></span>
                             </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Technician Ranking (Placeholder for Phase 3) -->
-    <div class="col-md-6 mb-4">
-        <div class="card border-0 shadow-sm h-100 rounded-lg">
-             <div class="card-header bg-white border-0 py-3 px-4 pt-4">
-                <h5 class="m-0 font-weight-bold">Technician Performance</h5>
-            </div>
-            <div class="card-body p-0">
-                <table class="table table-hover mb-0">
-                    <thead class="bg-light px-4">
-                        <tr>
-                            <th class="border-0 px-4">Staff Name</th>
-                            <th class="border-0">Score</th>
-                            <th class="border-0">Tasks</th>
-                            <th class="border-0">Growth</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="px-4 font-weight-bold">Rajesh Kumar</td>
-                            <td><span class="badge badge-success px-2 py-1"><i class="fas fa-star mr-1"></i> 4.9</span></td>
-                            <td>12</td>
-                            <td class="text-success"><i class="fas fa-caret-up"></i> 14%</td>
-                        </tr>
-                        <tr>
-                            <td class="px-4 font-weight-bold">Amit Singh</td>
-                            <td><span class="badge badge-success px-2 py-1"><i class="fas fa-star mr-1"></i> 4.7</span></td>
-                            <td>9</td>
-                            <td class="text-success"><i class="fas fa-caret-up"></i> 5%</td>
-                        </tr>
-                        <tr>
-                            <td class="px-4 font-weight-bold">Suresh Pal</td>
-                            <td><span class="badge badge-warning px-2 py-1"><i class="fas fa-star mr-1"></i> 4.2</span></td>
-                            <td>15</td>
-                            <td class="text-danger"><i class="fas fa-caret-down"></i> 2%</td>
-                        </tr>
-                    </tbody>
-                </table>
+                            <small class="text-muted"><?php echo $activity['time_str']; ?></small>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-.border-left-lg { border-left: 5px solid; }
-.bg-warning-light { background: #fff8eb; }
-.bg-primary-light { background: #eef2ff; }
-.bg-success-light { background: #ecfdf5; }
-.extra-small { font-size: 0.7rem; }
-.blink-status { animation: blink 2s infinite; }
-@keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-</style>
 
 <?php require APPROOT . '/views/inc/admin_footer.php'; ?>

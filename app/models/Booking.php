@@ -7,15 +7,13 @@
     }
 
     public function addBooking($data){
-      $this->db->query('INSERT INTO bookings (user_id, service_id, product_id, booking_date, booking_time, notes, priority) VALUES (:user_id, :service_id, :product_id, :booking_date, :booking_time, :notes, :priority)');
+      $this->db->query('INSERT INTO bookings (user_id, service_id, booking_date, booking_time, notes) VALUES (:user_id, :service_id, :booking_date, :booking_time, :notes)');
       // Bind values
       $this->db->bind(':user_id', $data['user_id']);
       $this->db->bind(':service_id', $data['service_id']);
-      $this->db->bind(':product_id', $data['product_id']);
       $this->db->bind(':booking_date', $data['booking_date']);
       $this->db->bind(':booking_time', $data['booking_time']);
       $this->db->bind(':notes', $data['notes']);
-      $this->db->bind(':priority', $data['priority']);
 
       // Execute
       if($this->db->execute()){
@@ -38,13 +36,11 @@
     }
 
     public function getAllBookings(){
-        $this->db->query('SELECT bookings.*, services.name as service_name, users.name as customer_name, users.email as user_email, staff.name as staff_name, cp.model_no, at.name as appliance_name
+        $this->db->query('SELECT bookings.*, services.name as service_name, users.name as customer_name, users.email as user_email, staff.name as staff_name
                           FROM bookings 
                           JOIN services ON bookings.service_id = services.id
                           JOIN users ON bookings.user_id = users.id
                           LEFT JOIN users staff ON bookings.assigned_to = staff.id
-                          LEFT JOIN customer_products cp ON bookings.product_id = cp.id
-                          LEFT JOIN appliance_types at ON cp.appliance_type_id = at.id
                           ORDER BY bookings.created_at DESC');
         return $this->db->resultSet();
     }
@@ -81,15 +77,9 @@
     }
 
     public function getBookingById($id){
-      $this->db->query('SELECT bookings.*, services.name as service_name, services.price as service_price, services.description as service_description, 
-                               users.name as customer_name, users.phone as customer_phone, users.email as customer_email, users.address as customer_address,
-                               staff.name as staff_name, cp.model_no, cp.serial_no, at.name as appliance_name
+      $this->db->query('SELECT bookings.*, services.name as service_name, services.price as service_price, services.description as service_description 
                         FROM bookings 
                         JOIN services ON bookings.service_id = services.id 
-                        JOIN users ON bookings.user_id = users.id
-                        LEFT JOIN users staff ON bookings.assigned_to = staff.id
-                        LEFT JOIN customer_products cp ON bookings.product_id = cp.id
-                        LEFT JOIN appliance_types at ON cp.appliance_type_id = at.id
                         WHERE bookings.id = :id');
       $this->db->bind(':id', $id);
 

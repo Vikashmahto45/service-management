@@ -6,26 +6,35 @@
         <a href="<?php echo URLROOT; ?>/admin" class="list-group-item list-group-item-action">
             <i class="fas fa-tachometer-alt mr-3"></i> Dashboard
         </a>
-        <a href="<?php echo URLROOT; ?>/parties/customers" class="list-group-item list-group-item-action">
-            <i class="fas fa-user-friends mr-3"></i> Manage Customers
+        <a href="<?php echo URLROOT; ?>/items" class="list-group-item list-group-item-action">
+            <i class="fas fa-box-open mr-3"></i> Items
         </a>
-        <a href="<?php echo URLROOT; ?>/customerproducts" class="list-group-item list-group-item-action">
-            <i class="fas fa-tv mr-3"></i> Customer Products
+        <a href="<?php echo URLROOT; ?>/brands" class="list-group-item list-group-item-action">
+            <i class="fas fa-tags mr-3"></i> Brands
+        </a>
+        <a href="<?php echo URLROOT; ?>/parties" class="list-group-item list-group-item-action">
+            <i class="fas fa-users mr-3"></i> Parties
         </a>
         <a href="<?php echo URLROOT; ?>/bookings/manage" class="list-group-item list-group-item-action">
-            <i class="fas fa-ticket-alt mr-3"></i> Manage Tickets
+            <i class="fas fa-calendar-check mr-3"></i> Bookings
         </a>
-        <a href="<?php echo URLROOT; ?>/employees" class="list-group-item list-group-item-action">
-            <i class="fas fa-users-cog mr-3"></i> Staff Management
+        <a href="<?php echo URLROOT; ?>/invoices" class="list-group-item list-group-item-action">
+            <i class="fas fa-file-invoice-dollar mr-3"></i> Invoices
+        </a>
+        <a href="<?php echo URLROOT; ?>/users/admin_create" class="list-group-item list-group-item-action">
+            <i class="fas fa-user-plus mr-3"></i> Add Staff/Vendor
+        </a>
+        <a href="<?php echo URLROOT; ?>/complaints/index" class="list-group-item list-group-item-action">
+            <i class="fas fa-comments mr-3"></i> Complaints
+        </a>
+        <a href="<?php echo URLROOT; ?>/adminExpenses" class="list-group-item list-group-item-action">
+            <i class="fas fa-receipt mr-3"></i> Expenses
+        </a>
+        <a href="<?php echo URLROOT; ?>/adminAttendance" class="list-group-item list-group-item-action">
+            <i class="fas fa-clock mr-3"></i> Attendance
         </a>
         <a href="<?php echo URLROOT; ?>/reports" class="list-group-item list-group-item-action">
-            <i class="fas fa-chart-bar mr-3"></i> All Reports
-        </a>
-        <a href="<?php echo URLROOT; ?>/settings" class="list-group-item list-group-item-action">
-            <i class="fas fa-cogs mr-3"></i> Settings
-        </a>
-        <a href="<?php echo URLROOT; ?>/departments" class="list-group-item list-group-item-action">
-            <i class="fas fa-building mr-3"></i> Departments
+            <i class="fas fa-chart-line mr-3"></i> Reports
         </a>
     </div>
 </div>
