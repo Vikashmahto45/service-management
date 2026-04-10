@@ -78,7 +78,7 @@
         </ul>
 
         <!-- AMC & Maintenance (Phase 9) -->
-        <a href="#amcSubmenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action bg-transparent second-text fw-bold dropdown-toggle text-warning">
+        <a href="#amcSubmenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action bg-transparent second-text fw-bold dropdown-toggle">
             <i class="fas fa-file-contract mr-2"></i> AMC & Maintenance
         </a>
         <ul class="collapse list-unstyled pl-4" id="amcSubmenu">
