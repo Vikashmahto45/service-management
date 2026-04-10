@@ -32,28 +32,24 @@
 
     // Get Monthly Income vs Expense Data (for Charts)
     public function getMonthlyBreakdown($limit = 6){
+        // Simplified query that grouped by month from existing data
         $this->db->query('
             SELECT 
-                DATE_FORMAT(all_dates.date, "%b %Y") as month,
-                IFNULL(SUM(invoices.total_amount), 0) as income,
-                (
-                    SELECT IFNULL(SUM(amount), 0) FROM expenses WHERE DATE_FORMAT(created_at, "%Y-%m") = DATE_FORMAT(all_dates.date, "%Y-%m") AND status = "approved"
-                ) +
-                (
-                    SELECT IFNULL(SUM(net_salary), 0) FROM salary_history WHERE DATE_FORMAT(paid_date, "%Y-%m") = DATE_FORMAT(all_dates.date, "%Y-%m")
-                ) +
-                (
-                    SELECT IFNULL(SUM(amount), 0) FROM vendor_payouts WHERE DATE_FORMAT(payout_date, "%Y-%m") = DATE_FORMAT(all_dates.date, "%Y-%m")
-                ) as expense
+                DATE_FORMAT(finance_data.date, "%b %Y") as month,
+                SUM(CASE WHEN type = "income" THEN amount ELSE 0 END) as income,
+                SUM(CASE WHEN type = "expense" THEN amount ELSE 0 END) as expense
             FROM (
-                SELECT CURDATE() - INTERVAL (a.a + (10 * b.a)) MONTH as date
-                FROM (SELECT 0 as a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) as a
-                CROSS JOIN (SELECT 0 as a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) as b
-            ) as all_dates
-            LEFT JOIN invoices ON DATE_FORMAT(invoices.created_at, "%Y-%m") = DATE_FORMAT(all_dates.date, "%Y-%m") AND invoices.status = "paid"
-            WHERE all_dates.date <= CURDATE() AND all_dates.date > CURDATE() - INTERVAL :limit MONTH
+                SELECT created_at as date, total_amount as amount, "income" as type FROM invoices WHERE status = "paid"
+                UNION ALL
+                SELECT created_at as date, amount, "expense" as type FROM expenses WHERE status = "approved"
+                UNION ALL
+                SELECT paid_date as date, net_salary as amount, "expense" as type FROM salary_history
+                UNION ALL
+                SELECT payout_date as date, amount, "expense" as type FROM vendor_payouts
+            ) as finance_data
+            WHERE finance_data.date > DATE_SUB(NOW(), INTERVAL :limit MONTH)
             GROUP BY month
-            ORDER BY all_dates.date ASC
+            ORDER BY MIN(finance_data.date) ASC
         ');
         $this->db->bind(':limit', $limit);
         return $this->db->resultSet();

@@ -74,4 +74,14 @@
             $this->view('admin/finance/add_payout', $data);
         }
     }
-  }
+
+    public function ledgers(){
+        $users = $this->userModel->getAllUsers();
+        
+        $data = [
+            'users' => $users
+        ];
+
+        $this->view('admin/finance/ledgers', $data);
+    }
+}
