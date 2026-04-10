@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo URLROOT; ?>/css/style.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="<?php echo URLROOT; ?>/css/admin.css?v=<?php echo time(); ?>">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Admin Dashboard - <?php echo SITENAME; ?></title>
     <style>
         body { font-family: 'Inter', 'Segoe UI', Roboto, sans-serif; }
