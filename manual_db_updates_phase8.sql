@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `vendor_payouts` (
 ALTER TABLE `invoices` ADD INDEX `idx_invoice_status` (`status`);
 ALTER TABLE `invoices` ADD INDEX `idx_invoice_date` (`created_at`);
 ALTER TABLE `expenses` ADD INDEX `idx_expense_status` (`status`);
-ALTER TABLE `salary_history` ADD INDEX `idx_salary_date` (`paid_date`);
+ALTER TABLE `salary_history` ADD INDEX `idx_salary_date` (`generated_at`);
 
 -- 3. Configuration table for financial settings
 CREATE TABLE IF NOT EXISTS `finance_settings` (

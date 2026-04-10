@@ -44,7 +44,7 @@
                 UNION ALL
                 SELECT created_at as date, amount, "expense" as type FROM expenses WHERE status = "approved"
                 UNION ALL
-                SELECT paid_date as date, net_salary as amount, "expense" as type FROM salary_history
+                SELECT generated_at as date, net_salary as amount, "expense" as type FROM salary_history
                 UNION ALL
                 SELECT payout_date as date, amount, "expense" as type FROM vendor_payouts
             ) as finance_data
@@ -63,7 +63,7 @@
             SELECT created_at as date, "Invoice" as type, CONCAT("Invoice #", invoice_number) as description, total_amount as amount, "in" as direction
             FROM invoices WHERE customer_id = :user_id
         ) UNION (
-            SELECT paid_date as date, "Salary" as type, CONCAT("Salary for ", DATE_FORMAT(paid_date, "%M %Y")) as description, net_salary as amount, "out" as direction
+            SELECT generated_at as date, "Salary" as type, CONCAT("Salary for ", DATE_FORMAT(generated_at, "%M %Y")) as description, net_salary as amount, "out" as direction
             FROM salary_history WHERE user_id = :user_id
         ) UNION (
             SELECT payout_date as date, "Vendor Payout" as type, notes as description, amount as amount, "out" as direction
