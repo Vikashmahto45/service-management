@@ -1,5 +1,10 @@
 <?php
   class Employees extends Controller {
+    private $bookingModel;
+    private $complaintModel;
+    private $attendanceModel;
+    private $expenseModel;
+
     public function __construct(){
       if(!isLoggedIn() || ($_SESSION['role_id'] != 3 && $_SESSION['role_id'] != 4)){
           // Only for Employees (3) and Vendors (4)

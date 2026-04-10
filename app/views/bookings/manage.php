@@ -1,94 +1,117 @@
 <?php require APPROOT . '/views/inc/admin_header.php'; ?>
+
 <?php flash('booking_message'); ?>
 
-<div class="row mb-4">
+<div class="row mb-4 align-items-center">
     <div class="col-md-6">
-        <h1>Booking Management</h1>
+        <h1 class="font-weight-bold mb-0">Ticket Management</h1>
+        <p class="text-muted mb-0">Track and manage service requests and lifecycle</p>
+    </div>
+    <div class="col-md-6 text-right">
+        <a href="<?php echo URLROOT; ?>/bookings/add" class="btn btn-primary btn-lg shadow-sm">
+            <i class="fas fa-plus mr-1"></i> Add New Ticket
+        </a>
+    </div>
+</div>
+
+<div class="card-box mb-4">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <div class="btn-group btn-group-sm mb-0">
+                <a href="?status=all" class="btn btn-outline-secondary px-3 active">All Tickets</a>
+                <a href="?status=pending" class="btn btn-outline-warning px-3">Pending</a>
+                <a href="?status=assigned" class="btn btn-outline-info px-3">Ongoing</a>
+                <a href="?status=completed" class="btn btn-outline-success px-3">Completed</a>
+                <a href="?status=cancelled" class="btn btn-outline-danger px-3">Cancelled</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="input-group">
+                <input type="text" class="form-control form-control-sm" placeholder="Search tickets...">
+                <div class="input-group-append">
+                    <button class="btn btn-primary btn-sm"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <div class="card-box">
-    <table class="table table-striped align-middle">
-        <thead class="thead-dark">
-            <tr>
-                <th>ID</th>
-                <th>Customer</th>
-                <th>Service</th>
-                <th>Date/Time</th>
-                <th>Assigned To</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach($data['bookings'] as $booking) : ?>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="thead-light text-muted small uppercase">
                 <tr>
-                    <td><?php echo $booking->id; ?></td>
-                    <td>
-                        <strong><?php echo $booking->customer_name; ?></strong><br>
-                        <small class="text-muted"><?php echo $booking->user_email; ?></small>
-                    </td>
-                    <td><?php echo $booking->service_name; ?></td>
-                    <td>
-                        <?php echo date('d M Y', strtotime($booking->booking_date)); ?><br>
-                        <small class="text-muted"><?php echo date('h:i A', strtotime($booking->booking_time)); ?></small>
-                    </td>
-                    <td>
-                        <?php if($booking->status == 'completed' || $booking->status == 'cancelled'): ?>
-                             <?php echo !empty($booking->staff_name) ? '<span class="badge badge-secondary">'.$booking->staff_name.'</span>' : '<span class="text-muted">-</span>'; ?>
-                        <?php else: ?>
-                            <form action="<?php echo URLROOT; ?>/bookings/assign/<?php echo $booking->id; ?>" method="POST" class="d-flex align-items-center">
-                                <select name="assigned_to" class="form-control form-control-sm mr-2" style="width: 150px;">
-                                    <option value="">-- Select Staff --</option>
-                                    <?php foreach($data['service_providers'] as $staff) : ?>
-                                        <option value="<?php echo $staff->id; ?>" <?php echo ($booking->assigned_to == $staff->id) ? 'selected' : ''; ?>>
-                                            <?php echo $staff->name; ?> (<?php echo $staff->role_id == 3 ? 'Emp' : 'Ven'; ?>)
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                                <button type="submit" class="btn btn-sm btn-primary">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                            </form>
-                        <?php endif; ?>
-                    </td>
-                     <td>
-                        <?php if($booking->status == 'confirmed') : ?>
-                            <span class="badge badge-success">Confirmed</span>
-                        <?php elseif($booking->status == 'assigned') : ?>
-                            <span class="badge badge-primary">Assigned</span>
-                        <?php elseif($booking->status == 'in_progress') : ?>
-                            <span class="badge badge-info text-white">In Progress</span>
-                        <?php elseif($booking->status == 'pending') : ?>
-                            <span class="badge badge-warning">Pending</span>
-                        <?php elseif($booking->status == 'cancelled') : ?>
-                            <span class="badge badge-danger">Cancelled</span>
-                        <?php else : ?>
-                            <span class="badge badge-secondary">Completed</span>
-                        <?php endif; ?>
-                    </td>
-                    <td>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-toggle="dropdown">
-                                Action
-                            </button>
-                            <div class="dropdown-menu">
-                                <?php if($booking->status == 'pending') : ?>
-                                    <a class="dropdown-item text-success" href="<?php echo URLROOT; ?>/bookings/update_status/<?php echo $booking->id; ?>/confirmed">Confirm</a>
-                                    <a class="dropdown-item text-danger" href="<?php echo URLROOT; ?>/bookings/update_status/<?php echo $booking->id; ?>/cancelled">Reject</a>
-                                <?php elseif($booking->status != 'completed' && $booking->status != 'cancelled') : ?>
-                                     <a class="dropdown-item" href="<?php echo URLROOT; ?>/bookings/update_status/<?php echo $booking->id; ?>/completed">Mark Completed</a>
-                                     <a class="dropdown-item text-danger" href="<?php echo URLROOT; ?>/bookings/update_status/<?php echo $booking->id; ?>/cancelled">Cancel</a>
-                                <?php elseif($booking->status == 'completed'): ?>
-                                    <a class="dropdown-item" href="<?php echo URLROOT; ?>/invoices/generate/<?php echo $booking->id; ?>">Generate Invoice</a>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </td>
+                    <th style="width: 80px;">Ticket #</th>
+                    <th>Customer</th>
+                    <th>Service / Job</th>
+                    <th>Schedule</th>
+                    <th>Assignment</th>
+                    <th>Status</th>
+                    <th style="width: 60px;">Action</th>
                 </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php if(!empty($data['bookings'])): ?>
+                <?php foreach($data['bookings'] as $booking) : ?>
+                    <tr>
+                        <td class="font-weight-bold">#<?php echo $booking->id; ?></td>
+                        <td>
+                            <div class="font-weight-bold text-dark"><?php echo $booking->customer_name; ?></div>
+                            <small class="text-muted"><i class="fas fa-envelope mr-1"></i><?php echo $booking->user_email; ?></small>
+                        </td>
+                        <td>
+                            <div class="small font-weight-bold text-primary mb-1"><?php echo $booking->service_name; ?></div>
+                            <div class="badge badge-light border" style="font-size: 0.65rem;">Priority: <?php echo ucfirst($booking->priority ?? 'medium'); ?></div>
+                        </td>
+                        <td>
+                            <div class="small font-weight-bold"><?php echo date('d M Y', strtotime($booking->booking_date)); ?></div>
+                            <div class="small text-muted"><i class="far fa-clock mr-1"></i><?php echo $booking->booking_time; ?></div>
+                        </td>
+                        <td>
+                            <?php if($booking->staff_name): ?>
+                                <div class="d-flex align-items-center">
+                                    <div class="user-avatar-sm mr-2" style="width:24px; height:24px; font-size:10px; background:var(--gradient-info);">
+                                        <?php echo strtoupper(substr($booking->staff_name, 0, 1)); ?>
+                                    </div>
+                                    <span class="small font-weight-bold"><?php echo $booking->staff_name; ?></span>
+                                </div>
+                            <?php else: ?>
+                                <span class="badge badge-light text-muted border px-2">Unassigned</span>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <?php 
+                                $statusBadge = [
+                                    'pending' => 'badge-warning',
+                                    'confirmed' => 'badge-primary',
+                                    'assigned' => 'badge-info',
+                                    'in_progress' => 'badge-info',
+                                    'completed' => 'badge-success',
+                                    'cancelled' => 'badge-danger'
+                                ];
+                            ?>
+                            <span class="badge <?php echo $statusBadge[$booking->status] ?? 'badge-secondary'; ?> p-2 px-3 shadow-sm" style="font-size: 0.7rem; min-width: 80px;">
+                                <?php echo strtoupper($booking->status); ?>
+                            </span>
+                        </td>
+                        <td>
+                            <a href="<?php echo URLROOT; ?>/bookings/details/<?php echo $booking->id; ?>" class="btn btn-sm btn-outline-primary" title="Details">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+                            <i class="fas fa-ticket-alt fa-3x text-muted mb-3 d-block"></i>
+                            <p class="text-muted mb-0">No tickets found in the system.</p>
+                        </td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <?php require APPROOT . '/views/inc/admin_footer.php'; ?>

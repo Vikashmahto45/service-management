@@ -1,5 +1,13 @@
 <?php
   class Bookings extends Controller {
+    private $bookingModel;
+    private $serviceModel;
+    private $userModel;
+    private $partyModel;
+    private $customerProductModel;
+    private $applianceTypeModel;
+    private $timeSlotModel;
+
     public function __construct(){
       if(!isLoggedIn()){
         redirect('users/login');
@@ -7,6 +15,10 @@
       $this->bookingModel = $this->model('Booking');
       $this->serviceModel = $this->model('Service');
       $this->userModel = $this->model('User');
+      $this->partyModel = $this->model('Party');
+      $this->customerProductModel = $this->model('CustomerProduct');
+      $this->applianceTypeModel = $this->model('ApplianceType');
+      $this->timeSlotModel = $this->model('TimeSlot');
     }
 
     public function index(){
@@ -20,59 +32,92 @@
       $this->view('bookings/index', $data);
     }
 
-    public function create($service_id){
-        $service = $this->serviceModel->getServiceById($service_id);
-        
-        if(!$service){
-            redirect('services');
+    public function add(){
+        if($_SESSION['role_id'] != 1){
+            redirect('bookings');
         }
 
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_SPECIAL_CHARS);
 
             $data = [
-                'user_id' => $_SESSION['user_id'],
-                'service_id' => $service_id,
-                'service_name' => $service->name,
+                'user_id' => trim($_POST['party_id']), // Booking table user_id is the customer (Party)
+                'service_id' => trim($_POST['service_id']),
                 'booking_date' => trim($_POST['booking_date']),
                 'booking_time' => trim($_POST['booking_time']),
                 'notes' => trim($_POST['notes']),
-                'date_err' => '',
-                'time_err' => ''
+                'appliance_type_id' => trim($_POST['appliance_type_id']),
+                'customer_product_id' => !empty($_POST['customer_product_id']) ? $_POST['customer_product_id'] : null,
+                'complaint_description' => trim($_POST['complaint_description']),
+                'priority' => trim($_POST['priority']),
+                'estimated_cost' => trim($_POST['estimated_cost']),
+                'is_warranty' => isset($_POST['is_warranty']) ? 1 : 0,
+                'status' => 'pending',
+                'customer_err' => '',
+                'service_err' => ''
             ];
 
-            if(empty($data['booking_date'])){
-                $data['date_err'] = 'Please select a date';
+            if(empty($data['user_id'])){
+                $data['customer_err'] = 'Please select a customer';
             }
-            if(empty($data['booking_time'])){
-                $data['time_err'] = 'Please select a time';
+            if(empty($data['service_id'])){
+                $data['service_err'] = 'Please select a service';
             }
 
-            if(empty($data['date_err']) && empty($data['time_err'])){
-                if($this->bookingModel->addBooking($data)){
-                    flash('booking_message', 'Booking request submitted');
-                    redirect('bookings');
+            if(empty($data['customer_err']) && empty($data['service_err'])){
+                $booking_id = $this->bookingModel->addBooking($data);
+                if($booking_id){
+                    // Log initial history
+                    $this->bookingModel->logStatusHistory($booking_id, 'pending', $_SESSION['user_id'], 'Ticket created manually by admin');
+                    flash('booking_message', 'Ticket created successfully');
+                    redirect('bookings/manage');
                 } else {
                     die('Something went wrong');
                 }
             } else {
-                $this->view('bookings/create', $data);
+                // Return data to view
+                $data['customers'] = $this->partyModel->getParties();
+                $data['services'] = $this->serviceModel->getServices();
+                $data['appliance_types'] = $this->applianceTypeModel->getApplianceTypes();
+                $data['time_slots'] = $this->timeSlotModel->getSlots(); // Assuming getSlots() exists, let's verify
+                $this->view('bookings/add', $data);
             }
 
         } else {
+            $customers = $this->partyModel->getParties();
+            $services = $this->serviceModel->getServices();
+            $appliance_types = $this->applianceTypeModel->getApplianceTypes();
+            $time_slots = $this->timeSlotModel->getSlots();
+
             $data = [
-                'user_id' => $_SESSION['user_id'],
-                'service_id' => $service_id,
-                'service_name' => $service->name,
-                'booking_date' => '',
+                'customers' => $customers,
+                'services' => $services,
+                'appliance_types' => $appliance_types,
+                'time_slots' => $time_slots,
+                'user_id' => '',
+                'service_id' => '',
+                'booking_date' => date('Y-m-d'),
                 'booking_time' => '',
                 'notes' => '',
-                'date_err' => '',
-                'time_err' => ''
+                'appliance_type_id' => '',
+                'customer_product_id' => '',
+                'complaint_description' => '',
+                'priority' => 'medium',
+                'estimated_cost' => '0',
+                'is_warranty' => 0,
+                'customer_err' => '',
+                'service_err' => ''
             ];
     
-            $this->view('bookings/create', $data);
+            $this->view('bookings/add', $data);
         }
+    }
+
+    // AJAX: Get customer products
+    public function get_customer_products($party_id){
+        $products = $this->customerProductModel->getProductsByCustomer($party_id);
+        header('Content-Type: application/json');
+        echo json_encode($products);
     }
 
     public function cancel($id){
@@ -120,25 +165,66 @@
     }
 
     // Admin Action
+    public function details($id){
+        if($_SESSION['role_id'] != 1){
+            redirect('bookings');
+        }
+
+        $booking = $this->bookingModel->getBookingById($id);
+        $history = $this->bookingModel->getStatusHistory($id);
+        $remarks = $this->bookingModel->getRemarks($id);
+        $service_providers = $this->userModel->getServiceProviders();
+
+        $data = [
+            'booking' => $booking,
+            'history' => $history,
+            'remarks' => $remarks,
+            'service_providers' => $service_providers
+        ];
+
+        $this->view('bookings/details', $data);
+    }
+
+    // Admin Action: Update Status with History
     public function update_status($id, $status){
         if($_SESSION['role_id'] != 1){
             redirect('bookings');
         }
 
+        $remarks = isset($_POST['remarks']) ? trim($_POST['remarks']) : 'Status updated by Admin';
+
         if($this->bookingModel->updateStatus($id, $status)){
+             // Log History
+             $this->bookingModel->logStatusHistory($id, $status, $_SESSION['user_id'], $remarks);
+
              // Create Notification
              $booking = $this->bookingModel->getBookingById($id);
              $user_id = $booking->user_id;
-             $msg = "Your booking #" . $id . " has been marked as " . strtoupper($status);
+             $msg = "Your ticket #" . $id . " status changed to " . strtoupper($status);
              
-             // Load Notification Model (Ad-hoc)
              $notifModel = $this->model('Notification');
              $notifModel->add($user_id, $msg, 'info');
 
-             flash('booking_message', 'Booking Status Updated');
+             flash('booking_message', 'Ticket Status Updated');
         } else {
              flash('booking_message', 'Something went wrong', 'alert alert-danger');
         }
-        redirect('bookings/manage');
+        redirect('bookings/details/' . $id);
+    }
+
+    public function add_remark($id){
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $data = [
+                'booking_id' => $id,
+                'user_id' => $_SESSION['user_id'],
+                'remark' => trim($_POST['remark']),
+                'visibility' => $_POST['visibility'] ?? 'internal'
+            ];
+
+            if($this->bookingModel->addRemark($data)){
+                flash('booking_message', 'Remark added');
+            }
+        }
+        redirect('bookings/details/' . $id);
     }
   }

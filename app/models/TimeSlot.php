@@ -11,6 +11,11 @@
       return $this->db->resultSet();
     }
 
+    public function getSlots(){
+        $this->db->query('SELECT * FROM time_slots WHERE is_active = 1 ORDER BY slot_range ASC');
+        return $this->db->resultSet();
+    }
+
     public function addTimeSlot($data){
       $this->db->query('INSERT INTO time_slots (slot_range, is_active) VALUES(:slot_range, :is_active)');
       $this->db->bind(':slot_range', $data['slot_range']);

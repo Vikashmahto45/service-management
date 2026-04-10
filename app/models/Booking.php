@@ -7,17 +7,26 @@
     }
 
     public function addBooking($data){
-      $this->db->query('INSERT INTO bookings (user_id, service_id, booking_date, booking_time, notes) VALUES (:user_id, :service_id, :booking_date, :booking_time, :notes)');
+      $this->db->query('INSERT INTO bookings (user_id, service_id, booking_date, booking_time, notes, appliance_type_id, customer_product_id, complaint_description, priority, estimated_cost, is_warranty, assigned_to, status) 
+                        VALUES (:user_id, :service_id, :booking_date, :booking_time, :notes, :appliance_type_id, :customer_product_id, :complaint_description, :priority, :estimated_cost, :is_warranty, :assigned_to, :status)');
       // Bind values
       $this->db->bind(':user_id', $data['user_id']);
       $this->db->bind(':service_id', $data['service_id']);
       $this->db->bind(':booking_date', $data['booking_date']);
       $this->db->bind(':booking_time', $data['booking_time']);
-      $this->db->bind(':notes', $data['notes']);
+      $this->db->bind(':notes', $data['notes'] ?? null);
+      
+      $this->db->bind(':appliance_type_id', $data['appliance_type_id'] ?? null);
+      $this->db->bind(':customer_product_id', $data['customer_product_id'] ?? null);
+      $this->db->bind(':complaint_description', $data['complaint_description'] ?? null);
+      $this->db->bind(':priority', $data['priority'] ?? 'medium');
+      $this->db->bind(':estimated_cost', $data['estimated_cost'] ?? 0);
+      $this->db->bind(':is_warranty', $data['is_warranty'] ?? 0);
+      $this->db->bind(':assigned_to', $data['assigned_to'] ?? null);
+      $this->db->bind(':status', $data['status'] ?? 'pending');
 
-      // Execute
       if($this->db->execute()){
-        return true;
+        return $this->db->lastInsertId();
       } else {
         return false;
       }
@@ -77,9 +86,18 @@
     }
 
     public function getBookingById($id){
-      $this->db->query('SELECT bookings.*, services.name as service_name, services.price as service_price, services.description as service_description 
+      $this->db->query('SELECT bookings.*, 
+                               services.name as service_name, services.price as service_price, services.description as service_description,
+                               users.name as customer_name, users.phone as customer_phone, users.address as customer_address,
+                               staff.name as staff_name,
+                               appliance_types.name as appliance_name,
+                               customer_products.product_name, customer_products.model_no
                         FROM bookings 
                         JOIN services ON bookings.service_id = services.id 
+                        JOIN users ON bookings.user_id = users.id
+                        LEFT JOIN users staff ON bookings.assigned_to = staff.id
+                        LEFT JOIN appliance_types ON bookings.appliance_type_id = appliance_types.id
+                        LEFT JOIN customer_products ON bookings.customer_product_id = customer_products.id
                         WHERE bookings.id = :id');
       $this->db->bind(':id', $id);
 
@@ -140,6 +158,48 @@
                           LEFT JOIN users staff ON b.assigned_to = staff.id
                           WHERE b.booking_date = CURRENT_DATE()
                           ORDER BY b.booking_time ASC");
+        return $this->db->resultSet();
+    }
+
+    // --- History & Remarks ---
+
+    public function logStatusHistory($booking_id, $status, $changed_by, $remarks = ''){
+        $this->db->query('INSERT INTO ticket_status_history (booking_id, status, changed_by, remarks) 
+                          VALUES (:booking_id, :status, :changed_by, :remarks)');
+        $this->db->bind(':booking_id', $booking_id);
+        $this->db->bind(':status', $status);
+        $this->db->bind(':changed_by', $changed_by);
+        $this->db->bind(':remarks', $remarks);
+        return $this->db->execute();
+    }
+
+    public function getStatusHistory($booking_id){
+        $this->db->query('SELECT h.*, u.name as user_name 
+                          FROM ticket_status_history h 
+                          JOIN users u ON h.changed_by = u.id 
+                          WHERE h.booking_id = :booking_id 
+                          ORDER BY h.created_at DESC');
+        $this->db->bind(':booking_id', $booking_id);
+        return $this->db->resultSet();
+    }
+
+    public function addRemark($data){
+        $this->db->query('INSERT INTO ticket_remarks (booking_id, user_id, remark, visibility) 
+                          VALUES (:booking_id, :user_id, :remark, :visibility)');
+        $this->db->bind(':booking_id', $data['booking_id']);
+        $this->db->bind(':user_id', $data['user_id']);
+        $this->db->bind(':remark', $data['remark']);
+        $this->db->bind(':visibility', $data['visibility'] ?? 'internal');
+        return $this->db->execute();
+    }
+
+    public function getRemarks($booking_id){
+        $this->db->query('SELECT r.*, u.name as user_name 
+                          FROM ticket_remarks r 
+                          JOIN users u ON r.user_id = u.id 
+                          WHERE r.booking_id = :booking_id 
+                          ORDER BY r.created_at DESC');
+        $this->db->bind(':booking_id', $booking_id);
         return $this->db->resultSet();
     }
 

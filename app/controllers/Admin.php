@@ -1,5 +1,14 @@
 <?php
   class Admin extends Controller {
+    private $userModel;
+    private $serviceModel;
+    private $inventoryModel;
+    private $invoiceModel;
+    private $bookingModel;
+    private $complaintModel;
+    private $expenseModel;
+    private $attendanceModel;
+
     public function __construct(){
       if(!isLoggedIn()){
         redirect('users/login');

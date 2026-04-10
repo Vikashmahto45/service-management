@@ -16,6 +16,16 @@
       return $this->db->resultSet();
     }
 
+    public function getProductsByCustomer($party_id){
+        $this->db->query('SELECT cp.*, at.name as appliance_type_name 
+                          FROM customer_products cp
+                          LEFT JOIN appliance_types at ON cp.appliance_type_id = at.id
+                          WHERE cp.party_id = :party_id 
+                          ORDER BY cp.created_at DESC');
+        $this->db->bind(':party_id', $party_id);
+        return $this->db->resultSet();
+    }
+
     public function addProduct($data){
       $this->db->query('INSERT INTO customer_products (party_id, appliance_type_id, product_name, model_no, serial_no, specifications, purchase_date, warranty_expiry) 
                         VALUES(:party_id, :appliance_type_id, :product_name, :model_no, :serial_no, :specifications, :purchase_date, :warranty_expiry)');

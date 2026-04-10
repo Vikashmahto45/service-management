@@ -1,5 +1,9 @@
 <?php
   class Users extends Controller {
+    private $userModel;
+    private $bookingModel;
+    private $invoiceModel;
+
     public function __construct(){
       $this->userModel = $this->model('User');
       $this->bookingModel = $this->model('Booking');
