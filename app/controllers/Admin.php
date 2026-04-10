@@ -1,18 +1,18 @@
 <?php
   class Admin extends Controller {
+    private $userModel;
+    private $serviceModel;
+    private $inventoryModel;
+    private $invoiceModel;
+    private $bookingModel;
+    private $complaintModel;
+    private $expenseModel;
+
     public function __construct(){
       if(!isLoggedIn()){
         redirect('users/login');
       }
 
-      // Check for Admin Role (ID = 1)
-      // Assuming 'role_id' is stored in session, need to update Users controller to store it
-      // For now, let's fetch user to be safe or update session 
-      // But wait, session only has id, name, email.
-      // We should probably add role_id to session in Users.php
-      // For now, I will add a check here by fetching the user again or trusting the session if I update it.
-      
-      // Let's rely on session. I will update Users.php to store role_id.
       if($_SESSION['role_id'] != 1){
         redirect('pages/index');
       }
@@ -27,26 +27,42 @@
     }
 
     public function index(){
-      $userCount = $this->userModel->getUserCount();
-      $serviceCount = $this->serviceModel->getServiceCount();
-      $inventoryCount = $this->inventoryModel->getInventoryCount();
-      $totalRevenue = $this->invoiceModel->getTotalRevenue();
-      $totalExpenses = $this->expenseModel->getTotalExpenses();
+      // 1. Ticket Stats
+      $allBookings = $this->bookingModel->getAllBookings();
+      $stats = [
+        'total' => count($allBookings),
+        'ongoing' => 0,
+        'in_progress' => 0,
+        'completed_today' => 0
+      ];
       
-      $recentBookings = $this->bookingModel->getRecentBookings(3);
-      $recentComplaints = $this->complaintModel->getRecentComplaints(2);
+      $today = date('Y-m-d');
+      foreach($allBookings as $b){
+        if(in_array($b->status, ['confirmed', 'assigned'])){ $stats['ongoing']++; }
+        if($b->status == 'in_progress'){ $stats['in_progress']++; }
+        if($b->status == 'completed' && date('Y-m-d', strtotime($b->updated_at)) == $today){ $stats['completed_today']++; }
+      }
 
-      // We'll format the array to make it easy to loop through mixed items chronologically if needed,
-      // or just pass them separately. Let's pass them separately and handle display in the view.
+      // 2. Business Summary
+      $totalRevenue = $this->invoiceModel->getTotalRevenue();
+      $monthlyRevenue = $this->invoiceModel->getMonthlyRevenue(date('m'), date('Y'));
+      
+      // 3. Activity
+      $recentBookings = $this->bookingModel->getRecentBookings(5);
+      $recentComplaints = $this->complaintModel->getRecentComplaints(3);
+      
+      // 4. Counts
+      $userCount = $this->userModel->getUserCount();
       
       $data = [
-        'user_count' => $userCount,
-        'service_count' => $serviceCount,
-        'inventory_count' => $inventoryCount,
+        'stats' => $stats,
         'total_revenue' => $totalRevenue,
-        'total_expenses' => $totalExpenses,
+        'monthly_revenue' => $monthlyRevenue,
+        'user_count' => $userCount,
         'recent_bookings' => $recentBookings,
-        'recent_complaints' => $recentComplaints
+        'recent_complaints' => $recentComplaints,
+        'attendance_percentage' => 85, // Placeholder for Phase 3
+        'customer_rating' => 4.8      // Placeholder
       ];
 
       $this->view('admin/index', $data);
