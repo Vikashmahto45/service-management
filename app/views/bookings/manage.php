@@ -4,7 +4,9 @@
 
 <div class="row mb-4 align-items-center">
     <div class="col-md-6">
-        <h1 class="font-weight-bold mb-0">Ticket Management</h1>
+        <h1 class="font-weight-bold mb-0">
+            <?php echo isset($data['status_filter']) ? ucfirst($data['status_filter']) . ' Tickets' : 'Ticket Management'; ?>
+        </h1>
         <p class="text-muted mb-0">Track and manage service requests and lifecycle</p>
     </div>
     <div class="col-md-6 text-right">
@@ -18,11 +20,11 @@
     <div class="row align-items-center">
         <div class="col-md-8">
             <div class="btn-group btn-group-sm mb-0">
-                <a href="?status=all" class="btn btn-outline-secondary px-3 active">All Tickets</a>
-                <a href="?status=pending" class="btn btn-outline-warning px-3">Pending</a>
-                <a href="?status=assigned" class="btn btn-outline-info px-3">Ongoing</a>
-                <a href="?status=completed" class="btn btn-outline-success px-3">Completed</a>
-                <a href="?status=cancelled" class="btn btn-outline-danger px-3">Cancelled</a>
+                <a href="<?php echo URLROOT; ?>/bookings/manage" class="btn btn-outline-secondary px-3 <?php echo !isset($data['status_filter']) ? 'active' : ''; ?>">All Tickets</a>
+                <a href="<?php echo URLROOT; ?>/bookings/manage/pending" class="btn btn-outline-warning px-3 <?php echo ($data['status_filter'] == 'pending') ? 'active' : ''; ?>">Pending</a>
+                <a href="<?php echo URLROOT; ?>/bookings/manage/assigned" class="btn btn-outline-info px-3 <?php echo ($data['status_filter'] == 'assigned') ? 'active' : ''; ?>">Ongoing</a>
+                <a href="<?php echo URLROOT; ?>/bookings/manage/completed" class="btn btn-outline-success px-3 <?php echo ($data['status_filter'] == 'completed') ? 'active' : ''; ?>">Completed</a>
+                <a href="<?php echo URLROOT; ?>/bookings/manage/cancelled" class="btn btn-outline-danger px-3 <?php echo ($data['status_filter'] == 'cancelled') ? 'active' : ''; ?>">Cancelled</a>
             </div>
         </div>
         <div class="col-md-4">

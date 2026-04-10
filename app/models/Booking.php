@@ -44,13 +44,25 @@
       return $this->db->resultSet();
     }
 
-    public function getAllBookings(){
-        $this->db->query('SELECT bookings.*, services.name as service_name, users.name as customer_name, users.email as user_email, staff.name as staff_name
-                          FROM bookings 
-                          JOIN services ON bookings.service_id = services.id
-                          JOIN users ON bookings.user_id = users.id
-                          LEFT JOIN users staff ON bookings.assigned_to = staff.id
-                          ORDER BY bookings.created_at DESC');
+    public function getAllBookings($status = null){
+        $sql = 'SELECT bookings.*, services.name as service_name, users.name as customer_name, users.email as user_email, staff.name as staff_name
+                FROM bookings 
+                JOIN services ON bookings.service_id = services.id
+                JOIN users ON bookings.user_id = users.id
+                LEFT JOIN users staff ON bookings.assigned_to = staff.id';
+        
+        if($status){
+            $sql .= ' WHERE bookings.status = :status';
+        }
+        
+        $sql .= ' ORDER BY bookings.created_at DESC';
+        
+        $this->db->query($sql);
+        
+        if($status){
+            $this->db->bind(':status', $status);
+        }
+        
         return $this->db->resultSet();
     }
 

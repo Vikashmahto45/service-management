@@ -130,18 +130,19 @@
     }
 
     // Admin Only
-    public function manage(){
+    public function manage($status = null){
         if($_SESSION['role_id'] != 1){
             redirect('bookings');
         }
 
-        $bookings = $this->bookingModel->getAllBookings();
+        $bookings = $this->bookingModel->getAllBookings($status);
         // Get Employees and Vendors for assignment drop down
         $service_providers = $this->userModel->getServiceProviders();
 
         $data = [
             'bookings' => $bookings,
-            'service_providers' => $service_providers
+            'service_providers' => $service_providers,
+            'status_filter' => $status
         ];
 
         $this->view('bookings/manage', $data);
