@@ -12,25 +12,34 @@
     }
 
     public function index(){
-        $revenue = $this->financeModel->getTotalRevenue();
-        $expenses = $this->financeModel->getTotalExpenses();
-        $salaries = $this->financeModel->getTotalSalaries();
-        $payouts = $this->financeModel->getTotalVendorPayouts();
-        
-        $total_out = $expenses + $salaries + $payouts;
-        $net_profit = $revenue - $total_out;
+        try {
+            $revenue = $this->financeModel->getTotalRevenue();
+            $expenses = $this->financeModel->getTotalExpenses();
+            $salaries = $this->financeModel->getTotalSalaries();
+            $payouts = $this->financeModel->getTotalVendorPayouts();
+            
+            $total_out = $expenses + $salaries + $payouts;
+            $net_profit = $revenue - $total_out;
 
-        $monthly_data = $this->financeModel->getMonthlyBreakdown();
+            $monthly_data = $this->financeModel->getMonthlyBreakdown();
 
-        $data = [
-            'total_revenue' => $revenue,
-            'total_expenses' => $expenses,
-            'total_salaries' => $salaries,
-            'total_payouts' => $payouts,
-            'total_outflow' => $total_out,
-            'net_profit' => $net_profit,
-            'monthly_data' => $monthly_data
-        ];
+            $data = [
+                'total_revenue' => $revenue,
+                'total_expenses' => $expenses,
+                'total_salaries' => $salaries,
+                'total_payouts' => $payouts,
+                'total_outflow' => $total_out,
+                'net_profit' => $net_profit,
+                'monthly_data' => $monthly_data,
+                'db_error' => false
+            ];
+        } catch (Exception $e) {
+            // If query fails, likely due to missing tables on live server
+            $data = [
+                'db_error' => true,
+                'error_msg' => $e->getMessage()
+            ];
+        }
 
         $this->view('admin/finance/index', $data);
     }
@@ -79,11 +88,20 @@
     }
 
     public function ledgers(){
-        $users = $this->userModel->getAllUsers();
-        
-        $data = [
-            'users' => $users
-        ];
+        try {
+            $users = $this->userModel->getAllUsers();
+            
+            $data = [
+                'users' => $users,
+                'db_error' => false
+            ];
+        } catch (Exception $e) {
+            $data = [
+                'db_error' => true,
+                'error_msg' => $e->getMessage(),
+                'users' => []
+            ];
+        }
 
         $this->view('admin/finance/ledgers', $data);
     }

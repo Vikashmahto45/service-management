@@ -1,5 +1,29 @@
 <?php require APPROOT . '/views/inc/admin_header.php'; ?>
 
+<!-- Diagnostic Error Alert (Phase 8 Fix) -->
+<?php if(isset($data['db_error']) && $data['db_error']): ?>
+    <div class="alert alert-danger shadow-sm border-0 p-4 mb-5">
+        <div class="d-flex align-items-center mb-3">
+            <i class="fas fa-exclamation-triangle fa-2x mr-3"></i>
+            <h4 class="alert-heading mb-0 font-weight-bold">Live Database Update Required!</h4>
+        </div>
+        <p class="mb-2">The Finance Dashboard is crashing because your <strong>Live Hostinger Database</strong> is missing the new financial tables (like <code>vendor_payouts</code>).</p>
+        <hr>
+        <div class="small">
+            <p class="font-weight-bold mb-1">To fix this, follow these 3 steps:</p>
+            <ol class="mb-3">
+                <li>Log in to your <strong>Hostinger hPanel</strong> and open <strong>phpMyAdmin</strong>.</li>
+                <li>Import the file: <code>c:\xampp\htdocs\Service Management System\manual_db_updates_phase8.sql</code></li>
+                <li>Refresh this page.</li>
+            </ol>
+            <div class="bg-dark text-light p-2 rounded">
+                <code>Technical Error: <?php echo $data['error_msg']; ?></code>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+
+<?php if(!isset($data['db_error']) || !$data['db_error']): ?>
 <div class="row mb-4 align-items-center">
     <div class="col-md-6">
         <h1 class="font-weight-bold mb-0">Finance Dashboard</h1>
@@ -200,4 +224,5 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<?php endif; ?>
 <?php require APPROOT . '/views/inc/admin_footer.php'; ?>

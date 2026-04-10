@@ -32,12 +32,13 @@
 
     // Get Monthly Income vs Expense Data (for Charts)
     public function getMonthlyBreakdown($limit = 6){
-        // Simplified query that grouped by month from existing data
+        // Highly compatible query for strict MySQL modes
         $this->db->query('
             SELECT 
                 DATE_FORMAT(finance_data.date, "%b %Y") as month,
                 SUM(CASE WHEN type = "income" THEN amount ELSE 0 END) as income,
-                SUM(CASE WHEN type = "expense" THEN amount ELSE 0 END) as expense
+                SUM(CASE WHEN type = "expense" THEN amount ELSE 0 END) as expense,
+                DATE_FORMAT(finance_data.date, "%Y-%m") as month_sort
             FROM (
                 SELECT created_at as date, total_amount as amount, "income" as type FROM invoices WHERE status = "paid"
                 UNION ALL
@@ -48,8 +49,8 @@
                 SELECT payout_date as date, amount, "expense" as type FROM vendor_payouts
             ) as finance_data
             WHERE finance_data.date > DATE_SUB(NOW(), INTERVAL :limit MONTH)
-            GROUP BY month
-            ORDER BY MIN(finance_data.date) ASC
+            GROUP BY month, month_sort
+            ORDER BY month_sort ASC
         ');
         $this->db->bind(':limit', $limit);
         return $this->db->resultSet();
