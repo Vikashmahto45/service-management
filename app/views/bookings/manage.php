@@ -96,8 +96,8 @@
                                 <?php echo strtoupper($booking->status); ?>
                             </span>
                         </td>
-                        <td>
-                            <a href="<?php echo URLROOT; ?>/bookings/details/<?php echo $booking->id; ?>" class="btn btn-sm btn-outline-primary" title="Details">
+                        <td class="text-center">
+                            <a href="<?php echo URLROOT; ?>/bookings/details/<?php echo $booking->id; ?>" class="btn btn-sm btn-outline-primary shadow-sm rounded-circle" title="View Details" style="width: 30px; height: 30px; padding: 0; line-height: 28px;">
                                 <i class="fas fa-eye"></i>
                             </a>
                         </td>

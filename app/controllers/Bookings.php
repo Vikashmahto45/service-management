@@ -187,9 +187,20 @@
     }
 
     // Admin Action: Update Status with History
-    public function update_status($id, $status){
+    public function update_status($id, $status = null){
         if($_SESSION['role_id'] != 1){
             redirect('bookings');
+        }
+
+        // If status is not in URL, check POST
+        if($status === null && isset($_POST['status'])){
+            $status = $_POST['status'];
+        }
+
+        if(!$status){
+            flash('booking_message', 'Invalid status update', 'alert alert-danger');
+            redirect('bookings/details/' . $id);
+            return;
         }
 
         $remarks = isset($_POST['remarks']) ? trim($_POST['remarks']) : 'Status updated by Admin';
@@ -209,6 +220,8 @@
              flash('booking_message', 'Ticket Status Updated');
         } else {
              flash('booking_message', 'Something went wrong', 'alert alert-danger');
+             redirect('bookings/details/' . $id);
+             return;
         }
         redirect('bookings/details/' . $id);
     }
