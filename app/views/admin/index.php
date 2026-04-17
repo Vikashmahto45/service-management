@@ -211,7 +211,7 @@
                     <p class="text-center text-muted small py-4">No recent bookings</p>
                 <?php endif; ?>
             </div>
-            <a href="<?php echo URLROOT; ?>/bookings" class="btn btn-sm btn-outline-primary btn-block mt-3">View All Tickets</a>
+            <a href="<?php echo URLROOT; ?>/bookings/manage" class="btn btn-sm btn-outline-primary btn-block mt-3">View All Tickets</a>
         </div>
     </div>
 </div>
