@@ -3,7 +3,7 @@
 <!-- Content Header -->
 <div class="row mb-4 align-items-center">
     <div class="col-md-6">
-        <h1 class="font-weight-bold mb-0">Dashboard Analytics</h1>
+        <h1 class="font-weight-bold mb-0">Dashboard Analytics test text</h1>
         <p class="text-muted">Welcome back, admin! Here's your business at a glance.</p>
     </div>
     <div class="col-md-6 text-right">
