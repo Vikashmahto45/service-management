@@ -18,44 +18,52 @@
 <!-- TOP STATS: Ticket Statistics -->
 <div class="row">
     <div class="col-xl-3 col-md-6">
-        <div class="stat-card stat-primary">
-            <div class="stat-icon"><i class="fas fa-ticket-alt"></i></div>
-            <h6 class="text-muted font-weight-bold uppercase mb-1" style="font-size: 0.7rem;">Total Tickets</h6>
-            <h2 class="font-weight-bold mb-0"><?php echo $data['ticket_stats']->total; ?></h2>
-            <div class="mt-2 text-primary small font-weight-bold">
-                <i class="fas fa-chart-line"></i> Total in system
+        <a href="<?php echo URLROOT; ?>/bookings/manage" class="text-decoration-none">
+            <div class="stat-card stat-primary">
+                <div class="stat-icon"><i class="fas fa-ticket-alt"></i></div>
+                <h6 class="text-muted font-weight-bold uppercase mb-1" style="font-size: 0.7rem;">Total Tickets</h6>
+                <h2 class="font-weight-bold mb-0 text-dark"><?php echo $data['ticket_stats']->total; ?></h2>
+                <div class="mt-2 text-primary small font-weight-bold">
+                    <i class="fas fa-chart-line"></i> Total in system
+                </div>
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-xl-3 col-md-6">
-        <div class="stat-card stat-warning">
-            <div class="stat-icon"><i class="fas fa-spinner"></i></div>
-            <h6 class="text-muted font-weight-bold uppercase mb-1" style="font-size: 0.7rem;">Ongoing</h6>
-            <h2 class="font-weight-bold mb-0"><?php echo $data['ticket_stats']->ongoing; ?></h2>
-            <div class="mt-2 text-warning small font-weight-bold">
-                <i class="fas fa-user-clock"></i> Assigned & Confirmed
+        <a href="<?php echo URLROOT; ?>/bookings/manage/ongoing" class="text-decoration-none">
+            <div class="stat-card stat-warning">
+                <div class="stat-icon"><i class="fas fa-spinner"></i></div>
+                <h6 class="text-muted font-weight-bold uppercase mb-1" style="font-size: 0.7rem;">Ongoing</h6>
+                <h2 class="font-weight-bold mb-0 text-dark"><?php echo $data['ticket_stats']->ongoing; ?></h2>
+                <div class="mt-2 text-warning small font-weight-bold">
+                    <i class="fas fa-user-clock"></i> Assigned & Confirmed
+                </div>
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-xl-3 col-md-6">
-        <div class="stat-card stat-info">
-            <div class="stat-icon"><i class="fas fa-tools"></i></div>
-            <h6 class="text-muted font-weight-bold uppercase mb-1" style="font-size: 0.7rem;">In Progress</h6>
-            <h2 class="font-weight-bold mb-0"><?php echo $data['ticket_stats']->in_progress; ?></h2>
-            <div class="mt-2 text-info small font-weight-bold">
-                <i class="fas fa-cog fa-spin"></i> Being serviced now
+        <a href="<?php echo URLROOT; ?>/bookings/manage/in_progress" class="text-decoration-none">
+            <div class="stat-card stat-info">
+                <div class="stat-icon"><i class="fas fa-tools"></i></div>
+                <h6 class="text-muted font-weight-bold uppercase mb-1" style="font-size: 0.7rem;">In Progress</h6>
+                <h2 class="font-weight-bold mb-0 text-dark"><?php echo $data['ticket_stats']->in_progress; ?></h2>
+                <div class="mt-2 text-info small font-weight-bold">
+                    <i class="fas fa-cog fa-spin"></i> Being serviced now
+                </div>
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-xl-3 col-md-6">
-        <div class="stat-card stat-success">
-            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
-            <h6 class="text-muted font-weight-bold uppercase mb-1" style="font-size: 0.7rem;">Completed</h6>
-            <h2 class="font-weight-bold mb-0"><?php echo $data['ticket_stats']->completed; ?></h2>
-            <div class="mt-2 text-success small font-weight-bold">
-                <i class="fas fa-medal"></i> Jobs finalized
+        <a href="<?php echo URLROOT; ?>/bookings/manage/completed" class="text-decoration-none">
+            <div class="stat-card stat-success">
+                <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                <h6 class="text-muted font-weight-bold uppercase mb-1" style="font-size: 0.7rem;">Completed</h6>
+                <h2 class="font-weight-bold mb-0 text-dark"><?php echo $data['ticket_stats']->completed; ?></h2>
+                <div class="mt-2 text-success small font-weight-bold">
+                    <i class="fas fa-medal"></i> Jobs finalized
+                </div>
             </div>
-        </div>
+        </a>
     </div>
 </div>
 

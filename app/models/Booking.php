@@ -52,14 +52,18 @@
                 LEFT JOIN users staff ON bookings.assigned_to = staff.id';
         
         if($status){
-            $sql .= ' WHERE bookings.status = :status';
+            if($status == 'ongoing'){
+                $sql .= " WHERE bookings.status IN ('pending', 'confirmed', 'assigned')";
+            } else {
+                $sql .= ' WHERE bookings.status = :status';
+            }
         }
         
         $sql .= ' ORDER BY bookings.created_at DESC';
         
         $this->db->query($sql);
         
-        if($status){
+        if($status && $status != 'ongoing'){
             $this->db->bind(':status', $status);
         }
         
