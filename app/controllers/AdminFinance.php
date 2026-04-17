@@ -81,15 +81,28 @@
                 $this->view('admin/finance/add_payout', $data);
             }
         } else {
-            $vendor = $this->userModel->getUserById($vendor_id);
-            $ledger = $this->financeModel->getAccountLedger($vendor_id);
-            
-            $data = [
-                'vendor' => $vendor,
-                'ledger' => $ledger
-            ];
+            try {
+                $vendor = $this->userModel->getUserById($vendor_id);
+                $ledger = $this->financeModel->getAccountLedger($vendor_id);
+                
+                $data = [
+                    'vendor' => $vendor,
+                    'ledger' => $ledger,
+                    'db_error' => false
+                ];
 
-            $this->view('admin/finance/add_payout', $data);
+                $this->view('admin/finance/add_payout', $data);
+            } catch (Exception $e) {
+                // Handle missing tables gracefully
+                $vendor = $this->userModel->getUserById($vendor_id);
+                $data = [
+                    'vendor' => $vendor,
+                    'ledger' => [],
+                    'db_error' => true,
+                    'error_msg' => 'Financial tables are missing. Please run finance_fix.sql in your database.'
+                ];
+                $this->view('admin/finance/add_payout', $data);
+            }
         }
     }
 
