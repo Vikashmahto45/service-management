@@ -7,10 +7,10 @@
         <p class="text-muted">Welcome back, admin! Here's your business at a glance.</p>
     </div>
     <div class="col-md-6 text-right">
-        <div class="bg-white d-inline-block px-3 py-2 rounded shadow-sm border position-relative" style="cursor: pointer; overflow: hidden;">
-            <input type="date" style="position: absolute; opacity: 0; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer;">
+        <div class="bg-white d-inline-block px-3 py-2 rounded shadow-sm border position-relative" style="cursor: pointer;" onclick="try{ document.getElementById('dashPicker').showPicker(); }catch(e){ document.getElementById('dashPicker').focus(); document.getElementById('dashPicker').click(); }">
             <i class="fas fa-calendar-alt text-primary mr-2"></i>
-            <span class="font-weight-bold relative z-10"><?php echo date('D, d M Y'); ?></span>
+            <span class="font-weight-bold"><?php echo date('D, d M Y'); ?></span>
+            <input type="date" id="dashPicker" style="position: absolute; opacity: 0; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer; border: none;">
         </div>
     </div>
 </div>
