@@ -3,14 +3,15 @@
 <!-- Content Header -->
 <div class="row mb-4 align-items-center">
     <div class="col-md-6">
-        <h1 class="font-weight-bold mb-0">Dashboard Analytics test text</h1>
+        <h1 class="font-weight-bold mb-0">Dashboard Analytics</h1>
         <p class="text-muted">Welcome back, admin! Here's your business at a glance.</p>
     </div>
     <div class="col-md-6 text-right">
-        <a href="#" class="bg-white d-inline-block px-3 py-2 rounded shadow-sm border text-dark" style="text-decoration: none;">
+        <div class="bg-white d-inline-block px-3 py-2 rounded shadow-sm border position-relative" style="cursor: pointer; overflow: hidden;">
+            <input type="date" style="position: absolute; opacity: 0; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer;">
             <i class="fas fa-calendar-alt text-primary mr-2"></i>
-            <span class="font-weight-bold"><?php echo date('D, d M Y'); ?></span>
-        </a>
+            <span class="font-weight-bold relative z-10"><?php echo date('D, d M Y'); ?></span>
+        </div>
     </div>
 </div>
 
