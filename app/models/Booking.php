@@ -109,8 +109,8 @@
                                appliance_types.name as appliance_name,
                                customer_products.product_name, customer_products.model_no
                         FROM bookings 
-                        JOIN services ON bookings.service_id = services.id 
-                        JOIN users ON bookings.user_id = users.id
+                        LEFT JOIN services ON bookings.service_id = services.id 
+                        LEFT JOIN users ON bookings.user_id = users.id
                         LEFT JOIN users staff ON bookings.assigned_to = staff.id
                         LEFT JOIN appliance_types ON bookings.appliance_type_id = appliance_types.id
                         LEFT JOIN customer_products ON bookings.customer_product_id = customer_products.id

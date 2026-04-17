@@ -172,6 +172,12 @@
         }
 
         $booking = $this->bookingModel->getBookingById($id);
+        
+        if(!$booking){
+            flash('booking_message', 'Ticket not found or has been removed', 'alert alert-danger');
+            redirect('bookings/manage');
+        }
+
         $history = $this->bookingModel->getStatusHistory($id);
         $remarks = $this->bookingModel->getRemarks($id);
         $service_providers = $this->userModel->getServiceProviders();
