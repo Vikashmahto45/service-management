@@ -28,14 +28,25 @@
             redirect('adminUsers');
         }
 
-        $profile = $this->userModel->getUserProfile($id);
-        $ledger = $this->financeModel->getAccountLedger($id); // Phase 8
-
-        $data = [
-            'user' => $user,
-            'profile' => $profile,
-            'ledger' => $ledger // Phase 8
-        ];
+        try {
+            $profile = $this->userModel->getUserProfile($id);
+            $ledger = $this->financeModel->getAccountLedger($id); // Phase 8
+            
+            $data = [
+                'user' => $user,
+                'profile' => $profile,
+                'ledger' => $ledger, // Phase 8
+                'db_error' => false
+            ];
+        } catch (Exception $e) {
+            $data = [
+                'user' => $user,
+                'profile' => null,
+                'ledger' => [],
+                'db_error' => true,
+                'error_msg' => 'Financial ledger tables are missing. Please run finance_fix.sql.'
+            ];
+        }
 
         $this->view('admin/users/details', $data);
     }

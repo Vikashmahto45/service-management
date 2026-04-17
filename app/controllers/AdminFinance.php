@@ -68,11 +68,17 @@
                 'notes' => trim($_POST['notes'])
             ];
 
-            if($this->financeModel->addVendorPayout($data)){
-                flash('finance_message', 'Vendor Payout Recorded Successfully');
-                redirect('adminFinance/payouts');
-            } else {
-                die('Something went wrong');
+            try {
+                if($this->financeModel->addVendorPayout($data)){
+                    flash('finance_message', 'Vendor Payout Recorded Successfully');
+                    redirect('adminFinance/payouts');
+                } else {
+                    $data['error'] = 'Database execution failed.';
+                    $this->view('admin/finance/add_payout', $data);
+                }
+            } catch (Exception $e) {
+                $data['error'] = 'Could not save payout. Please ensure your database tables are updated.';
+                $this->view('admin/finance/add_payout', $data);
             }
         } else {
             $vendor = $this->userModel->getUserById($vendor_id);
