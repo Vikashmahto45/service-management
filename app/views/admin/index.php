@@ -7,10 +7,10 @@
         <p class="text-muted">Welcome back, admin! Here's your business at a glance.</p>
     </div>
     <div class="col-md-6 text-right">
-        <div class="bg-white d-inline-block px-3 py-2 rounded shadow-sm border">
+        <a href="#" class="bg-white d-inline-block px-3 py-2 rounded shadow-sm border text-dark" style="text-decoration: none;">
             <i class="fas fa-calendar-alt text-primary mr-2"></i>
             <span class="font-weight-bold"><?php echo date('D, d M Y'); ?></span>
-        </div>
+        </a>
     </div>
 </div>
 
