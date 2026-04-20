@@ -149,13 +149,20 @@
 <script src="<?php echo URLROOT; ?>/js/parties.js"></script>
 <script>
 document.getElementById('verify_gst_btn').addEventListener('click', function() {
-    const gstin = document.getElementById('gstin_input').value;
-    if(gstin.length === 15) {
+    let gstin = document.getElementById('gstin_input').value.toUpperCase().replace(/\s/g, '');
+    document.getElementById('gstin_input').value = gstin; // Update field with sanitized value
+
+    const gstinRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+    
+    if(gstinRegex.test(gstin)) {
         this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+        this.disabled = true;
+        
         fetch('<?php echo URLROOT; ?>/parties/verify_gst/' + gstin)
             .then(res => res.json())
             .then(res => {
                 this.innerHTML = 'Verify';
+                this.disabled = false;
                 if(res.success) {
                     document.getElementById('billing_address').value = res.data.billing_address;
                     document.getElementById('state_select').value = res.data.state;
@@ -165,9 +172,14 @@ document.getElementById('verify_gst_btn').addEventListener('click', function() {
                 } else {
                     document.getElementById('gstinStatus').innerHTML = '<span class="text-danger"><i class="fas fa-times-circle"></i> ' + res.message + '</span>';
                 }
+            })
+            .catch(err => {
+                this.innerHTML = 'Verify';
+                this.disabled = false;
+                document.getElementById('gstinStatus').innerHTML = '<span class="text-danger"><i class="fas fa-exclamation-triangle"></i> Network error. Please check your connection.</span>';
             });
     } else {
-        alert('Please enter a valid 15-digit GSTIN');
+        document.getElementById('gstinStatus').innerHTML = '<span class="text-warning"><i class="fas fa-info-circle"></i> Please enter a valid 15-digit GSTIN (e.g. 08AAAAA0000A1Z5)</span>';
     }
 });
 </script>

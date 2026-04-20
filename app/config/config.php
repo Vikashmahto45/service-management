@@ -18,5 +18,8 @@ if (in_array($_SERVER['HTTP_HOST'], ['localhost', '127.0.0.1', 'localhost:8080']
 
 // App Root
 define('APPROOT', dirname(dirname(__FILE__)));
+// GSTIN Verification API Key (Obtain from gstincheck.co.in)
+define('GSTIN_API_KEY', 'YOUR_API_KEY_HERE');
+
 // Site Name
 define('SITENAME', 'Service Management System');

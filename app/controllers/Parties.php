@@ -214,28 +214,34 @@
 
     // Verify GST (API Endpoint)
     public function verify_gst($gstin){
-      // Make sure it's an AJAX/JSON request or similar, return exact JSON
       header('Content-Type: application/json');
 
-      $gstin = trim(strtoupper($gstin));
+      // 1. Sanitize: Force uppercase and remove spaces
+      $gstin = strtoupper(str_replace(' ', '', trim($gstin)));
       
-      if(strlen($gstin) !== 15){
-        echo json_encode(['success' => false, 'message' => 'Invalid GSTIN length']);
+      // 2. Pattern Check (Real GSTIN Regex)
+      $pattern = "/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/";
+      if(!preg_match($pattern, $gstin)){
+        echo json_encode(['success' => false, 'message' => 'Invalid GSTIN Format pattern']);
         return;
       }
 
-      // Fetch Live Details using a Public API 
-      // (Using a free public endpoint for GST search)
+      // 3. API Key Check
+      if(empty(GSTIN_API_KEY) || GSTIN_API_KEY == 'YOUR_API_KEY_HERE'){
+          echo json_encode(['success' => false, 'message' => 'GST API Key not configured in config.php']);
+          return;
+      }
+
+      // 4. Fetch Live Details
       $curl = curl_init();
       curl_setopt_array($curl, [
-          CURLOPT_URL => "https://sheet.gstincheck.co.in/check/" . urlencode($gstin),
+          CURLOPT_URL => "https://sheet.gstincheck.co.in/check/" . GSTIN_API_KEY . "/" . $gstin,
           CURLOPT_RETURNTRANSFER => true,
           CURLOPT_ENCODING => "",
           CURLOPT_MAXREDIRS => 10,
           CURLOPT_TIMEOUT => 30,
           CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
           CURLOPT_CUSTOMREQUEST => "GET",
-          // Adding a generic user agent to avoid being blocked by simple scrapers
           CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
       ]);
 
@@ -244,26 +250,21 @@
       $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
       
       if ($err) {
-          echo json_encode([
-              'success' => false,
-              'message' => 'Connection error. Please try manually.'
-          ]);
+          echo json_encode(['success' => false, 'message' => 'Connection error: ' . $err]);
           return;
       }
 
       $data = json_decode($response, true);
 
-      // Check if the response was successful and contains the flag
+      // 5. Response Processing
       if($data && isset($data['flag']) && $data['flag'] == true && isset($data['data'])) {
           
           $gstData = $data['data'];
           
-          // Determine GST Type based on typical responses
+          // Determine GST Type
           $gstType = 'registered_regular';
           if(isset($gstData['dty']) && stripos($gstData['dty'], 'Composition') !== false) {
               $gstType = 'registered_composition';
-          } else if(isset($gstData['dty']) && stripos($gstData['dty'], 'SEZ') !== false) {
-               $gstType = 'special_economic_zone';
           }
 
           // Format Address
@@ -274,14 +275,25 @@
           if(!empty($gstData['pradr']['addr']['dst'])) $addressParts[] = $gstData['pradr']['addr']['dst'];
           
           $addressString = implode(', ', $addressParts);
-          
-          // Append Pincode if available
           if(!empty($gstData['pradr']['addr']['pncd'])) {
               $addressString .= ' - ' . $gstData['pradr']['addr']['pncd'];
           }
 
-          // Standardize State Name (Capitalize correctly)
-          $stateName = !empty($gstData['pradr']['addr']['stcd']) ? ucwords(strtolower($gstData['pradr']['addr']['stcd'])) : '';
+          // 6. IMPROVED STATE MAPPING (Translate Code to Name)
+          $stateMap = [
+              '01' => 'Jammu & Kashmir', '02' => 'Himachal Pradesh', '03' => 'Punjab', '04' => 'Chandigarh',
+              '05' => 'Uttarakhand', '06' => 'Haryana', '07' => 'Delhi', '08' => 'Rajasthan',
+              '09' => 'Uttar Pradesh', '10' => 'Bihar', '11' => 'Sikkim', '12' => 'Arunachal Pradesh',
+              '13' => 'Nagaland', '14' => 'Manipur', '15' => 'Mizoram', '16' => 'Tripura',
+              '17' => 'Meghalaya', '18' => 'Assam', '19' => 'West Bengal', '20' => 'Jharkhand',
+              '21' => 'Odisha', '22' => 'Chhattisgarh', '23' => 'Madhya Pradesh', '24' => 'Gujarat',
+              '27' => 'Maharashtra', '28' => 'Andhra Pradesh', '29' => 'Karnataka', '30' => 'Goa',
+              '31' => 'Lakshadweep', '32' => 'Kerala', '33' => 'Tamil Nadu', '34' => 'Puducherry',
+              '35' => 'Andaman & Nicobar Islands', '36' => 'Telangana', '37' => 'Andhra Pradesh', '38' => 'Ladakh'
+          ];
+
+          $stateCode = substr($gstin, 0, 2);
+          $stateName = $stateMap[$stateCode] ?? (isset($gstData['pradr']['addr']['stcd']) ? ucwords(strtolower($gstData['pradr']['addr']['stcd'])) : '');
 
           echo json_encode([
               'success' => true,
@@ -293,12 +305,8 @@
               ]
           ]);
       } else {
-           // Invalid GSTIN or not found in the public registry
-           $errorMsg = isset($data['message']) ? $data['message'] : 'Invalid GSTIN or not found.';
-           echo json_encode([
-              'success' => false,
-              'message' => $errorMsg
-          ]);
+           $errorMsg = isset($data['message']) ? $data['message'] : 'Invalid GSTIN or not found in official registry.';
+           echo json_encode(['success' => false, 'message' => $errorMsg]);
       }
     }
   }
