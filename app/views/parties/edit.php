@@ -39,7 +39,7 @@
                     <input type="text" name="gstin" class="form-control floating-input" value="<?php echo $party->gstin; ?>" maxlength="15" placeholder=" ">
                     <label class="floating-label">GSTIN</label>
                 </div>
-                <small id="gstinStatus" class="form-text text-muted">Enter 15-digit GSTIN to auto-fetch details</small>
+
             </div>
             <div class="col-md-4">
                 <div class="floating-label-group">

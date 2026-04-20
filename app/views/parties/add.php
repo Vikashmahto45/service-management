@@ -48,13 +48,8 @@
                          <div class="col-md-4">
                             <div class="form-group">
                                 <label class="small font-weight-bold text-muted uppercase">GSTIN</label>
-                                <div class="input-group">
-                                    <input type="text" name="gstin" id="gstin_input" class="form-control" placeholder="15-digit GSTIN" maxlength="15">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-primary" type="button" id="verify_gst_btn">Verify</button>
-                                    </div>
-                                </div>
-                                <small id="gstinStatus" class="form-text text-muted">Auto-fetch details via GSTIN</small>
+                                <input type="text" name="gstin" id="gstin_input" class="form-control" placeholder="15-digit GSTIN" maxlength="15">
+                                <small id="gstinStatus" class="form-text text-muted">Enter 15-digit GST identification number</small>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -148,40 +143,7 @@
 
 <script src="<?php echo URLROOT; ?>/js/parties.js"></script>
 <script>
-document.getElementById('verify_gst_btn').addEventListener('click', function() {
-    let gstin = document.getElementById('gstin_input').value.toUpperCase().replace(/\s/g, '');
-    document.getElementById('gstin_input').value = gstin; // Update field with sanitized value
 
-    const gstinRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
-    
-    if(gstinRegex.test(gstin)) {
-        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
-        this.disabled = true;
-        
-        fetch('<?php echo URLROOT; ?>/parties/verify_gst/' + gstin)
-            .then(res => res.json())
-            .then(res => {
-                this.innerHTML = 'Verify';
-                this.disabled = false;
-                if(res.success) {
-                    document.getElementById('billing_address').value = res.data.billing_address;
-                    document.getElementById('state_select').value = res.data.state;
-                    document.getElementById('gst_type_select').value = res.data.gst_type;
-                    document.querySelector('input[name="name"]').value = res.data.name;
-                    document.getElementById('gstinStatus').innerHTML = '<span class="text-success"><i class="fas fa-check-circle"></i> GSTIN Verified: ' + res.data.name + '</span>';
-                } else {
-                    document.getElementById('gstinStatus').innerHTML = '<span class="text-danger"><i class="fas fa-times-circle"></i> ' + res.message + '</span>';
-                }
-            })
-            .catch(err => {
-                this.innerHTML = 'Verify';
-                this.disabled = false;
-                document.getElementById('gstinStatus').innerHTML = '<span class="text-danger"><i class="fas fa-exclamation-triangle"></i> Network error. Please check your connection.</span>';
-            });
-    } else {
-        document.getElementById('gstinStatus').innerHTML = '<span class="text-warning"><i class="fas fa-info-circle"></i> Please enter a valid 15-digit GSTIN (e.g. 08AAAAA0000A1Z5)</span>';
-    }
-});
 </script>
 
 <?php require APPROOT . '/views/inc/admin_footer.php'; ?>
