@@ -40,6 +40,17 @@
           'party_err' => ''
         ];
 
+        // Handle New Appliance Type
+        if($data['appliance_type_id'] == 'NEW' && !empty($_POST['new_appliance_type_name'])){
+            $newTypeId = $this->applianceTypeModel->addApplianceType([
+                'name' => trim($_POST['new_appliance_type_name']),
+                'description' => ''
+            ]);
+            if($newTypeId){
+                $data['appliance_type_id'] = $newTypeId;
+            }
+        }
+
         // Validate
         if(empty($data['product_name'])){
           $data['product_err'] = 'Please enter product name';
@@ -101,6 +112,17 @@
           'product_err' => '',
           'party_err' => ''
         ];
+
+        // Handle New Appliance Type
+        if($data['appliance_type_id'] == 'NEW' && !empty($_POST['new_appliance_type_name'])){
+            $newTypeId = $this->applianceTypeModel->addApplianceType([
+                'name' => trim($_POST['new_appliance_type_name']),
+                'description' => ''
+            ]);
+            if($newTypeId){
+                $data['appliance_type_id'] = $newTypeId;
+            }
+        }
 
         if(empty($data['product_name'])){
           $data['product_err'] = 'Please enter product name';

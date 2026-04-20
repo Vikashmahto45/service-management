@@ -17,7 +17,7 @@
       $this->db->bind(':description', $data['description']);
 
       if($this->db->execute()){
-        return true;
+        return $this->db->lastInsertId();
       } else {
         return false;
       }

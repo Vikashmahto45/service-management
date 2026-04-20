@@ -30,15 +30,33 @@
 
                 <div class="form-group mb-4">
                     <label class="font-weight-bold">Appliance Type</label>
-                    <select name="appliance_type_id" class="form-control">
+                    <select name="appliance_type_id" id="appliance_type_id" class="form-control">
                         <option value="">-- Choose Type --</option>
                         <?php foreach($data['appliance_types'] as $type): ?>
                             <option value="<?php echo $type->id; ?>" <?php echo ($data['appliance_type_id'] == $type->id) ? 'selected' : ''; ?>>
                                 <?php echo $type->name; ?>
                             </option>
                         <?php endforeach; ?>
+                        <option value="NEW" class="text-primary font-weight-bold font-italic">+ Add New Type</option>
                     </select>
+
+                    <div id="new_type_field" class="mt-2" style="display:none;">
+                        <input type="text" name="new_appliance_type_name" class="form-control border-primary" placeholder="Enter new appliance type name">
+                        <small class="text-primary">This will be added to your types list.</small>
+                    </div>
                 </div>
+
+                <script>
+                document.getElementById('appliance_type_id').addEventListener('change', function() {
+                    const newTypeField = document.getElementById('new_type_field');
+                    if(this.value === 'NEW') {
+                        newTypeField.style.display = 'block';
+                        newTypeField.querySelector('input').focus();
+                    } else {
+                        newTypeField.style.display = 'none';
+                    }
+                });
+                </script>
 
                 <div class="form-group mb-4">
                     <label class="font-weight-bold">Product Name *</label>
