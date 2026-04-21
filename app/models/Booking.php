@@ -58,9 +58,9 @@
         
         if($status){
             if($status == 'ongoing'){
-                $sql .= " WHERE bookings.status IN ('pending', 'confirmed', 'assigned')";
+                $sql .= " WHERE b.status IN ('pending', 'confirmed', 'assigned')";
             } else {
-                $sql .= ' WHERE bookings.status = :status';
+                $sql .= ' WHERE b.status = :status';
             }
         }
         
