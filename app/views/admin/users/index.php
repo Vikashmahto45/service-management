@@ -182,6 +182,7 @@
                                         <?php else : ?>
                                             <a class="dropdown-item text-success" href="<?php echo URLROOT; ?>/adminUsers/verify/<?php echo $user->id; ?>">Activate User</a>
                                         <?php endif; ?>
+                                        <?php if($user->kyc_status == 'pending' && !empty($user->kyc_document)): ?>
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item text-success" href="<?php echo URLROOT; ?>/adminUsers/verify_kyc/<?php echo $user->id; ?>/verified">Approve KYC</a>
                                             <a class="dropdown-item text-danger" href="<?php echo URLROOT; ?>/adminUsers/verify_kyc/<?php echo $user->id; ?>/rejected">Reject KYC</a>
@@ -270,6 +271,7 @@
                                         <?php else : ?>
                                             <a class="dropdown-item text-success" href="<?php echo URLROOT; ?>/adminUsers/verify/<?php echo $user->id; ?>">Activate User</a>
                                         <?php endif; ?>
+                                        <?php if($user->kyc_status == 'pending' && !empty($user->kyc_document)): ?>
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item text-success" href="<?php echo URLROOT; ?>/adminUsers/verify_kyc/<?php echo $user->id; ?>/verified">Approve KYC</a>
                                             <a class="dropdown-item text-danger" href="<?php echo URLROOT; ?>/adminUsers/verify_kyc/<?php echo $user->id; ?>/rejected">Reject KYC</a>
