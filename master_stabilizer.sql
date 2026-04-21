@@ -91,6 +91,11 @@ BEGIN
     IF NOT EXISTS (SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'bookings' AND COLUMN_NAME = 'customer_product_id') THEN
         ALTER TABLE `bookings` ADD COLUMN `customer_product_id` INT(11) DEFAULT NULL AFTER `appliance_type_id`;
     END IF;
+
+    -- Columns for Ticket Status History (In case table exists but is old)
+    IF NOT EXISTS (SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ticket_status_history' AND COLUMN_NAME = 'remarks') THEN
+        ALTER TABLE `ticket_status_history` ADD COLUMN `remarks` TEXT AFTER `changed_by`;
+    END IF;
 END //
 DELIMITER ;
 
