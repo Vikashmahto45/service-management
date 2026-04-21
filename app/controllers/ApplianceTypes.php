@@ -3,9 +3,16 @@
     private $applianceTypeModel;
 
     public function __construct(){
-      if(!isLoggedIn() || ($_SESSION['role_id'] != 1 && $_SESSION['role_id'] != 2)){
+      if(!isLoggedIn()){
         redirect('users/login');
       }
+      
+      // Allow Super Admin (1) and Admin (2)
+      $role_id = (int)$_SESSION['role_id'];
+      if($role_id !== 1 && $role_id !== 2){
+        redirect('pages/index'); 
+      }
+      
       $this->applianceTypeModel = $this->model('ApplianceType');
     }
 
@@ -36,7 +43,7 @@
         if(empty($data['name_err'])){
           if($this->applianceTypeModel->addApplianceType($data)){
             flash('appliancetype_message', 'Appliance Type Added');
-            redirect('appliancetypes');
+            redirect('ApplianceTypes');
           } else {
             die('Something went wrong');
           }
@@ -73,7 +80,7 @@
         if(empty($data['name_err'])){
           if($this->applianceTypeModel->updateApplianceType($data)){
             flash('appliancetype_message', 'Appliance Type Updated');
-            redirect('appliancetypes');
+            redirect('ApplianceTypes');
           } else {
             die('Something went wrong');
           }
@@ -106,9 +113,9 @@
         } catch (\Exception $e) {
           flash('appliancetype_message', 'Cannot delete this type: It is linked to existing tickets.', 'alert alert-danger');
         }
-        redirect('appliancetypes');
+        redirect('ApplianceTypes');
       } else {
-        redirect('appliancetypes');
+        redirect('ApplianceTypes');
       }
     }
   }

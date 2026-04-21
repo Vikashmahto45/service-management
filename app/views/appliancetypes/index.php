@@ -8,7 +8,7 @@
         <p class="text-muted mb-0">Manage categories of appliances and devices</p>
     </div>
     <div class="col-md-6 text-right">
-        <a href="<?php echo URLROOT; ?>/appliancetypes/add" class="btn btn-primary btn-lg shadow-sm">
+        <a href="<?php echo URLROOT; ?>/ApplianceTypes/add" class="btn btn-primary btn-lg shadow-sm">
             <i class="fas fa-plus mr-1"></i> Add Appliance Type
         </a>
     </div>
@@ -33,10 +33,10 @@
                         <td><?php echo $type->description ?: '<span class="text-muted">No description</span>'; ?></td>
                         <td><small class="text-muted"><?php echo date('d/m/Y', strtotime($type->created_at)); ?></small></td>
                         <td>
-                            <a href="<?php echo URLROOT; ?>/appliancetypes/edit/<?php echo $type->id; ?>" class="btn btn-sm btn-outline-primary" title="Edit">
+                            <a href="<?php echo URLROOT; ?>/ApplianceTypes/edit/<?php echo $type->id; ?>" class="btn btn-sm btn-outline-primary" title="Edit">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <form action="<?php echo URLROOT; ?>/appliancetypes/delete/<?php echo $type->id; ?>" method="post" class="d-inline">
+                            <form action="<?php echo URLROOT; ?>/ApplianceTypes/delete/<?php echo $type->id; ?>" method="post" class="d-inline">
                                 <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this appliance type?');" title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </button>

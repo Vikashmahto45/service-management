@@ -6,12 +6,12 @@
         <p class="text-muted mb-0">Define a new category of appliance</p>
     </div>
     <div class="col-md-6 text-right">
-        <a href="<?php echo URLROOT; ?>/appliancetypes" class="btn btn-outline-secondary"><i class="fas fa-arrow-left mr-1"></i> Back to List</a>
+        <a href="<?php echo URLROOT; ?>/ApplianceTypes" class="btn btn-outline-secondary"><i class="fas fa-arrow-left mr-1"></i> Back to List</a>
     </div>
 </div>
 
 <div class="card-box" style="max-width: 600px;">
-    <form action="<?php echo URLROOT; ?>/appliancetypes/add" method="POST">
+    <form action="<?php echo URLROOT; ?>/ApplianceTypes/add" method="POST">
         <div class="form-group mb-4">
             <label class="font-weight-bold">Type Name *</label>
             <input type="text" name="name" class="form-control <?php echo (!empty($data['name_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['name']; ?>" placeholder="e.g., Washing Machine, Air Conditioner">
@@ -25,7 +25,7 @@
 
         <div class="mt-4">
             <button type="submit" class="btn btn-primary px-4 shadow-sm">Save Appliance Type</button>
-            <a href="<?php echo URLROOT; ?>/appliancetypes" class="btn btn-light ml-2">Cancel</a>
+            <a href="<?php echo URLROOT; ?>/ApplianceTypes" class="btn btn-light ml-2">Cancel</a>
         </div>
     </form>
 </div>
