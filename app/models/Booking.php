@@ -46,7 +46,6 @@
     }
 
     public function getAllBookings($status = null){
-    public function getAllBookings($status = null){
         $sql = 'SELECT b.id, b.user_id, b.service_id, b.booking_date, b.booking_time, b.notes, b.appliance_type_id, b.customer_product_id, b.complaint_description, b.priority, b.estimated_cost, b.is_warranty, b.assigned_to, b.created_at,
                        COALESCE(b.status, "pending") as t_status, 
                        COALESCE(s.name, "General Service") as service_name, 
