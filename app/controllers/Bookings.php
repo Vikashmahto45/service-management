@@ -43,6 +43,7 @@
             $data = [
                 'user_id' => trim($_POST['party_id']), // Booking table user_id is the customer (Party)
                 'service_id' => trim($_POST['service_id']),
+                'assigned_to' => !empty($_POST['assigned_to']) ? $_POST['assigned_to'] : null,
                 'booking_date' => trim($_POST['booking_date']),
                 'booking_time' => trim($_POST['booking_time']),
                 'notes' => trim($_POST['notes']),
@@ -183,7 +184,7 @@
         }
 
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
-            $staff_id = $_POST['assigned_to'];
+            $staff_id = !empty($_POST['assigned_to']) ? $_POST['assigned_to'] : null;
             if($this->bookingModel->assignBooking($id, $staff_id)){
                 flash('booking_message', 'Booking Assigned Successfully');
             } else {

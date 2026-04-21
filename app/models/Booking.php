@@ -22,7 +22,9 @@
       $this->db->bind(':priority', $data['priority'] ?? 'medium');
       $this->db->bind(':estimated_cost', $data['estimated_cost'] ?? 0);
       $this->db->bind(':is_warranty', $data['is_warranty'] ?? 0);
-      $this->db->bind(':assigned_to', $data['assigned_to'] ?? null);
+      // Harden assignment
+      $assigned_to = !empty($data['assigned_to']) ? $data['assigned_to'] : null;
+      $this->db->bind(':assigned_to', $assigned_to);
       $this->db->bind(':status', $data['status'] ?? 'pending');
 
       if($this->db->execute()){
@@ -88,6 +90,8 @@
 
     // Assign Booking
     public function assignBooking($id, $staff_id){
+        // Ensure staff_id is truly null if empty to prevent FK failure
+        $staff_id = !empty($staff_id) ? $staff_id : null;
         $this->db->query('UPDATE bookings SET assigned_to = :staff_id, status = "assigned" WHERE id = :id');
         $this->db->bind(':staff_id', $staff_id);
         $this->db->bind(':id', $id);
