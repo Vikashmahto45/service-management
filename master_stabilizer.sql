@@ -66,6 +66,11 @@ SELECT '04:00 PM - 06:00 PM', 1 WHERE NOT EXISTS (SELECT 1 FROM `time_slots` WHE
 DELIMITER //
 CREATE PROCEDURE FixAllBookingsInfrastructure()
 BEGIN
+    -- DROP Conflicting Foreign Key (This is causing the 1452 error on Hostinger)
+    IF EXISTS (SELECT * FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'bookings_ibfk_1' AND TABLE_NAME = 'bookings' AND TABLE_SCHEMA = DATABASE()) THEN
+        ALTER TABLE `bookings` DROP FOREIGN KEY `bookings_ibfk_1`;
+    END IF;
+
     -- Columns for Advanced Bookings
     IF NOT EXISTS (SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'bookings' AND COLUMN_NAME = 'priority') THEN
         ALTER TABLE `bookings` ADD COLUMN `priority` VARCHAR(20) DEFAULT 'medium' AFTER `complaint_description`;
