@@ -1,6 +1,6 @@
 <?php
 // DB Params
-if (in_array($_SERVER['HTTP_HOST'], ['localhost', '127.0.0.1', 'localhost:8080'])) {
+if (strpos($_SERVER['HTTP_HOST'], 'localhost') !== false || $_SERVER['HTTP_HOST'] == '127.0.0.1' || strpos($_SERVER['HTTP_HOST'], ':8080') !== false) {
     // Local DB Params
     define('DB_HOST', 'localhost');
     define('DB_USER', 'root');
@@ -8,7 +8,7 @@ if (in_array($_SERVER['HTTP_HOST'], ['localhost', '127.0.0.1', 'localhost:8080']
     define('DB_NAME', 'service_management_db');
     define('URLROOT', 'http://localhost/Service Management System');
 } else {
-    // Live DB Params (Hostinger)
+    // Live DB Params (Hostinger) - Comprehensive Check
     define('DB_HOST', 'localhost');
     define('DB_USER', 'u523255408_servicemanager');
     define('DB_PASS', '3phuH1s&');

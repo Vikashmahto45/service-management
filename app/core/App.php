@@ -42,7 +42,20 @@ class App {
         $this->params = $url ? array_values($url) : [];
 
         // Call a callback with array of params
-        call_user_func_array([$this->currentController, $this->currentMethod], $this->params);
+        try {
+            call_user_func_array([$this->currentController, $this->currentMethod], $this->params);
+        } catch (\Throwable $e) {
+            // Global safety: if an error occurs and isn't caught by the controller, 
+            // show a graceful error instead of a 500 crash.
+            die('<div style="font-family:sans-serif; padding: 20px; border: 1px solid #cc0000; background: #fff5f5; color: #cc0000; border-radius: 8px; margin: 40px auto; max-width: 600px;">
+                <h2 style="margin-top:0;">System Initialization Error</h2>
+                <p>The application encountered a problem. Please ensure the database is connected and all tables exist.</p>
+                <hr style="border: 0; border-top: 1px solid #ffcccc; margin: 15px 0;">
+                <small><strong>Error Detail:</strong> ' . $e->getMessage() . '</small>
+                <br><br>
+                <a href="' . (defined('URLROOT') ? URLROOT : '/') . '" style="display:inline-block; padding: 10px 20px; background: #cc0000; color: #white; text-decoration: none; border-radius: 4px; color: #fff;">Home</a>
+            </div>');
+        }
     }
 
     public function getUrl(){
