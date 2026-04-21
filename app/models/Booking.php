@@ -34,10 +34,11 @@
 
     // Get user's bookings
     public function getBookingsByUserId($user_id){
-      $this->db->query('SELECT bookings.*, services.name as service_name, users.name as assigned_name 
+      $this->db->query('SELECT bookings.*, services.name as service_name, users.name as assigned_name, parties.name as customer_name
                         FROM bookings 
                         JOIN services ON bookings.service_id = services.id 
                         LEFT JOIN users ON bookings.assigned_to = users.id
+                        LEFT JOIN parties ON bookings.user_id = parties.id
                         WHERE bookings.user_id = :user_id 
                         ORDER BY bookings.created_at DESC');
       $this->db->bind(':user_id', $user_id);
@@ -45,10 +46,10 @@
     }
 
     public function getAllBookings($status = null){
-        $sql = 'SELECT bookings.*, services.name as service_name, users.name as customer_name, users.email as user_email, staff.name as staff_name
+        $sql = 'SELECT bookings.*, services.name as service_name, parties.name as customer_name, parties.email as user_email, staff.name as staff_name
                 FROM bookings 
                 JOIN services ON bookings.service_id = services.id
-                JOIN users ON bookings.user_id = users.id
+                LEFT JOIN parties ON bookings.user_id = parties.id
                 LEFT JOIN users staff ON bookings.assigned_to = staff.id';
         
         if($status){
@@ -71,10 +72,10 @@
     }
 
     public function getRecentBookings($limit = 5){
-        $this->db->query('SELECT bookings.*, services.name as service_name, users.name as customer_name
+        $this->db->query('SELECT bookings.*, services.name as service_name, parties.name as customer_name
                           FROM bookings 
                           JOIN services ON bookings.service_id = services.id
-                          JOIN users ON bookings.user_id = users.id
+                          LEFT JOIN parties ON bookings.user_id = parties.id
                           ORDER BY bookings.created_at DESC 
                           LIMIT :limit');
         $this->db->bind(':limit', $limit);
@@ -91,10 +92,10 @@
 
     // Get Assigned Bookings (For Employee)
     public function getAssignedBookings($staff_id){
-        $this->db->query('SELECT bookings.*, services.name as service_name, users.name as customer_name, users.phone as customer_phone, users.address as customer_address
+        $this->db->query('SELECT bookings.*, services.name as service_name, parties.name as customer_name, parties.phone as customer_phone, parties.address as customer_address
                           FROM bookings 
                           JOIN services ON bookings.service_id = services.id
-                          JOIN users ON bookings.user_id = users.id
+                          LEFT JOIN parties ON bookings.user_id = parties.id
                           WHERE bookings.assigned_to = :staff_id AND bookings.status != "completed" AND bookings.status != "cancelled"
                           ORDER BY bookings.booking_date ASC');
         $this->db->bind(':staff_id', $staff_id);
@@ -104,17 +105,17 @@
     public function getBookingById($id){
       $this->db->query('SELECT bookings.*, 
                                services.name as service_name, services.price as service_price, services.description as service_description,
-                               users.name as customer_name, users.phone as customer_phone, users.address as customer_address,
+                               parties.name as customer_name, parties.phone as customer_phone, parties.address as customer_address,
                                staff.name as staff_name,
                                appliance_types.name as appliance_name,
                                customer_products.product_name, customer_products.model_no
-                        FROM bookings 
-                        LEFT JOIN services ON bookings.service_id = services.id 
-                        LEFT JOIN users ON bookings.user_id = users.id
-                        LEFT JOIN users staff ON bookings.assigned_to = staff.id
-                        LEFT JOIN appliance_types ON bookings.appliance_type_id = appliance_types.id
-                        LEFT JOIN customer_products ON bookings.customer_product_id = customer_products.id
-                        WHERE bookings.id = :id');
+                         FROM bookings 
+                         LEFT JOIN services ON bookings.service_id = services.id 
+                         LEFT JOIN parties ON bookings.user_id = parties.id
+                         LEFT JOIN users staff ON bookings.assigned_to = staff.id
+                         LEFT JOIN appliance_types ON bookings.appliance_type_id = appliance_types.id
+                         LEFT JOIN customer_products ON bookings.customer_product_id = customer_products.id
+                         WHERE bookings.id = :id');
       $this->db->bind(':id', $id);
 
       $row = $this->db->single();
@@ -167,10 +168,10 @@
     }
 
     public function getTodaySchedule(){
-        $this->db->query("SELECT b.*, s.name as service_name, u.name as customer_name, staff.name as staff_name 
+        $this->db->query("SELECT b.*, s.name as service_name, p.name as customer_name, staff.name as staff_name 
                           FROM bookings b 
                           JOIN services s ON b.service_id = s.id
-                          JOIN users u ON b.user_id = u.id
+                          LEFT JOIN parties p ON b.user_id = p.id
                           LEFT JOIN users staff ON b.assigned_to = staff.id
                           WHERE b.booking_date = CURRENT_DATE()
                           ORDER BY b.booking_time ASC");
