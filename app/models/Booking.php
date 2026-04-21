@@ -64,7 +64,7 @@
             }
         }
         
-        $sql .= ' ORDER BY bookings.created_at DESC';
+        $sql .= ' ORDER BY b.created_at DESC';
         
         $this->db->query($sql);
         
