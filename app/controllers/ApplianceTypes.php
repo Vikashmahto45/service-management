@@ -3,7 +3,7 @@
     private $applianceTypeModel;
 
     public function __construct(){
-      if(!isLoggedIn() || $_SESSION['role_id'] != 1){
+      if(!isLoggedIn() || ($_SESSION['role_id'] != 1 && $_SESSION['role_id'] != 2)){
         redirect('users/login');
       }
       $this->applianceTypeModel = $this->model('ApplianceType');
@@ -97,10 +97,14 @@
 
     public function delete($id){
       if($_SERVER['REQUEST_METHOD'] == 'POST'){
-        if($this->applianceTypeModel->deleteApplianceType($id)){
-          flash('appliancetype_message', 'Appliance Type Removed');
-        } else {
-          flash('appliancetype_message', 'Something went wrong', 'alert alert-danger');
+        try {
+          if($this->applianceTypeModel->deleteApplianceType($id)){
+            flash('appliancetype_message', 'Appliance Type Removed');
+          } else {
+            flash('appliancetype_message', 'Something went wrong', 'alert alert-danger');
+          }
+        } catch (\Exception $e) {
+          flash('appliancetype_message', 'Cannot delete this type: It is linked to existing tickets.', 'alert alert-danger');
         }
         redirect('appliancetypes');
       } else {
