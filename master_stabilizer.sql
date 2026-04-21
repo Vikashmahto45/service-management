@@ -77,8 +77,16 @@ BEGIN
     END IF;
 
     -- Columns for Advanced Bookings
+    IF NOT EXISTS (SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'bookings' AND COLUMN_NAME = 'complaint_description') THEN
+        ALTER TABLE `bookings` ADD COLUMN `complaint_description` TEXT DEFAULT NULL AFTER `notes`;
+    END IF;
+
     IF NOT EXISTS (SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'bookings' AND COLUMN_NAME = 'priority') THEN
         ALTER TABLE `bookings` ADD COLUMN `priority` VARCHAR(20) DEFAULT 'medium' AFTER `complaint_description`;
+    END IF;
+
+    IF NOT EXISTS (SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'bookings' AND COLUMN_NAME = 'assigned_to') THEN
+        ALTER TABLE `bookings` ADD COLUMN `assigned_to` INT(11) DEFAULT NULL AFTER `is_warranty`;
     END IF;
     
     IF NOT EXISTS (SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'bookings' AND COLUMN_NAME = 'estimated_cost') THEN

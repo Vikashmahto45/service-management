@@ -154,11 +154,17 @@
 
         try {
             $bookings = $this->bookingModel->getAllBookings($status);
+        } catch (\Throwable $e) {
+            // Log the error for the developer and show a friendly but informative message
+            error_log("Database error in Ticket Management: " . $e->getMessage());
+            $bookings = [];
+            flash('booking_message', 'Database sync issue detected. Please run the Master Stabilizer script in phpMyAdmin. Error: ' . substr($e->getMessage(), 0, 100), 'alert alert-danger');
+        }
+
+        try {
             $service_providers = $this->userModel->getServiceProviders();
         } catch (\Throwable $e) {
-            $bookings = [];
             $service_providers = [];
-            flash('booking_message', 'Database error in Ticket Management. System is stabilizing.', 'alert alert-warning');
         }
 
         $data = [

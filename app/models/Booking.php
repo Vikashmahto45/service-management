@@ -52,7 +52,7 @@
                        p.name as customer_name, p.email as user_email, 
                        staff.name as staff_name
                 FROM bookings b
-                JOIN services s ON b.service_id = s.id
+                LEFT JOIN services s ON b.service_id = s.id
                 LEFT JOIN parties p ON b.user_id = p.id
                 LEFT JOIN users staff ON b.assigned_to = staff.id';
         
