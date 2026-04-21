@@ -105,13 +105,15 @@
     public function getBookingById($id){
       $this->db->query('SELECT bookings.*, 
                                services.name as service_name, services.price as service_price, services.description as service_description,
-                               parties.name as customer_name, parties.phone as customer_phone, parties.address as customer_address,
+                               parties.name as customer_name, parties.phone as customer_phone, parties.email as customer_email,
+                               COALESCE(pa.address_line1, parties.state) as customer_address,
                                staff.name as staff_name,
                                appliance_types.name as appliance_name,
                                customer_products.product_name, customer_products.model_no
                          FROM bookings 
                          LEFT JOIN services ON bookings.service_id = services.id 
                          LEFT JOIN parties ON bookings.user_id = parties.id
+                         LEFT JOIN party_addresses pa ON parties.id = pa.party_id AND pa.is_default = 1
                          LEFT JOIN users staff ON bookings.assigned_to = staff.id
                          LEFT JOIN appliance_types ON bookings.appliance_type_id = appliance_types.id
                          LEFT JOIN customer_products ON bookings.customer_product_id = customer_products.id
@@ -231,5 +233,22 @@
         } else {
             return false;
         }
+    }
+
+    public function deleteTicket($id){
+        // Delete history first (FK reference cleanup is better handles explicitly if needed, but here we just delete)
+        $this->db->query('DELETE FROM ticket_status_history WHERE booking_id = :id');
+        $this->db->bind(':id', $id);
+        $this->db->execute();
+
+        // Delete remarks
+        $this->db->query('DELETE FROM ticket_remarks WHERE booking_id = :id');
+        $this->db->bind(':id', $id);
+        $this->db->execute();
+
+        // Delete the ticket itself
+        $this->db->query('DELETE FROM bookings WHERE id = :id');
+        $this->db->bind(':id', $id);
+        return $this->db->execute();
     }
   }

@@ -279,4 +279,17 @@
         }
         redirect('bookings/details/' . $id);
     }
+
+    public function delete($id){
+        if($_SESSION['role_id'] != 1){
+            redirect('bookings');
+        }
+
+        if($this->bookingModel->deleteTicket($id)){
+            flash('booking_message', 'Ticket deleted successfully');
+        } else {
+            flash('booking_message', 'Something went wrong while deleting', 'alert alert-danger');
+        }
+        redirect('bookings/manage');
+    }
   }

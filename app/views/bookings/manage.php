@@ -96,9 +96,12 @@
                                 <?php echo strtoupper($booking->status); ?>
                             </span>
                         </td>
-                        <td class="text-center">
-                            <a href="<?php echo URLROOT; ?>/bookings/details/<?php echo $booking->id; ?>" class="btn btn-sm btn-outline-primary shadow-sm rounded-circle" title="View Details" style="width: 30px; height: 30px; padding: 0; line-height: 28px;">
+                        <td class="text-center d-flex justify-content-center">
+                            <a href="<?php echo URLROOT; ?>/bookings/details/<?php echo $booking->id; ?>" class="btn btn-sm btn-outline-primary shadow-sm rounded-circle mr-2" title="View Details" style="width: 30px; height: 30px; padding: 0; line-height: 28px;">
                                 <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="<?php echo URLROOT; ?>/bookings/delete/<?php echo $booking->id; ?>" class="btn btn-sm btn-outline-danger shadow-sm rounded-circle" title="Delete Ticket" onclick="return confirm('Are you sure you want to delete this ticket? All logs and history will be lost.');" style="width: 30px; height: 30px; padding: 0; line-height: 28px;">
+                                <i class="fas fa-trash"></i>
                             </a>
                         </td>
                     </tr>

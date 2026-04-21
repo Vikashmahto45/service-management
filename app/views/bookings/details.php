@@ -19,7 +19,10 @@
         <span class="badge <?php echo $statusBadge[$data['booking']->status] ?? 'badge-secondary'; ?> p-2 px-3 shadow-sm mr-2" style="font-size: 1rem;">
             <?php echo strtoupper($data['booking']->status); ?>
         </span>
-        <a href="<?php echo URLROOT; ?>/bookings/manage" class="btn btn-outline-secondary"><i class="fas fa-arrow-left mr-1"></i> Back</a>
+        <a href="<?php echo URLROOT; ?>/bookings/manage" class="btn btn-outline-secondary mr-2"><i class="fas fa-arrow-left mr-1"></i> Back</a>
+        <a href="<?php echo URLROOT; ?>/bookings/delete/<?php echo $data['booking']->id; ?>" class="btn btn-danger shadow-sm" onclick="return confirm('Permanently delete this ticket?');">
+            <i class="fas fa-trash mr-1"></i> Delete
+        </a>
     </div>
 </div>
 
