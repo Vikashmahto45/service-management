@@ -49,7 +49,7 @@
 
     public function getAllBookings($status = null){
         $sql = 'SELECT b.id, b.user_id, b.service_id, b.booking_date, b.booking_time, b.notes, b.appliance_type_id, b.customer_product_id, b.complaint_description, b.priority, b.estimated_cost, b.is_warranty, b.assigned_to, b.created_at,
-                       COALESCE(b.status, \'pending\') as booking_current_status, 
+                       COALESCE(NULLIF(TRIM(b.status), \'\'), \'pending\') as booking_current_status, 
                        COALESCE(s.name, \'General Service\') as service_name, 
                        COALESCE(p.name, \'Guest Customer\') as customer_name, p.email as user_email, 
                        COALESCE(staff.name, \'Unassigned\') as assigned_technician_name
@@ -112,7 +112,7 @@
 
     public function getBookingById($id){
       $this->db->query('SELECT b.id, b.user_id, b.service_id, b.booking_date, b.booking_time, b.notes, b.appliance_type_id, b.customer_product_id, b.complaint_description, b.priority, b.estimated_cost, b.is_warranty, b.assigned_to, b.created_at,
-                               COALESCE(b.status, \'pending\') as booking_current_status,
+                               COALESCE(NULLIF(TRIM(b.status), \'\'), \'pending\') as booking_current_status,
                                COALESCE(s.name, \'General Service\') as service_name, s.price as service_price, s.description as service_description,
                                COALESCE(p.name, \'Guest Customer\') as customer_name, p.phone as customer_phone, p.email as customer_email,
                                COALESCE(pa.address_line1, p.state, \'No Address Provided\') as customer_address,
