@@ -70,12 +70,12 @@
                             <div class="small text-muted"><i class="far fa-clock mr-1"></i><?php echo $booking->booking_time; ?></div>
                         </td>
                         <td>
-                            <?php if($booking->staff_name): ?>
+                            <?php if($booking->tech_name != 'Unassigned'): ?>
                                 <div class="d-flex align-items-center">
                                     <div class="user-avatar-sm mr-2" style="width:24px; height:24px; font-size:10px; background:var(--gradient-info);">
-                                        <?php echo strtoupper(substr($booking->staff_name, 0, 1)); ?>
+                                        <?php echo strtoupper(substr($booking->tech_name, 0, 1)); ?>
                                     </div>
-                                    <span class="small font-weight-bold"><?php echo $booking->staff_name; ?></span>
+                                    <span class="small font-weight-bold"><?php echo $booking->tech_name; ?></span>
                                 </div>
                             <?php else: ?>
                                 <span class="badge badge-light text-muted border px-2">Unassigned</span>
@@ -92,8 +92,8 @@
                                     'cancelled' => 'badge-danger'
                                 ];
                             ?>
-                            <span class="badge <?php echo $statusBadge[$booking->ticket_status] ?? 'badge-secondary'; ?> p-2 px-3 shadow-sm" style="font-size: 0.7rem; min-width: 80px;">
-                                <?php echo strtoupper($booking->ticket_status); ?>
+                            <span class="badge <?php echo $statusBadge[$booking->t_status] ?? 'badge-secondary'; ?> p-2 px-3 shadow-sm" style="font-size: 0.7rem; min-width: 80px;">
+                                <?php echo strtoupper($booking->t_status); ?>
                             </span>
                         </td>
                         <td class="text-center d-flex justify-content-center">

@@ -46,11 +46,12 @@
     }
 
     public function getAllBookings($status = null){
+    public function getAllBookings($status = null){
         $sql = 'SELECT b.id, b.user_id, b.service_id, b.booking_date, b.booking_time, b.notes, b.appliance_type_id, b.customer_product_id, b.complaint_description, b.priority, b.estimated_cost, b.is_warranty, b.assigned_to, b.created_at,
-                       b.status as ticket_status, 
-                       s.name as service_name, 
-                       p.name as customer_name, p.email as user_email, 
-                       staff.name as staff_name
+                       COALESCE(b.status, "pending") as t_status, 
+                       COALESCE(s.name, "General Service") as service_name, 
+                       COALESCE(p.name, "Guest Customer") as customer_name, p.email as user_email, 
+                       COALESCE(staff.name, "Unassigned") as tech_name
                 FROM bookings b
                 LEFT JOIN services s ON b.service_id = s.id
                 LEFT JOIN parties p ON b.user_id = p.id
@@ -108,13 +109,13 @@
 
     public function getBookingById($id){
       $this->db->query('SELECT b.id, b.user_id, b.service_id, b.booking_date, b.booking_time, b.notes, b.appliance_type_id, b.customer_product_id, b.complaint_description, b.priority, b.estimated_cost, b.is_warranty, b.assigned_to, b.created_at,
-                               b.status as ticket_status,
-                               s.name as service_name, s.price as service_price, s.description as service_description,
-                               p.name as customer_name, p.phone as customer_phone, p.email as customer_email,
-                               COALESCE(pa.address_line1, p.state) as customer_address,
-                               staff.name as staff_name,
-                               at.name as appliance_name,
-                               cp.product_name, cp.model_no
+                               COALESCE(b.status, "pending") as t_status,
+                               COALESCE(s.name, "General Service") as service_name, s.price as service_price, s.description as service_description,
+                               COALESCE(p.name, "Guest Customer") as customer_name, p.phone as customer_phone, p.email as customer_email,
+                               COALESCE(pa.address_line1, p.state, "No Address Provided") as customer_address,
+                               COALESCE(staff.name, "Unassigned") as tech_name,
+                               COALESCE(at.name, "Unknown Appliance") as appliance_name,
+                               COALESCE(cp.product_name, "Generic Product") as product_name, cp.model_no
                          FROM bookings b
                          LEFT JOIN services s ON b.service_id = s.id 
                          LEFT JOIN parties p ON b.user_id = p.id
