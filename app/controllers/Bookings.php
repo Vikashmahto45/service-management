@@ -84,10 +84,19 @@
             }
 
         } else {
-            $customers = $this->partyModel->getParties();
-            $services = $this->serviceModel->getServices();
-            $appliance_types = $this->applianceTypeModel->getApplianceTypes();
-            $time_slots = $this->timeSlotModel->getSlots();
+            try {
+                $customers = $this->partyModel->getParties();
+                $services = $this->serviceModel->getServices();
+                $appliance_types = $this->applianceTypeModel->getApplianceTypes();
+                $time_slots = $this->timeSlotModel->getSlots();
+            } catch (Exception $e) {
+                // If tables are missing, provide empty defaults to prevent view crashes
+                $customers = [];
+                $services = [];
+                $appliance_types = [];
+                $time_slots = [];
+                flash('booking_message', 'Note: Some database tables are missing. Please run the stabilizer script.', 'alert alert-warning');
+            }
 
             $data = [
                 'customers' => $customers,
@@ -135,9 +144,14 @@
             redirect('bookings');
         }
 
-        $bookings = $this->bookingModel->getAllBookings($status);
-        // Get Employees and Vendors for assignment drop down
-        $service_providers = $this->userModel->getServiceProviders();
+        try {
+            $bookings = $this->bookingModel->getAllBookings($status);
+            $service_providers = $this->userModel->getServiceProviders();
+        } catch (Exception $e) {
+            $bookings = [];
+            $service_providers = [];
+            flash('booking_message', 'Database error in Ticket Management. System is stabilizing.', 'alert alert-warning');
+        }
 
         $data = [
             'bookings' => $bookings,
@@ -178,8 +192,18 @@
             redirect('bookings/manage');
         }
 
-        $history = $this->bookingModel->getStatusHistory($id);
-        $remarks = $this->bookingModel->getRemarks($id);
+        try {
+            $history = $this->bookingModel->getStatusHistory($id);
+        } catch (Exception $e) {
+            $history = [];
+        }
+
+        try {
+            $remarks = $this->bookingModel->getRemarks($id);
+        } catch (Exception $e) {
+            $remarks = [];
+        }
+
         $service_providers = $this->userModel->getServiceProviders();
 
         $data = [

@@ -81,11 +81,13 @@
                 <label class="font-weight-bold">Choose Customer *</label>
                 <select name="party_id" id="party_select" class="form-control <?php echo (!empty($data['customer_err'])) ? 'is-invalid' : ''; ?>">
                     <option value="">-- Search / Select Customer --</option>
-                    <?php foreach($data['customers'] as $customer): ?>
-                        <option value="<?php echo $customer->id; ?>" <?php echo ($data['user_id'] == $customer->id) ? 'selected' : ''; ?>>
-                            <?php echo $customer->name; ?> (<?php echo $customer->phone; ?>)
-                        </option>
-                    <?php endforeach; ?>
+                    <?php if(!empty($data['customers'])): ?>
+                        <?php foreach($data['customers'] as $customer): ?>
+                            <option value="<?php echo $customer->id; ?>" <?php echo ($data['user_id'] == $customer->id) ? 'selected' : ''; ?>>
+                                <?php echo $customer->name; ?> (<?php echo $customer->phone; ?>)
+                            </option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </select>
                 <span class="invalid-feedback"><?php echo $data['customer_err']; ?></span>
                 <div class="mt-2">
@@ -115,9 +117,11 @@
                         <label class="font-weight-bold">Appliance Type *</label>
                         <select name="appliance_type_id" id="appliance_type_id" class="form-control">
                             <option value="">-- Select Type --</option>
-                            <?php foreach($data['appliance_types'] as $type): ?>
-                                <option value="<?php echo $type->id; ?>"><?php echo $type->name; ?></option>
-                            <?php endforeach; ?>
+                            <?php if(!empty($data['appliance_types'])): ?>
+                                <?php foreach($data['appliance_types'] as $type): ?>
+                                    <option value="<?php echo $type->id; ?>"><?php echo $type->name; ?></option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
                     </div>
                 </div>
@@ -172,9 +176,11 @@
                         <label class="font-weight-bold">Service Type *</label>
                         <select name="service_id" class="form-control <?php echo (!empty($data['service_err'])) ? 'is-invalid' : ''; ?>">
                             <option value="">-- Choose Service --</option>
-                            <?php foreach($data['services'] as $service): ?>
-                                <option value="<?php echo $service->id; ?>"><?php echo $service->name; ?> (₹<?php echo $service->price; ?>)</option>
-                            <?php endforeach; ?>
+                            <?php if(!empty($data['services'])): ?>
+                                <?php foreach($data['services'] as $service): ?>
+                                    <option value="<?php echo $service->id; ?>"><?php echo $service->name; ?> (₹<?php echo $service->price; ?>)</option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
                         <span class="invalid-feedback"><?php echo $data['service_err']; ?></span>
                     </div>
@@ -193,9 +199,13 @@
                         <label class="font-weight-bold">Time Slot *</label>
                         <select name="booking_time" class="form-control">
                             <option value="">-- Select Slot --</option>
-                            <?php foreach($data['time_slots'] as $slot): ?>
-                                <option value="<?php echo $slot->slot_range; ?>"><?php echo $slot->slot_range; ?></option>
-                            <?php endforeach; ?>
+                            <?php if(!empty($data['time_slots'])): ?>
+                                <?php foreach($data['time_slots'] as $slot): ?>
+                                    <option value="<?php echo $slot->slot_range; ?>"><?php echo $slot->slot_range; ?></option>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <option value="ASAP">ASAP (No predefined slots)</option>
+                            <?php endif; ?>
                         </select>
                     </div>
                 </div>
