@@ -5,7 +5,7 @@
 <div class="row mb-4 align-items-center">
     <div class="col-md-6">
         <h1 class="font-weight-bold mb-0">
-            <?php echo isset($data['status_filter']) ? ucfirst($data['status_filter']) . ' Tickets' : 'Ticket Management'; ?> <span class="badge badge-secondary" style="font-size: 0.5em; vertical-align: middle;">(V3)</span>
+            <?php echo isset($data['status_filter']) ? ucfirst($data['status_filter']) . ' Tickets' : 'Ticket Management'; ?>
         </h1>
         <p class="text-muted mb-0">Track and manage service requests and lifecycle</p>
     </div>

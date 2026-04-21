@@ -2,7 +2,7 @@
 
 <div class="row mb-4 align-items-center">
     <div class="col-md-6">
-        <h1><i class="fas fa-ticket-alt text-primary mr-2"></i>Ticket #<?php echo $data['booking']->id; ?> <span class="badge badge-secondary" style="font-size: 0.4em; vertical-align: middle;">(V3)</span></h1>
+        <h1><i class="fas fa-ticket-alt text-primary mr-2"></i>Ticket #<?php echo $data['booking']->id; ?></h1>
         <p class="text-muted mb-0">Manage service lifecycle and history</p>
     </div>
     <div class="col-md-6 text-right">
