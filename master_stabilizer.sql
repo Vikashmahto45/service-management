@@ -71,6 +71,11 @@ BEGIN
         ALTER TABLE `bookings` DROP FOREIGN KEY `bookings_ibfk_1`;
     END IF;
 
+    -- DROP Conflicting Foreign Key on notifications
+    IF EXISTS (SELECT * FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME = 'notifications_ibfk_1' AND TABLE_NAME = 'notifications' AND TABLE_SCHEMA = DATABASE()) THEN
+        ALTER TABLE `notifications` DROP FOREIGN KEY `notifications_ibfk_1`;
+    END IF;
+
     -- Columns for Advanced Bookings
     IF NOT EXISTS (SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'bookings' AND COLUMN_NAME = 'priority') THEN
         ALTER TABLE `bookings` ADD COLUMN `priority` VARCHAR(20) DEFAULT 'medium' AFTER `complaint_description`;

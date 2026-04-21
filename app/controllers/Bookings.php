@@ -247,13 +247,17 @@
              // Log History
              $this->bookingModel->logStatusHistory($id, $status, $_SESSION['user_id'], $remarks);
 
-             // Create Notification
-             $booking = $this->bookingModel->getBookingById($id);
-             $user_id = $booking->user_id;
-             $msg = "Your ticket #" . $id . " status changed to " . strtoupper($status);
-             
-             $notifModel = $this->model('Notification');
-             $notifModel->add($user_id, $msg, 'info');
+             // Create Notification (Fail-safe)
+             try {
+                $booking = $this->bookingModel->getBookingById($id);
+                $user_id = $booking->user_id;
+                $msg = "Your ticket #" . $id . " status changed to " . strtoupper($status);
+                
+                $notifModel = $this->model('Notification');
+                $notifModel->add($user_id, $msg, 'info');
+             } catch (\Throwable $e) {
+                // If notification fails (e.g. DB constraint), don't crash the whole update
+             }
 
              flash('booking_message', 'Ticket Status Updated');
         } else {
