@@ -7,7 +7,7 @@
     }
 
     public function addBooking($data){
-      $this->db->query('INSERT INTO bookings (user_id, service_id, booking_date, booking_time, notes, appliance_type_id, customer_product_id, complaint_description, priority, estimated_cost, is_warranty, assigned_to, status) 
+      $this->db->query('INSERT INTO bookings (user_id, service_id, booking_date, booking_time, notes, appliance_type_id, customer_product_id, complaint_description, priority, estimated_cost, is_warranty, assigned_to, `status`) 
                         VALUES (:user_id, :service_id, :booking_date, :booking_time, :notes, :appliance_type_id, :customer_product_id, :complaint_description, :priority, :estimated_cost, :is_warranty, :assigned_to, :status)');
       // Bind values
       $this->db->bind(':user_id', $data['user_id']);
@@ -100,7 +100,7 @@
         // If technician is assigned, force status to 'assigned', if unassigned go back to 'pending'
         $new_status = (!empty($staff_id)) ? 'assigned' : 'pending';
         
-        $this->db->query('UPDATE bookings SET assigned_to = :staff_id, status = :status WHERE id = :id');
+        $this->db->query('UPDATE bookings SET assigned_to = :staff_id, `status` = :status WHERE id = :id');
         $this->db->bind(':staff_id', $staff_id);
         $this->db->bind(':status', $new_status);
         $this->db->bind(':id', $id);
