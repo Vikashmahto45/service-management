@@ -36,7 +36,7 @@
         $topStaff = $this->bookingModel->getTopStaff(5);
         $todaySchedule = $this->bookingModel->getTodaySchedule();
         $recentBookings = $this->bookingModel->getRecentBookings(5);
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
         // Fallback for missing ticket tables
         $ticketStats = (object)['total'=>0, 'ongoing'=>0, 'in_progress'=>0, 'completed'=>0, 'cancelled'=>0];
         $performanceData = [];
@@ -53,7 +53,7 @@
         $todayAttendance = $this->attendanceModel->getTodayStats();
         $staffCount = $this->userModel->getStaffCount();
         $attendancePercent = ($staffCount > 0) ? round(($todayAttendance->present / $staffCount) * 100) : 0;
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
         $totalRevenue = 0;
         $totalExpenses = 0;
         $attendancePercent = 0;

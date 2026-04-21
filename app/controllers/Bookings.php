@@ -75,11 +75,19 @@
                     die('Something went wrong');
                 }
             } else {
-                // Return data to view
-                $data['customers'] = $this->partyModel->getParties();
-                $data['services'] = $this->serviceModel->getServices();
-                $data['appliance_types'] = $this->applianceTypeModel->getApplianceTypes();
-                $data['time_slots'] = $this->timeSlotModel->getSlots(); // Assuming getSlots() exists, let's verify
+                // Return data to view with error handling
+                try {
+                    $data['customers'] = $this->partyModel->getParties();
+                    $data['services'] = $this->serviceModel->getServices();
+                    $data['appliance_types'] = $this->applianceTypeModel->getApplianceTypes();
+                    $data['time_slots'] = $this->timeSlotModel->getSlots();
+                } catch (\Throwable $e) {
+                    $data['customers'] = [];
+                    $data['services'] = [];
+                    $data['appliance_types'] = [];
+                    $data['time_slots'] = [];
+                    flash('booking_message', 'Note: System is stabilizing. Some options are missing.', 'alert alert-warning');
+                }
                 $this->view('bookings/add', $data);
             }
 
@@ -89,7 +97,7 @@
                 $services = $this->serviceModel->getServices();
                 $appliance_types = $this->applianceTypeModel->getApplianceTypes();
                 $time_slots = $this->timeSlotModel->getSlots();
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 // If tables are missing, provide empty defaults to prevent view crashes
                 $customers = [];
                 $services = [];
@@ -147,7 +155,7 @@
         try {
             $bookings = $this->bookingModel->getAllBookings($status);
             $service_providers = $this->userModel->getServiceProviders();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $bookings = [];
             $service_providers = [];
             flash('booking_message', 'Database error in Ticket Management. System is stabilizing.', 'alert alert-warning');
@@ -194,13 +202,13 @@
 
         try {
             $history = $this->bookingModel->getStatusHistory($id);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $history = [];
         }
 
         try {
             $remarks = $this->bookingModel->getRemarks($id);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $remarks = [];
         }
 

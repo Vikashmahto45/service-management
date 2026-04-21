@@ -36,13 +36,19 @@
                 <ul class="navbar-nav ml-auto mt-2 mt-lg-0 align-items-center">
                     <!-- Notification Bell -->
                     <?php
-                      require_once APPROOT . '/models/Notification.php';
-                      $notificationModel = new Notification();
-                      // Only show notifications for the logged in user for the last 2 days
-                      $headerNotifications = $notificationModel->getRecentNotifications($_SESSION['user_id'], 2);
-                      $unreadCount = 0;
-                      if($headerNotifications) {
-                          foreach($headerNotifications as $n) { if(!$n->is_read) $unreadCount++; }
+                      try {
+                          require_once APPROOT . '/models/Notification.php';
+                          $notificationModel = new Notification();
+                          // Only show notifications for the logged in user for the last 2 days
+                          $headerNotifications = $notificationModel->getRecentNotifications($_SESSION['user_id'], 2);
+                          $unreadCount = 0;
+                          if($headerNotifications) {
+                              foreach($headerNotifications as $n) { if(!$n->is_read) $unreadCount++; }
+                          }
+                      } catch (\Throwable $e) {
+                          $headerNotifications = [];
+                          $unreadCount = 0;
+                          // Fail silently in header but log or warn in console if needed
                       }
                     ?>
                     <li class="nav-item dropdown mr-3 view-notifications-btn">
