@@ -3,6 +3,7 @@
     private $customerProductModel;
     private $partyModel;
     private $applianceTypeModel;
+    private $predefinedNoteModel;
 
     public function __construct(){
       if(!isLoggedIn() || $_SESSION['role_id'] != 1){
@@ -11,6 +12,7 @@
       $this->customerProductModel = $this->model('CustomerProduct');
       $this->partyModel = $this->model('Party');
       $this->applianceTypeModel = $this->model('ApplianceType');
+      $this->predefinedNoteModel = $this->model('PredefinedNote');
     }
 
     public function index(){
@@ -69,16 +71,19 @@
         } else {
           $data['customers'] = $this->partyModel->getParties();
           $data['appliance_types'] = $this->applianceTypeModel->getApplianceTypes();
+          $data['predefined_notes'] = $this->predefinedNoteModel->getNotes();
           $this->view('customer_products/add', $data);
         }
 
       } else {
         $customers = $this->partyModel->getParties();
         $appliance_types = $this->applianceTypeModel->getApplianceTypes();
+        $predefined_notes = $this->predefinedNoteModel->getNotes();
 
         $data = [
           'customers' => $customers,
           'appliance_types' => $appliance_types,
+          'predefined_notes' => $predefined_notes,
           'party_id' => '',
           'appliance_type_id' => '',
           'product_name' => '',
@@ -138,6 +143,7 @@
         } else {
           $data['customers'] = $this->partyModel->getParties();
           $data['appliance_types'] = $this->applianceTypeModel->getApplianceTypes();
+          $data['predefined_notes'] = $this->predefinedNoteModel->getNotes();
           $this->view('customer_products/edit', $data);
         }
 
@@ -145,6 +151,7 @@
         $product = $this->customerProductModel->getProductById($id);
         $customers = $this->partyModel->getParties();
         $appliance_types = $this->applianceTypeModel->getApplianceTypes();
+        $predefined_notes = $this->predefinedNoteModel->getNotes();
 
         $data = [
           'id' => $id,
@@ -158,6 +165,7 @@
           'warranty_expiry' => $product->warranty_expiry,
           'customers' => $customers,
           'appliance_types' => $appliance_types,
+          'predefined_notes' => $predefined_notes,
           'product_err' => '',
           'party_err' => ''
         ];
@@ -177,5 +185,27 @@
       } else {
         redirect('customerProducts');
       }
+    }
+
+    // AJAX: Add predefined note
+    public function add_predefined_note(){
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $note_text = trim($_POST['note_text']);
+            if(!empty($note_text)){
+                if($this->predefinedNoteModel->addNote($note_text)){
+                    echo json_encode(['success' => true]);
+                } else {
+                    echo json_encode(['success' => false, 'error' => 'Database error']);
+                }
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Empty note']);
+            }
+        }
+    }
+
+    // AJAX: Get predefined notes
+    public function get_predefined_notes(){
+        $notes = $this->predefinedNoteModel->getNotes();
+        echo json_encode($notes);
     }
   }

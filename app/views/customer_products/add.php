@@ -101,8 +101,21 @@
             <!-- Full Width -->
             <div class="col-12">
                 <div class="form-group mb-4">
-                    <label class="font-weight-bold">Specifications / Notes</label>
-                    <textarea name="specifications" class="form-control" rows="3" placeholder="Any specific details or issues..."><?php echo $data['specifications']; ?></textarea>
+                    <div class="d-flex justify-content-between align-items-end mb-2">
+                        <label class="font-weight-bold mb-0">Specifications / Notes</label>
+                        <div class="d-flex align-items-center">
+                            <select id="quickNotesSelect" class="form-control form-control-sm mr-2" style="width: auto; max-width: 200px;">
+                                <option value="">-- Quick Notes --</option>
+                                <?php foreach($data['predefined_notes'] as $note): ?>
+                                    <option value="<?php echo htmlspecialchars($note->note_text); ?>"><?php echo substr(htmlspecialchars($note->note_text), 0, 30); ?>...</option>
+                                <?php endforeach; ?>
+                            </select>
+                            <button type="button" id="savePredefinedBtn" class="btn btn-sm btn-outline-info" title="Save current text to library">
+                                <i class="fas fa-save mr-1"></i> Save to Library
+                            </button>
+                        </div>
+                    </div>
+                    <textarea name="specifications" id="specifications" class="form-control" rows="4" placeholder="Any specific details or issues..."><?php echo $data['specifications']; ?></textarea>
                 </div>
             </div>
         </div>
@@ -113,5 +126,73 @@
         </div>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const quickNotesSelect = document.getElementById('quickNotesSelect');
+    const specifications = document.getElementById('specifications');
+    const savePredefinedBtn = document.getElementById('savePredefinedBtn');
+
+    // 1. Selection from dropdown
+    quickNotesSelect.addEventListener('change', function() {
+        if (this.value) {
+            const currentVal = specifications.value.trim();
+            if (currentVal) {
+                specifications.value = currentVal + "\n" + this.value;
+            } else {
+                specifications.value = this.value;
+            }
+            this.value = ""; // Reset dropdown
+            specifications.focus();
+        }
+    });
+
+    // 2. Save current as predefined (AJAX)
+    savePredefinedBtn.addEventListener('click', function() {
+        const text = specifications.value.trim();
+        if (!text) {
+            alert('Please type some notes first.');
+            return;
+        }
+
+        if (confirm('Save this note to your library for future use?')) {
+            const formData = new FormData();
+            formData.append('note_text', text);
+
+            fetch('<?php echo URLROOT; ?>/customerProducts/add_predefined_note', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Note saved to library!');
+                    refreshQuickNotes();
+                } else {
+                    alert('Error saving note: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Connection error. Could not save note.');
+            });
+        }
+    });
+
+    function refreshQuickNotes() {
+        fetch('<?php echo URLROOT; ?>/customerProducts/get_predefined_notes')
+        .then(response => response.json())
+        .then(notes => {
+            quickNotesSelect.innerHTML = '<option value="">-- Quick Notes --</option>';
+            notes.forEach(note => {
+                const option = document.createElement('option');
+                option.value = note.note_text;
+                option.textContent = note.note_text.substring(0, 30) + (note.note_text.length > 30 ? '...' : '');
+                quickNotesSelect.appendChild(option);
+            });
+        });
+    }
+});
+</script>
 
 <?php require APPROOT . '/views/inc/admin_footer.php'; ?>
