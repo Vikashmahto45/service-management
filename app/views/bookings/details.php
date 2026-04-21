@@ -16,8 +16,8 @@
                 'cancelled' => 'badge-danger'
             ];
         ?>
-        <span class="badge <?php echo $statusBadge[$data['booking']->status] ?? 'badge-secondary'; ?> p-2 px-3 shadow-sm mr-2" style="font-size: 1rem;">
-            <?php echo strtoupper($data['booking']->status); ?>
+        <span class="badge <?php echo $statusBadge[$data['booking']->ticket_status] ?? 'badge-secondary'; ?> p-2 px-3 shadow-sm mr-2" style="font-size: 1rem;">
+            <?php echo strtoupper($data['booking']->ticket_status); ?>
         </span>
         <a href="<?php echo URLROOT; ?>/bookings/manage" class="btn btn-outline-secondary mr-2"><i class="fas fa-arrow-left mr-1"></i> Back</a>
         <a href="<?php echo URLROOT; ?>/bookings/delete/<?php echo $data['booking']->id; ?>" class="btn btn-danger shadow-sm" onclick="return confirm('Permanently delete this ticket?');">
@@ -175,12 +175,12 @@
                 <label class="font-weight-bold small text-muted uppercase mb-2">Change Status</label>
                 <div class="form-group">
                     <select name="status" id="status_selector" class="form-control form-control-sm mb-3">
-                        <option value="pending" <?php echo ($data['booking']->status == 'pending') ? 'selected' : ''; ?>>Pending</option>
-                        <option value="confirmed" <?php echo ($data['booking']->status == 'confirmed') ? 'selected' : ''; ?>>Confirmed</option>
-                        <option value="assigned" <?php echo ($data['booking']->status == 'assigned') ? 'selected' : ''; ?>>Assigned</option>
-                        <option value="in_progress" <?php echo ($data['booking']->status == 'in_progress') ? 'selected' : ''; ?>>In Progress</option>
-                        <option value="completed" <?php echo ($data['booking']->status == 'completed') ? 'selected' : ''; ?>>Completed</option>
-                        <option value="cancelled" <?php echo ($data['booking']->status == 'cancelled') ? 'selected' : ''; ?>>Cancelled</option>
+                        <option value="pending" <?php echo ($data['booking']->ticket_status == 'pending') ? 'selected' : ''; ?>>Pending</option>
+                        <option value="confirmed" <?php echo ($data['booking']->ticket_status == 'confirmed') ? 'selected' : ''; ?>>Confirmed</option>
+                        <option value="assigned" <?php echo ($data['booking']->ticket_status == 'assigned') ? 'selected' : ''; ?>>Assigned</option>
+                        <option value="in_progress" <?php echo ($data['booking']->ticket_status == 'in_progress') ? 'selected' : ''; ?>>In Progress</option>
+                        <option value="completed" <?php echo ($data['booking']->ticket_status == 'completed') ? 'selected' : ''; ?>>Completed</option>
+                        <option value="cancelled" <?php echo ($data['booking']->ticket_status == 'cancelled') ? 'selected' : ''; ?>>Cancelled</option>
                     </select>
                     
                     <textarea name="remarks" class="form-control form-control-sm mb-3" rows="2" placeholder="Status change reason..."></textarea>

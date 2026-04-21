@@ -92,8 +92,8 @@
                                     'cancelled' => 'badge-danger'
                                 ];
                             ?>
-                            <span class="badge <?php echo $statusBadge[$booking->status] ?? 'badge-secondary'; ?> p-2 px-3 shadow-sm" style="font-size: 0.7rem; min-width: 80px;">
-                                <?php echo strtoupper($booking->status); ?>
+                            <span class="badge <?php echo $statusBadge[$booking->ticket_status] ?? 'badge-secondary'; ?> p-2 px-3 shadow-sm" style="font-size: 0.7rem; min-width: 80px;">
+                                <?php echo strtoupper($booking->ticket_status); ?>
                             </span>
                         </td>
                         <td class="text-center d-flex justify-content-center">

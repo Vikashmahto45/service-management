@@ -46,7 +46,10 @@
     }
 
     public function getAllBookings($status = null){
-        $sql = 'SELECT bookings.*, services.name as service_name, parties.name as customer_name, parties.email as user_email, staff.name as staff_name
+        $sql = 'SELECT bookings.*, bookings.status as ticket_status, 
+                       services.name as service_name, 
+                       parties.name as customer_name, parties.email as user_email, 
+                       staff.name as staff_name
                 FROM bookings 
                 JOIN services ON bookings.service_id = services.id
                 LEFT JOIN parties ON bookings.user_id = parties.id
@@ -103,7 +106,7 @@
     }
 
     public function getBookingById($id){
-      $this->db->query('SELECT bookings.*, 
+      $this->db->query('SELECT bookings.*, bookings.status as ticket_status,
                                services.name as service_name, services.price as service_price, services.description as service_description,
                                parties.name as customer_name, parties.phone as customer_phone, parties.email as customer_email,
                                COALESCE(pa.address_line1, parties.state) as customer_address,
