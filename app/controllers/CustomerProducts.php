@@ -208,4 +208,15 @@
         $notes = $this->predefinedNoteModel->getNotes();
         echo json_encode($notes);
     }
+
+    // AJAX: Delete predefined note
+    public function delete_predefined_note($id){
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            if($this->predefinedNoteModel->deleteNote($id)){
+                echo json_encode(['success' => true]);
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Database error']);
+            }
+        }
+    }
   }

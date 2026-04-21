@@ -107,9 +107,14 @@
                             <select id="quickNotesSelect" class="form-control form-control-sm mr-2" style="width: auto; max-width: 200px;">
                                 <option value="">-- Quick Notes --</option>
                                 <?php foreach($data['predefined_notes'] as $note): ?>
-                                    <option value="<?php echo htmlspecialchars($note->note_text); ?>"><?php echo substr(htmlspecialchars($note->note_text), 0, 30); ?>...</option>
+                                    <option value="<?php echo $note->id; ?>" data-text="<?php echo htmlspecialchars($note->note_text); ?>">
+                                        <?php echo substr(htmlspecialchars($note->note_text), 0, 30); ?><?php echo (strlen($note->note_text) > 30) ? '...' : ''; ?>
+                                    </option>
                                 <?php endforeach; ?>
                             </select>
+                            <button type="button" id="deleteNoteBtn" class="btn btn-sm btn-outline-danger mr-2" title="Delete selected note" style="display:none;">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
                             <button type="button" id="savePredefinedBtn" class="btn btn-sm btn-outline-info" title="Save current text to library">
                                 <i class="fas fa-save mr-1"></i> Save to Library
                             </button>
@@ -132,18 +137,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const quickNotesSelect = document.getElementById('quickNotesSelect');
     const specifications = document.getElementById('specifications');
     const savePredefinedBtn = document.getElementById('savePredefinedBtn');
+    const deleteNoteBtn = document.getElementById('deleteNoteBtn');
 
     // 1. Selection from dropdown
     quickNotesSelect.addEventListener('change', function() {
         if (this.value) {
+            const selectedText = this.options[this.selectedIndex].getAttribute('data-text');
             const currentVal = specifications.value.trim();
             if (currentVal) {
-                specifications.value = currentVal + "\n" + this.value;
+                specifications.value = currentVal + "\n" + selectedText;
             } else {
-                specifications.value = this.value;
+                specifications.value = selectedText;
             }
-            this.value = ""; // Reset dropdown
+            deleteNoteBtn.style.display = 'inline-block'; // Show delete button when something is selected
             specifications.focus();
+        } else {
+            deleteNoteBtn.style.display = 'none';
         }
     });
 
@@ -179,6 +188,32 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // 3. Delete selected predefined note
+    deleteNoteBtn.addEventListener('click', function() {
+        const noteId = quickNotesSelect.value;
+        if (!noteId) return;
+
+        if (confirm('Are you sure you want to delete this note from your library?')) {
+            fetch('<?php echo URLROOT; ?>/customerProducts/delete_predefined_note/' + noteId, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Note deleted from library!');
+                    refreshQuickNotes();
+                    deleteNoteBtn.style.display = 'none';
+                } else {
+                    alert('Error deleting note: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Connection error. Could not delete note.');
+            });
+        }
+    });
+
     function refreshQuickNotes() {
         fetch('<?php echo URLROOT; ?>/customerProducts/get_predefined_notes')
         .then(response => response.json())
@@ -186,7 +221,8 @@ document.addEventListener('DOMContentLoaded', function() {
             quickNotesSelect.innerHTML = '<option value="">-- Quick Notes --</option>';
             notes.forEach(note => {
                 const option = document.createElement('option');
-                option.value = note.note_text;
+                option.value = note.id;
+                option.setAttribute('data-text', note.note_text);
                 option.textContent = note.note_text.substring(0, 30) + (note.note_text.length > 30 ? '...' : '');
                 quickNotesSelect.appendChild(option);
             });
