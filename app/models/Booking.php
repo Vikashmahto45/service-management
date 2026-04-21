@@ -46,14 +46,15 @@
     }
 
     public function getAllBookings($status = null){
-        $sql = 'SELECT bookings.*, bookings.status as ticket_status, 
-                       services.name as service_name, 
-                       parties.name as customer_name, parties.email as user_email, 
+        $sql = 'SELECT b.id, b.user_id, b.service_id, b.booking_date, b.booking_time, b.notes, b.appliance_type_id, b.customer_product_id, b.complaint_description, b.priority, b.estimated_cost, b.is_warranty, b.assigned_to, b.created_at,
+                       b.status as ticket_status, 
+                       s.name as service_name, 
+                       p.name as customer_name, p.email as user_email, 
                        staff.name as staff_name
-                FROM bookings 
-                JOIN services ON bookings.service_id = services.id
-                LEFT JOIN parties ON bookings.user_id = parties.id
-                LEFT JOIN users staff ON bookings.assigned_to = staff.id';
+                FROM bookings b
+                JOIN services s ON b.service_id = s.id
+                LEFT JOIN parties p ON b.user_id = p.id
+                LEFT JOIN users staff ON b.assigned_to = staff.id';
         
         if($status){
             if($status == 'ongoing'){
@@ -106,21 +107,22 @@
     }
 
     public function getBookingById($id){
-      $this->db->query('SELECT bookings.*, bookings.status as ticket_status,
-                               services.name as service_name, services.price as service_price, services.description as service_description,
-                               parties.name as customer_name, parties.phone as customer_phone, parties.email as customer_email,
-                               COALESCE(pa.address_line1, parties.state) as customer_address,
+      $this->db->query('SELECT b.id, b.user_id, b.service_id, b.booking_date, b.booking_time, b.notes, b.appliance_type_id, b.customer_product_id, b.complaint_description, b.priority, b.estimated_cost, b.is_warranty, b.assigned_to, b.created_at,
+                               b.status as ticket_status,
+                               s.name as service_name, s.price as service_price, s.description as service_description,
+                               p.name as customer_name, p.phone as customer_phone, p.email as customer_email,
+                               COALESCE(pa.address_line1, p.state) as customer_address,
                                staff.name as staff_name,
-                               appliance_types.name as appliance_name,
-                               customer_products.product_name, customer_products.model_no
-                         FROM bookings 
-                         LEFT JOIN services ON bookings.service_id = services.id 
-                         LEFT JOIN parties ON bookings.user_id = parties.id
-                         LEFT JOIN party_addresses pa ON parties.id = pa.party_id AND pa.is_default = 1
-                         LEFT JOIN users staff ON bookings.assigned_to = staff.id
-                         LEFT JOIN appliance_types ON bookings.appliance_type_id = appliance_types.id
-                         LEFT JOIN customer_products ON bookings.customer_product_id = customer_products.id
-                         WHERE bookings.id = :id');
+                               at.name as appliance_name,
+                               cp.product_name, cp.model_no
+                         FROM bookings b
+                         LEFT JOIN services s ON b.service_id = s.id 
+                         LEFT JOIN parties p ON b.user_id = p.id
+                         LEFT JOIN party_addresses pa ON p.id = pa.party_id AND pa.is_default = 1
+                         LEFT JOIN users staff ON b.assigned_to = staff.id
+                         LEFT JOIN appliance_types at ON b.appliance_type_id = at.id
+                         LEFT JOIN customer_products cp ON b.customer_product_id = cp.id
+                         WHERE b.id = :id');
       $this->db->bind(':id', $id);
 
       $row = $this->db->single();
