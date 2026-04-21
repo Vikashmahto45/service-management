@@ -25,7 +25,10 @@
       // Harden assignment
       $assigned_to = !empty($data['assigned_to']) ? $data['assigned_to'] : null;
       $this->db->bind(':assigned_to', $assigned_to);
-      $this->db->bind(':status', $data['status'] ?? 'pending');
+      
+      // Bulletproof Status: If technician is assigned, default to 'assigned', otherwise 'pending'
+      $final_status = !empty($assigned_to) ? 'assigned' : ($data['status'] ?? 'pending');
+      $this->db->bind(':status', trim(strtolower($final_status)));
 
       if($this->db->execute()){
         return $this->db->lastInsertId();
@@ -60,7 +63,8 @@
         
         if($status){
             if($status == 'ongoing'){
-                $sql .= " WHERE b.status IN ('pending', 'confirmed', 'assigned')";
+                // Ongoing should only be Assigned or In Progress
+                $sql .= " WHERE b.status IN ('assigned', 'in_progress')";
             } else {
                 $sql .= ' WHERE b.status = :status';
             }
@@ -92,8 +96,13 @@
     public function assignBooking($id, $staff_id){
         // Ensure staff_id is truly null if empty to prevent FK failure
         $staff_id = !empty($staff_id) ? $staff_id : null;
-        $this->db->query('UPDATE bookings SET assigned_to = :staff_id, status = "assigned" WHERE id = :id');
+        
+        // If technician is assigned, force status to 'assigned', if unassigned go back to 'pending'
+        $new_status = (!empty($staff_id)) ? 'assigned' : 'pending';
+        
+        $this->db->query('UPDATE bookings SET assigned_to = :staff_id, status = :status WHERE id = :id');
         $this->db->bind(':staff_id', $staff_id);
+        $this->db->bind(':status', $new_status);
         $this->db->bind(':id', $id);
         return $this->db->execute();
     }
@@ -134,15 +143,13 @@
     }
 
     public function updateStatus($id, $status){
-        $this->db->query('UPDATE bookings SET status = :status WHERE id = :id');
+        // Bulletproof: Force lowercase and trim to match database ENUM
+        $status = trim(strtolower($status));
+        $this->db->query('UPDATE bookings SET `status` = :status WHERE id = :id');
         $this->db->bind(':id', $id);
         $this->db->bind(':status', $status);
   
-        if($this->db->execute()){
-          return true;
-        } else {
-          return false;
-        }
+        return $this->db->execute();
     }
 
     public function getStatsByStatus(){
@@ -192,7 +199,9 @@
     // --- History & Remarks ---
 
     public function logStatusHistory($booking_id, $status, $changed_by, $remarks = ''){
-        $this->db->query('INSERT INTO ticket_status_history (booking_id, status, changed_by, remarks) 
+        // Bulletproof formatting
+        $status = trim(strtolower($status));
+        $this->db->query('INSERT INTO ticket_status_history (booking_id, `status`, changed_by, remarks) 
                           VALUES (:booking_id, :status, :changed_by, :remarks)');
         $this->db->bind(':booking_id', $booking_id);
         $this->db->bind(':status', $status);
