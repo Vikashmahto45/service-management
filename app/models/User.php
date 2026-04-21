@@ -369,10 +369,21 @@
       }
     }
 
-    // Delete Password Reset Token
-    public function deletePasswordReset($token){
-      $this->db->query('DELETE FROM password_resets WHERE token = :token');
-      $this->db->bind(':token', $token);
+    // Delete User
+    public function deleteUser($id){
+      // Profiles table depends on user_id, delete it first
+      $this->db->query('DELETE FROM user_profiles WHERE user_id = :id');
+      $this->db->bind(':id', $id);
+      $this->db->execute();
+
+      // Notifications too
+      $this->db->query('DELETE FROM notifications WHERE user_id = :id');
+      $this->db->bind(':id', $id);
+      $this->db->execute();
+
+      // Main user record
+      $this->db->query('DELETE FROM users WHERE id = :id');
+      $this->db->bind(':id', $id);
       return $this->db->execute();
     }
   }

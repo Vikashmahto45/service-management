@@ -151,9 +151,25 @@
         redirect('adminUsers');
     }
     
-    // Create Internal User (View)
-    public function create(){
-        // Check for POST first for creation logic...
-        // For brevity in this turn, I'm just loading the listing.
+    // Delete User
+    public function delete($id){
+        // Protect Super Admin (usually ID 1)
+        if($id == 1){
+            flash('user_message', 'Super Admin cannot be deleted', 'alert alert-danger');
+            redirect('adminUsers');
+            return;
+        }
+
+        try {
+            if($this->userModel->deleteUser($id)){
+                flash('user_message', 'User Permanently Deleted');
+            } else {
+                flash('user_message', 'Something went wrong', 'alert alert-danger');
+            }
+        } catch (\Exception $e) {
+            flash('user_message', 'Cannot delete user: They have linked data (bookings, attendance, etc.) Choose "Ban" instead.', 'alert alert-danger');
+        }
+
+        redirect('adminUsers');
     }
   }

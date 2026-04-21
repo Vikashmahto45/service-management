@@ -101,6 +101,10 @@
                                             <a class="dropdown-item text-success" href="<?php echo URLROOT; ?>/adminUsers/verify_kyc/<?php echo $user->id; ?>/verified">Approve KYC</a>
                                             <a class="dropdown-item text-danger" href="<?php echo URLROOT; ?>/adminUsers/verify_kyc/<?php echo $user->id; ?>/rejected">Reject KYC</a>
                                         <?php endif; ?>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-danger" href="<?php echo URLROOT; ?>/adminUsers/delete/<?php echo $user->id; ?>" onclick="return confirm('Are you sure you want to permanently delete this user? This cannot be undone.')">
+                                            <i class="fas fa-trash-alt mr-2"></i> Delete User
+                                        </a>
                                     </div>
                                 </div>
                             </td>
@@ -178,11 +182,14 @@
                                         <?php else : ?>
                                             <a class="dropdown-item text-success" href="<?php echo URLROOT; ?>/adminUsers/verify/<?php echo $user->id; ?>">Activate User</a>
                                         <?php endif; ?>
-                                        <?php if($user->kyc_status == 'pending' && !empty($user->kyc_document)): ?>
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item text-success" href="<?php echo URLROOT; ?>/adminUsers/verify_kyc/<?php echo $user->id; ?>/verified">Approve KYC</a>
                                             <a class="dropdown-item text-danger" href="<?php echo URLROOT; ?>/adminUsers/verify_kyc/<?php echo $user->id; ?>/rejected">Reject KYC</a>
                                         <?php endif; ?>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-danger" href="<?php echo URLROOT; ?>/adminUsers/delete/<?php echo $user->id; ?>" onclick="return confirm('Are you sure you want to permanently delete this user?')">
+                                            <i class="fas fa-trash-alt mr-2"></i> Delete Vendor
+                                        </a>
                                     </div>
                                 </div>
                             </td>
@@ -263,11 +270,14 @@
                                         <?php else : ?>
                                             <a class="dropdown-item text-success" href="<?php echo URLROOT; ?>/adminUsers/verify/<?php echo $user->id; ?>">Activate User</a>
                                         <?php endif; ?>
-                                        <?php if($user->kyc_status == 'pending' && !empty($user->kyc_document)): ?>
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item text-success" href="<?php echo URLROOT; ?>/adminUsers/verify_kyc/<?php echo $user->id; ?>/verified">Approve KYC</a>
                                             <a class="dropdown-item text-danger" href="<?php echo URLROOT; ?>/adminUsers/verify_kyc/<?php echo $user->id; ?>/rejected">Reject KYC</a>
                                         <?php endif; ?>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-danger" href="<?php echo URLROOT; ?>/adminUsers/delete/<?php echo $user->id; ?>" onclick="return confirm('Are you sure you want to permanently delete this employee?')">
+                                            <i class="fas fa-trash-alt mr-2"></i> Delete Employee
+                                        </a>
                                     </div>
                                 </div>
                             </td>
