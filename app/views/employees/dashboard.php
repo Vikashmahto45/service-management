@@ -56,7 +56,7 @@
                                             <i class="fas fa-check-double text-success font-size-lg"></i>
                                         </div>
                                         <div>
-                                            <h3 class="font-weight-bold mb-0">0</h3>
+                                            <h3 class="font-weight-bold mb-0"><?php echo $data['completed_today']; ?></h3>
                                             <small class="text-muted text-uppercase font-weight-bold">Completed Today</small>
                                         </div>
                                     </div>

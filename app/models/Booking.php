@@ -155,6 +155,28 @@
         return $this->db->execute();
     }
 
+    // Process Full Completion (With Notes & Images)
+    public function completeBooking($id, $notes, $image){
+        $this->db->query('UPDATE bookings SET 
+            `status` = "completed", 
+            completion_notes = :notes, 
+            completion_image = :image, 
+            completed_at = NOW() 
+            WHERE id = :id');
+        $this->db->bind(':id', $id);
+        $this->db->bind(':notes', $notes);
+        $this->db->bind(':image', $image);
+        return $this->db->execute();
+    }
+
+    // Get Count of Bookings Completed Today by a specific staff
+    public function getCompletedTodayCount($staff_id){
+        $this->db->query('SELECT COUNT(*) as count FROM bookings WHERE assigned_to = :staff_id AND status = "completed" AND DATE(completed_at) = CURDATE()');
+        $this->db->bind(':staff_id', $staff_id);
+        $row = $this->db->single();
+        return $row->count;
+    }
+
     public function getStatsByStatus(){
         $this->db->query("SELECT 
             COUNT(*) as total,

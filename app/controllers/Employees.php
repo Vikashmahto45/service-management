@@ -4,6 +4,7 @@
     private $complaintModel;
     private $attendanceModel;
     private $expenseModel;
+    private $userModel;
 
     public function __construct(){
       if(!isLoggedIn() || ($_SESSION['role_id'] != 3 && $_SESSION['role_id'] != 4)){
@@ -14,6 +15,7 @@
       $this->complaintModel = $this->model('Complaint');
       $this->attendanceModel = $this->model('Attendance');
       $this->expenseModel = $this->model('Expense');
+      $this->userModel = $this->model('User');
     }
 
     // Role Guard for internal staff only
@@ -35,8 +37,13 @@
         
         $today_attendance = $this->attendanceModel->getTodayAttendance($_SESSION['user_id']);
 
+        // Real Completion Counts
+        $completed_bookings = $this->bookingModel->getCompletedTodayCount($_SESSION['user_id']);
+        $completed_complaints = $this->complaintModel->getCompletedTodayCount($_SESSION['user_id']);
+
         $data = [
             'pending_tasks' => count($my_bookings) + count($my_complaints),
+            'completed_today' => $completed_bookings + $completed_complaints,
             'bookings' => array_slice($my_bookings, 0, 5), // Latest 5
             'complaints' => array_slice($my_complaints, 0, 5),
             'today_attendance' => $today_attendance
@@ -57,18 +64,79 @@
         $this->view('employees/tasks', $data);
     }
     
-    // Mark Task Complete
+    // Show Completion Form
     public function complete_task($type, $id){
+        // Fetch details to show in the form
         if($type == 'booking'){
-            if($this->bookingModel->updateStatus($id, 'completed')){
-                flash('task_message', 'Booking Marked Completed');
-            }
-        } elseif($type == 'complaint'){
-             if($this->complaintModel->updateStatus($id, 'resolved')){
-                flash('task_message', 'Complaint Resolved');
-            }
+            $task = $this->bookingModel->getBookingById($id);
+            $title = $task->service_name;
+        } else {
+            $task = $this->complaintModel->getComplaintById($id);
+            $title = $task->subject;
         }
-        redirect('employees/tasks');
+
+        $data = [
+            'type' => $type,
+            'id' => $id,
+            'title' => $title,
+            'task' => $task
+        ];
+
+        $this->view('employees/complete_task', $data);
+    }
+
+    // Process Task Completion With Upload
+    public function process_completion(){
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_SPECIAL_CHARS);
+            
+            $type = $_POST['type'];
+            $id = $_POST['id'];
+            $notes = trim($_POST['completion_notes']);
+
+            // Handle Image Upload
+            $image = '';
+            if(!empty($_FILES['completion_image']['name'])){
+                $file_name = uniqid() . '_complete_' . $_FILES['completion_image']['name'];
+                $upload_path = dirname(APPROOT) . '/public/img/task_completion/' . $file_name;
+                
+                if(!is_dir(dirname(APPROOT) . '/public/img/task_completion/')){
+                    mkdir(dirname(APPROOT) . '/public/img/task_completion/', 0777, true);
+                }
+
+                if(move_uploaded_file($_FILES['completion_image']['tmp_name'], $upload_path)){
+                    $image = $file_name;
+                }
+            }
+
+            $success = false;
+            if($type == 'booking'){
+                $success = $this->bookingModel->completeBooking($id, $notes, $image);
+            } else {
+                $success = $this->complaintModel->completeComplaint($id, $notes, $image);
+            }
+
+            if($success){
+                flash('task_message', 'Task marked as completed successfully!');
+            } else {
+                flash('task_message', 'Something went wrong', 'alert alert-danger');
+            }
+
+            redirect('employees/tasks');
+        }
+    }
+
+    // My Profile
+    public function profile(){
+        $user = $this->userModel->getUserById($_SESSION['user_id']);
+        $profile = $this->userModel->getUserProfile($_SESSION['user_id']);
+
+        $data = [
+            'user' => $user,
+            'profile' => $profile
+        ];
+
+        $this->view('employees/profile', $data);
     }
 
     // Attendance Actions

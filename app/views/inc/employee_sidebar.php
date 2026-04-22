@@ -25,6 +25,10 @@
                 <i class="fas fa-receipt mr-2"></i> My Expenses
             </a>
         <?php endif; ?>
+
+        <a href="<?php echo URLROOT; ?>/employees/profile" class="list-group-item list-group-item-action <?php echo isActive('profile'); ?>">
+            <i class="fas fa-user-circle mr-2"></i> My Profile
+        </a>
         
         <a href="<?php echo URLROOT; ?>/users/logout" class="list-group-item list-group-item-action text-danger">
             <i class="fas fa-sign-out-alt mr-2"></i> Logout

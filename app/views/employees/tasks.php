@@ -45,11 +45,11 @@
                                     <div class="col-md-3 text-right d-flex flex-column justify-content-center">
                                         <?php if($booking->status == 'in_progress'): ?>
                                             <span class="badge badge-info mb-2">In Progress</span>
-                                            <a href="<?php echo URLROOT; ?>/employees/complete_task/booking/<?php echo $booking->id; ?>" class="btn btn-success btn-sm" onclick="return confirm('Mark as Completed?');">Mark Complete</a>
+                                            <a href="<?php echo URLROOT; ?>/employees/complete_task/booking/<?php echo $booking->id; ?>" class="btn btn-success btn-sm"><i class="fas fa-check mr-1"></i> Mark Complete</a>
                                         <?php else: ?>
                                             <span class="badge badge-primary mb-2">Assigned</span>
                                              <!-- Logic to Start could be added here, for now direct complete -->
-                                            <a href="<?php echo URLROOT; ?>/employees/complete_task/booking/<?php echo $booking->id; ?>" class="btn btn-success btn-sm" onclick="return confirm('Mark as Completed?');">Mark Complete</a>
+                                            <a href="<?php echo URLROOT; ?>/employees/complete_task/booking/<?php echo $booking->id; ?>" class="btn btn-success btn-sm"><i class="fas fa-check mr-1"></i> Mark Complete</a>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -77,7 +77,7 @@
                                         <p class="mb-0"><?php echo $complaint->description; ?></p>
                                     </div>
                                     <div class="col-md-3 text-right d-flex flex-column justify-content-center">
-                                        <a href="<?php echo URLROOT; ?>/employees/complete_task/complaint/<?php echo $complaint->id; ?>" class="btn btn-success btn-sm" onclick="return confirm('Mark as Resolved?');">Resolve</a>
+                                        <a href="<?php echo URLROOT; ?>/employees/complete_task/complaint/<?php echo $complaint->id; ?>" class="btn btn-success btn-sm"><i class="fas fa-check mr-1"></i> Resolve</a>
                                     </div>
                                 </div>
                             </div>
