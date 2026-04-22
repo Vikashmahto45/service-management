@@ -51,7 +51,7 @@
                         </div>
                         <!-- STAT CARD 2 -->
                         <div class="col-md-6 mb-4">
-                            <a href="<?php echo URLROOT; ?>/employees/tasks" class="text-decoration-none">
+                            <a href="<?php echo URLROOT; ?>/employees/history" class="text-decoration-none">
                                 <div class="card shadow-sm border-0 h-100 bg-white stat-card">
                                     <div class="card-body">
                                         <div class="d-flex align-items-center">

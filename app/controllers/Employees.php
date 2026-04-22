@@ -139,6 +139,26 @@
         $this->view('employees/profile', $data);
     }
 
+    // Task History with Filtering
+    public function history(){
+        $from = $_GET['from'] ?? null;
+        $to = $_GET['to'] ?? null;
+
+        $bookings = $this->bookingModel->getBookingHistory($_SESSION['user_id'], $from, $to);
+        $complaints = $this->complaintModel->getComplaintHistory($_SESSION['user_id'], $from, $to);
+
+        $data = [
+            'bookings' => $bookings,
+            'complaints' => $complaints,
+            'filters' => [
+                'from' => $from,
+                'to' => $to
+            ]
+        ];
+
+        $this->view('employees/history', $data);
+    }
+
     // Attendance Actions
     public function check_in(){
         $this->internalOnly();

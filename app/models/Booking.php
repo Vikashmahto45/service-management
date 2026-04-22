@@ -177,6 +177,27 @@
         return $row->count;
     }
 
+    // Get Full Completion History for a staff member
+    public function getBookingHistory($staff_id, $from = null, $to = null){
+        $sql = 'SELECT b.*, s.name as service_name, p.name as customer_name, p.phone as customer_phone
+                FROM bookings b
+                JOIN services s ON b.service_id = s.id
+                LEFT JOIN parties p ON b.user_id = p.id
+                WHERE b.assigned_to = :staff_id AND b.status = "completed"';
+        
+        if($from) $sql .= ' AND DATE(b.completed_at) >= :from';
+        if($to) $sql .= ' AND DATE(b.completed_at) <= :to';
+        
+        $sql .= ' ORDER BY b.completed_at DESC';
+        
+        $this->db->query($sql);
+        $this->db->bind(':staff_id', $staff_id);
+        if($from) $this->db->bind(':from', $from);
+        if($to) $this->db->bind(':to', $to);
+        
+        return $this->db->resultSet();
+    }
+
     public function getStatsByStatus(){
         $this->db->query("SELECT 
             COUNT(*) as total,

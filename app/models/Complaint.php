@@ -101,4 +101,24 @@
         $row = $this->db->single();
         return $row->count;
     }
+
+    // Get Full Resolution History for a staff member
+    public function getComplaintHistory($staff_id, $from = null, $to = null){
+        $sql = 'SELECT c.*, p.name as customer_name, p.phone as customer_phone
+                FROM complaints c
+                LEFT JOIN parties p ON c.user_id = p.id
+                WHERE c.assigned_to = :staff_id AND c.status = "resolved"';
+        
+        if($from) $sql .= ' AND DATE(c.completed_at) >= :from';
+        if($to) $sql .= ' AND DATE(c.completed_at) <= :to';
+        
+        $sql .= ' ORDER BY c.completed_at DESC';
+        
+        $this->db->query($sql);
+        $this->db->bind(':staff_id', $staff_id);
+        if($from) $this->db->bind(':from', $from);
+        if($to) $this->db->bind(':to', $to);
+        
+        return $this->db->resultSet();
+    }
   }

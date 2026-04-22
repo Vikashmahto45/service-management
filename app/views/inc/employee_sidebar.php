@@ -26,6 +26,10 @@
             </a>
         <?php endif; ?>
 
+        <a href="<?php echo URLROOT; ?>/employees/history" class="list-group-item list-group-item-action <?php echo isActive('history'); ?>">
+            <i class="fas fa-history mr-2"></i> Task History
+        </a>
+
         <a href="<?php echo URLROOT; ?>/employees/profile" class="list-group-item list-group-item-action <?php echo isActive('profile'); ?>">
             <i class="fas fa-user-circle mr-2"></i> My Profile
         </a>
