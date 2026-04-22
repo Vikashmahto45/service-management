@@ -1,14 +1,10 @@
 <?php require APPROOT . '/views/inc/header.php'; ?>
-<div class="row">
-    <div class="col-md-3">
-        <div class="list-group mb-4">
-            <a href="<?php echo URLROOT; ?>/employees/dashboard" class="list-group-item list-group-item-action">Dashboard</a>
-            <a href="<?php echo URLROOT; ?>/employees/tasks" class="list-group-item list-group-item-action">My Tasks</a>
-            <a href="<?php echo URLROOT; ?>/employees/expenses" class="list-group-item list-group-item-action active">My Expenses</a>
-            <a href="<?php echo URLROOT; ?>/users/logout" class="list-group-item list-group-item-action text-danger">Logout</a>
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-lg-3">
+            <?php require APPROOT . '/views/inc/employee_sidebar.php'; ?>
         </div>
-    </div>
-    <div class="col-md-9">
+        <div class="col-lg-9">
         <?php flash('expense_message'); ?>
         <h2>My Expenses</h2>
 

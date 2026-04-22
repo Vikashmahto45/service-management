@@ -11,19 +11,13 @@
     if($nextMonth > 12) { $nextMonth = 1; $nextYear++; }
 ?>
 
-<div class="row">
-    <div class="col-md-3">
-        <div class="list-group mb-4">
-            <a href="<?php echo URLROOT; ?>/employees/dashboard" class="list-group-item list-group-item-action">Dashboard</a>
-            <a href="<?php echo URLROOT; ?>/employees/tasks" class="list-group-item list-group-item-action">My Tasks</a>
-            <a href="<?php echo URLROOT; ?>/employees/attendance" class="list-group-item list-group-item-action active">My Attendance</a>
-            <a href="<?php echo URLROOT; ?>/employees/my_leaves" class="list-group-item list-group-item-action">My Leaves</a>
-            <a href="<?php echo URLROOT; ?>/employees/expenses" class="list-group-item list-group-item-action">My Expenses</a>
-            <a href="<?php echo URLROOT; ?>/users/logout" class="list-group-item list-group-item-action text-danger">Logout</a>
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-lg-3">
+            <?php require APPROOT . '/views/inc/employee_sidebar.php'; ?>
         </div>
-    </div>
 
-    <div class="col-md-9">
+        <div class="col-lg-9">
         <h2><i class="fas fa-calendar-check text-primary mr-2"></i>My Attendance</h2>
 
         <!-- Today's Status -->

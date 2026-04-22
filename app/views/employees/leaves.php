@@ -1,18 +1,12 @@
 <?php require APPROOT . '/views/inc/header.php'; ?>
 
-<div class="row">
-    <div class="col-md-3">
-        <div class="list-group mb-4">
-            <a href="<?php echo URLROOT; ?>/employees/dashboard" class="list-group-item list-group-item-action">Dashboard</a>
-            <a href="<?php echo URLROOT; ?>/employees/tasks" class="list-group-item list-group-item-action">My Tasks</a>
-            <a href="<?php echo URLROOT; ?>/employees/attendance" class="list-group-item list-group-item-action">My Attendance</a>
-            <a href="<?php echo URLROOT; ?>/employees/my_leaves" class="list-group-item list-group-item-action active">My Leaves</a>
-            <a href="<?php echo URLROOT; ?>/employees/expenses" class="list-group-item list-group-item-action">My Expenses</a>
-            <a href="<?php echo URLROOT; ?>/users/logout" class="list-group-item list-group-item-action text-danger">Logout</a>
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-lg-3">
+            <?php require APPROOT . '/views/inc/employee_sidebar.php'; ?>
         </div>
-    </div>
 
-    <div class="col-md-9">
+        <div class="col-lg-9">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2><i class="fas fa-calendar-minus text-warning mr-2"></i>My Leaves</h2>
             <button class="btn btn-primary" data-toggle="modal" data-target="#applyLeaveModal">
