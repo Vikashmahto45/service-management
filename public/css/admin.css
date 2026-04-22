@@ -71,9 +71,9 @@ h2 { font-size: 2rem; }
 h3 { font-size: 1.75rem; }
 
 @media (max-width: 768px) {
-    h1 { display: none !important; }
+    h1, h1 + p, .col-md-6 > p { display: none !important; }
     h2 { font-size: 1.45rem !important; }
-    h3 { font-size: 1.25rem !important; }
+    h3 { font-size: 1.2rem !important; }
     
     /* Layout fix for top headers with buttons on mobile */
     .row.mb-4.align-items-center, .row.mb-4 {
