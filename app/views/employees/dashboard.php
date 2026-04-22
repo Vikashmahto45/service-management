@@ -33,35 +33,39 @@
                     <div class="row">
                         <!-- STAT CARD 1 -->
                         <div class="col-md-6 mb-4">
-                            <div class="card shadow-sm border-0 h-100 bg-white">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="rounded-circle bg-light p-3 mr-3">
-                                            <i class="fas fa-clipboard-list text-primary font-size-lg"></i>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-weight-bold mb-0"><?php echo $data['pending_tasks']; ?></h3>
-                                            <small class="text-muted text-uppercase font-weight-bold">Pending Tasks</small>
+                            <a href="<?php echo URLROOT; ?>/employees/tasks" class="text-decoration-none">
+                                <div class="card shadow-sm border-0 h-100 bg-white stat-card">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded-circle bg-light p-3 mr-3">
+                                                <i class="fas fa-clipboard-list text-primary font-size-lg"></i>
+                                            </div>
+                                            <div>
+                                                <h3 class="font-weight-bold mb-0 text-dark"><?php echo $data['pending_tasks']; ?></h3>
+                                                <small class="text-muted text-uppercase font-weight-bold">Pending Tasks</small>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </a>
                         </div>
                         <!-- STAT CARD 2 -->
                         <div class="col-md-6 mb-4">
-                            <div class="card shadow-sm border-0 h-100 bg-white">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="rounded-circle bg-light p-3 mr-3">
-                                            <i class="fas fa-check-double text-success font-size-lg"></i>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-weight-bold mb-0"><?php echo $data['completed_today']; ?></h3>
-                                            <small class="text-muted text-uppercase font-weight-bold">Completed Today</small>
+                            <a href="<?php echo URLROOT; ?>/employees/tasks" class="text-decoration-none">
+                                <div class="card shadow-sm border-0 h-100 bg-white stat-card">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded-circle bg-light p-3 mr-3">
+                                                <i class="fas fa-check-double text-success font-size-lg"></i>
+                                            </div>
+                                            <div>
+                                                <h3 class="font-weight-bold mb-0 text-dark"><?php echo $data['completed_today']; ?></h3>
+                                                <small class="text-muted text-uppercase font-weight-bold">Completed Today</small>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -184,6 +188,8 @@
 .opacity-8 { opacity: 0.8; }
 .btn-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
 .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.stat-card { transition: all 0.3s ease; }
+.stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
 </style>
 
 <?php require APPROOT . '/views/inc/footer.php'; ?>
