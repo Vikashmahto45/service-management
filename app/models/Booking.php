@@ -109,10 +109,13 @@
 
     // Get Assigned Bookings (For Employee)
     public function getAssignedBookings($staff_id){
-        $this->db->query('SELECT bookings.*, services.name as service_name, parties.name as customer_name, parties.phone as customer_phone, parties.address as customer_address
+        $this->db->query('SELECT bookings.*, services.name as service_name, 
+                                 parties.name as customer_name, parties.phone as customer_phone,
+                                 COALESCE(pa.address_line1, parties.state, "No Address Provided") as customer_address
                           FROM bookings 
                           JOIN services ON bookings.service_id = services.id
                           LEFT JOIN parties ON bookings.user_id = parties.id
+                          LEFT JOIN party_addresses pa ON parties.id = pa.party_id AND pa.is_default = 1
                           WHERE bookings.assigned_to = :staff_id AND bookings.status != "completed" AND bookings.status != "cancelled"
                           ORDER BY bookings.booking_date ASC');
         $this->db->bind(':staff_id', $staff_id);

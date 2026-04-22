@@ -75,9 +75,11 @@
     }
 
     public function getContractById($id){
-        $this->db->query('SELECT amc.*, p.name as customer_name, p.phone as customer_phone, p.email as customer_email, p.address as customer_address
+        $this->db->query('SELECT amc.*, p.name as customer_name, p.phone as customer_phone, p.email as customer_email, 
+                                 COALESCE(pa.address_line1, p.state, "No Address Provided") as customer_address
                           FROM amc_contracts amc
                           JOIN parties p ON amc.party_id = p.id
+                          LEFT JOIN party_addresses pa ON p.id = pa.party_id AND pa.is_default = 1
                           WHERE amc.id = :id');
         $this->db->bind(':id', $id);
         return $this->db->single();
