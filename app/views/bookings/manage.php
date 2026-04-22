@@ -19,12 +19,14 @@
 <div class="card-box mb-4">
     <div class="row align-items-center">
         <div class="col-md-8">
-            <div class="btn-group btn-group-sm mb-0">
-                <a href="<?php echo URLROOT; ?>/bookings/manage" class="btn btn-outline-secondary px-3 <?php echo !isset($data['status_filter']) ? 'active' : ''; ?>">All Tickets</a>
-                <a href="<?php echo URLROOT; ?>/bookings/manage/pending" class="btn btn-outline-warning px-3 <?php echo ($data['status_filter'] == 'pending') ? 'active' : ''; ?>">Pending</a>
-                <a href="<?php echo URLROOT; ?>/bookings/manage/assigned" class="btn btn-outline-info px-3 <?php echo ($data['status_filter'] == 'assigned') ? 'active' : ''; ?>">Ongoing</a>
-                <a href="<?php echo URLROOT; ?>/bookings/manage/completed" class="btn btn-outline-success px-3 <?php echo ($data['status_filter'] == 'completed') ? 'active' : ''; ?>">Completed</a>
-                <a href="<?php echo URLROOT; ?>/bookings/manage/cancelled" class="btn btn-outline-danger px-3 <?php echo ($data['status_filter'] == 'cancelled') ? 'active' : ''; ?>">Cancelled</a>
+            <div class="tab-scroll-container">
+                <div class="btn-group btn-group-sm mb-0 flex-nowrap scrollable-tabs">
+                    <a href="<?php echo URLROOT; ?>/bookings/manage" class="btn btn-outline-secondary px-3 <?php echo !isset($data['status_filter']) ? 'active' : ''; ?>">All Tickets</a>
+                    <a href="<?php echo URLROOT; ?>/bookings/manage/pending" class="btn btn-outline-warning px-3 <?php echo ($data['status_filter'] == 'pending') ? 'active' : ''; ?>">Pending</a>
+                    <a href="<?php echo URLROOT; ?>/bookings/manage/assigned" class="btn btn-outline-info px-3 <?php echo ($data['status_filter'] == 'assigned') ? 'active' : ''; ?>">Ongoing</a>
+                    <a href="<?php echo URLROOT; ?>/bookings/manage/completed" class="btn btn-outline-success px-3 <?php echo ($data['status_filter'] == 'completed') ? 'active' : ''; ?>">Completed</a>
+                    <a href="<?php echo URLROOT; ?>/bookings/manage/cancelled" class="btn btn-outline-danger px-3 <?php echo ($data['status_filter'] == 'cancelled') ? 'active' : ''; ?>">Cancelled</a>
+                </div>
             </div>
         </div>
         <div class="col-md-4">
@@ -118,5 +120,25 @@
         </table>
     </div>
 </div>
+
+<style>
+.tab-scroll-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+.tab-scroll-container::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome/Safari */
+}
+.scrollable-tabs {
+    display: inline-flex;
+    white-space: nowrap;
+    padding-bottom: 5px;
+}
+.scrollable-tabs .btn {
+    flex: 0 0 auto; /* Prevent buttons from shrinking */
+}
+</style>
 
 <?php require APPROOT . '/views/inc/admin_footer.php'; ?>
