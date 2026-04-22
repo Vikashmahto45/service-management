@@ -19,81 +19,85 @@
 
 <div class="card-box">
     <h3>Service List</h3>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Image</th>
-                <th>Category</th>
-                <th>Service Name</th>
-                <th>Price</th>
-                <th>Duration</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach($data['services'] as $service) : ?>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <td>
-                        <?php if(!empty($service->image)): ?>
-                            <?php if(strpos($service->image, 'http') === 0): ?>
-                                <img src="<?php echo $service->image; ?>" style="width: 50px; height: 30px; object-fit: cover; border-radius: 4px;">
-                            <?php else: ?>
-                                <img src="<?php echo URLROOT; ?>/img/services/<?php echo $service->image; ?>" style="width: 50px; height: 30px; object-fit: cover; border-radius: 4px;">
-                            <?php endif; ?>
-                        <?php else: ?>
-                            <span class="text-muted small">No Image</span>
-                        <?php endif; ?>
-                    </td>
-                    <td><?php echo $service->category_name; ?></td>
-                    <td><?php echo $service->name; ?></td>
-                    <td>$<?php echo $service->price; ?></td>
-                    <td><?php echo $service->duration; ?> mins</td>
-                    <td>
-                        <a href="<?php echo URLROOT; ?>/services/parts/<?php echo $service->id; ?>" class="btn btn-sm btn-info" title="Manage Parts"><i class="fas fa-cogs"></i></a>
-                        <a href="<?php echo URLROOT; ?>/services/edit/<?php echo $service->id; ?>" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
-                        <form action="<?php echo URLROOT; ?>/services/delete/<?php echo $service->id; ?>" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?');"><i class="fas fa-trash"></i></button>
-                        </form>
-                    </td>
+                    <th>Image</th>
+                    <th>Category</th>
+                    <th>Service Name</th>
+                    <th>Price</th>
+                    <th>Duration</th>
+                    <th>Action</th>
                 </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php foreach($data['services'] as $service) : ?>
+                    <tr>
+                        <td>
+                            <?php if(!empty($service->image)): ?>
+                                <?php if(strpos($service->image, 'http') === 0): ?>
+                                    <img src="<?php echo $service->image; ?>" style="width: 50px; height: 30px; object-fit: cover; border-radius: 4px;">
+                                <?php else: ?>
+                                    <img src="<?php echo URLROOT; ?>/img/services/<?php echo $service->image; ?>" style="width: 50px; height: 30px; object-fit: cover; border-radius: 4px;">
+                                <?php endif; ?>
+                            <?php else: ?>
+                                <span class="text-muted small">No Image</span>
+                            <?php endif; ?>
+                        </td>
+                        <td><?php echo $service->category_name; ?></td>
+                        <td><?php echo $service->name; ?></td>
+                        <td>$<?php echo $service->price; ?></td>
+                        <td><?php echo $service->duration; ?> mins</td>
+                        <td>
+                            <a href="<?php echo URLROOT; ?>/services/parts/<?php echo $service->id; ?>" class="btn btn-sm btn-info" title="Manage Parts"><i class="fas fa-cogs"></i></a>
+                            <a href="<?php echo URLROOT; ?>/services/edit/<?php echo $service->id; ?>" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
+                            <form action="<?php echo URLROOT; ?>/services/delete/<?php echo $service->id; ?>" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?');"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <div class="card-box mt-5">
     <h3>Category List</h3>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Icon</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach($data['categories'] as $category) : ?>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <td>
-                        <?php if(!empty($category->icon)): ?>
-                            <i class="fas <?php echo $category->icon; ?> fa-lg text-primary"></i>
-                        <?php else: ?>
-                            <i class="fas fa-tools fa-lg text-muted"></i>
-                        <?php endif; ?>
-                    </td>
-                    <td><?php echo $category->name; ?></td>
-                    <td><?php echo $category->description; ?></td>
-                    <td>
-                        <a href="<?php echo URLROOT; ?>/services/edit_category/<?php echo $category->id; ?>" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
-                        <form action="<?php echo URLROOT; ?>/services/delete_category/<?php echo $category->id; ?>" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure? This will affect all services in this category.');"><i class="fas fa-trash"></i></button>
-                        </form>
-                    </td>
+                    <th>Icon</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Action</th>
                 </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php foreach($data['categories'] as $category) : ?>
+                    <tr>
+                        <td>
+                            <?php if(!empty($category->icon)): ?>
+                                <i class="fas <?php echo $category->icon; ?> fa-lg text-primary"></i>
+                            <?php else: ?>
+                                <i class="fas fa-tools fa-lg text-muted"></i>
+                            <?php endif; ?>
+                        </td>
+                        <td><?php echo $category->name; ?></td>
+                        <td><?php echo $category->description; ?></td>
+                        <td>
+                            <a href="<?php echo URLROOT; ?>/services/edit_category/<?php echo $category->id; ?>" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
+                            <form action="<?php echo URLROOT; ?>/services/delete_category/<?php echo $category->id; ?>" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure? This will affect all services in this category.');"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- Add Category Modal -->
