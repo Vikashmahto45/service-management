@@ -25,21 +25,52 @@
 
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto ml-4">
-          <li class="nav-item">
-            <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/pages/about">About</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/services">Services</a>
-          </li>
-          <?php if(isset($_SESSION['user_id'])) : ?>
+          <?php 
+            $is_employee = (isset($_SESSION['role_id']) && ($_SESSION['role_id'] == 3 || $_SESSION['role_id'] == 4));
+          ?>
+          
+          <?php if(!$is_employee): ?>
             <li class="nav-item">
-                <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/bookings">Bookings</a>
+              <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/complaints">Complaints</a>
+              <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/pages/about">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/services">Services</a>
+            </li>
+            <?php if(isset($_SESSION['user_id'])) : ?>
+              <li class="nav-item">
+                  <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/bookings">Bookings</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/complaints">Complaints</a>
+              </li>
+            <?php endif; ?>
+          <?php else: ?>
+            <!-- Employee/Staff Navigation (Only visible inside Mobile Menu toggle on Phones) -->
+            <li class="nav-item d-lg-none mt-2 border-top pt-2">
+                <p class="small font-weight-bold text-muted ml-2 mb-1">WORK TABS</p>
+            </li>
+            <li class="nav-item d-lg-none">
+                <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/employees/dashboard"><i class="fas fa-th-large mr-2"></i> Dashboard</a>
+            </li>
+            <li class="nav-item d-lg-none">
+                <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/employees/tasks"><i class="fas fa-tasks mr-2"></i> My Tasks</a>
+            </li>
+            <?php if($_SESSION['role_id'] == 3): ?>
+                <li class="nav-item d-lg-none">
+                    <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/employees/attendance"><i class="fas fa-user-clock mr-2"></i> Attendance</a>
+                </li>
+            <?php endif; ?>
+            <li class="nav-item d-lg-none">
+                <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/employees/history"><i class="fas fa-history mr-2"></i> Task History</a>
+            </li>
+            <li class="nav-item d-lg-none">
+                <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/employees/profile"><i class="fas fa-user-circle mr-2"></i> My Profile</a>
+            </li>
+             <li class="nav-item d-lg-none border-top mt-1 pt-1">
+                <a class="nav-link text-danger" href="<?php echo URLROOT; ?>/users/logout"><i class="fas fa-sign-out-alt mr-2"></i> Logout</a>
             </li>
           <?php endif; ?>
         </ul>

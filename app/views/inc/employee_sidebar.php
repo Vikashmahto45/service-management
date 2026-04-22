@@ -1,4 +1,5 @@
-<div class="card shadow-sm border-0 mb-4">
+<!-- Static Sidebar: Hidden on Mobile, Visible on Desktop (>= 992px) -->
+<div class="card shadow-sm border-0 mb-4 d-none d-lg-block">
     <div class="list-group list-group-flush rounded">
         <?php 
         $current_url = $_SERVER['REQUEST_URI'];
