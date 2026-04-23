@@ -32,12 +32,20 @@
       $this->view('bookings/index', $data);
     }
     public function confirm($id){
+        // Need service details
         $service = $this->serviceModel->getServiceById($id);
-        if(!$service){ redirect('services'); }
+        
+        if(!$service){
+            redirect('services');
+        }
+
+        // Get user details for address/location
+        $user = $this->userModel->getUserById($_SESSION['user_id']);
 
         $data = [
             'service' => $service,
-            'user' => $this->userModel->getUserById($_SESSION['user_id'])
+            'user' => $user,
+            'id' => $id
         ];
 
         $this->view('bookings/confirm', $data);

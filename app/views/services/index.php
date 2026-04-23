@@ -59,7 +59,7 @@
                 
                 <div class="scrolling-wrapper">
                     <?php foreach($services as $service): ?>
-                        <div class="service-card-horizontal" onclick="window.location.href='<?php echo URLROOT; ?>/services/show/<?php echo $service->id; ?>'">
+                        <div class="service-card-horizontal">
                             <div class="card-img-container">
                                 <?php if($service->image): ?>
                                     <?php if(filter_var($service->image, FILTER_VALIDATE_URL)): ?>
@@ -79,7 +79,7 @@
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div class="service-price-h">₹<?php echo number_format($service->price); ?></div>
-                                    <a href="<?php echo URLROOT; ?>/services/book/<?php echo $service->id; ?>" class="btn btn-primary btn-block shadow-sm">Book Now</a>
+                                    <a href="<?php echo URLROOT; ?>/services/book/<?php echo $service->id; ?>" onclick="window.location.href='<?php echo URLROOT; ?>/services/book/<?php echo $service->id; ?>'; return false;" class="btn btn-primary btn-block shadow-sm">Book Now</a>
                                 </div>
                             </div>
                         </div>
@@ -90,5 +90,131 @@
     <?php endif; ?>
 
 </div>
+
+<style>
+/* Modern Horizontal Scrolling Layout */
+.section-title-h {
+    font-weight: 800;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #1a1a1a;
+    padding-left: 5px;
+    border-left: 5px solid #6e42e5;
+}
+
+.scrolling-wrapper {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 10px 5px 25px 5px;
+    gap: 20px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #6e42e5 #f0f0f0;
+}
+
+.scrolling-wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+
+.scrolling-wrapper::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 10px;
+}
+
+.scrolling-wrapper::-webkit-scrollbar-thumb {
+    background: #6e42e5; 
+    border-radius: 10px;
+}
+
+.service-card-horizontal {
+    flex: 0 0 auto;
+    width: 280px;
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    border: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+}
+
+.service-card-horizontal:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(110, 66, 229, 0.15);
+    border-color: #6e42e5;
+}
+
+.card-img-container {
+    width: 100%;
+    height: 160px;
+    overflow: hidden;
+    background: #f8f9fa;
+}
+
+.card-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.service-card-horizontal:hover .card-img-container img {
+    transform: scale(1.05);
+}
+
+.service-content-h {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.service-title-h {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.service-rating-h {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.star-icon {
+    color: #ffc107;
+    margin-right: 5px;
+}
+
+.service-price-h {
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: #1a1a1a;
+}
+
+.btn-pill-primary {
+    background: #6e42e5;
+    color: white;
+    border-radius: 50px;
+    padding: 8px 25px;
+    font-weight: 600;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-pill-primary:hover {
+    background: #5a32c7;
+    box-shadow: 0 4px 10px rgba(110, 66, 229, 0.3);
+    color: white;
+}
+</style>
 
 <?php require APPROOT . '/views/inc/footer.php'; ?>

@@ -1,5 +1,8 @@
 <?php
   class Services extends Controller {
+    private $serviceModel;
+    private $inventoryModel;
+
     public function __construct(){
       $this->serviceModel = $this->model('Service');
       $this->inventoryModel = $this->model('Inventory');
@@ -435,5 +438,20 @@
              flash('part_message', 'Something went wrong', 'alert alert-danger');
         }
         redirect('services/parts/' . $service_id);
+    }
+
+    // Public: Gated Booking Intent
+    public function book($id){
+        // Save the intended service ID in session
+        $_SESSION['booking_intent'] = $id;
+
+        if(!isLoggedIn()){
+            $url = URLROOT . '/users/login';
+            // die("Redirecting to: " . $url); // Uncomment this to see the URL if it still fails
+            redirect('users/login');
+        } else {
+            // Already logged in, go straight to the real booking form
+            redirect('bookings/confirm/' . $id);
+        }
     }
   }

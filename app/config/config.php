@@ -6,7 +6,7 @@ if (strpos($_SERVER['HTTP_HOST'], 'localhost') !== false || $_SERVER['HTTP_HOST'
     define('DB_USER', 'root');
     define('DB_PASS', '');
     define('DB_NAME', 'service_management_db');
-    define('URLROOT', 'http://localhost/Service Management System');
+    define('URLROOT', 'http://localhost/Service%20Management%20System');
 } else {
     // Live DB Params (Hostinger) - Comprehensive Check
     define('DB_HOST', 'localhost');
