@@ -124,9 +124,14 @@
                                                     <small class="text-muted d-block mb-2">
                                                         <i class="fas fa-clock mr-1"></i> <?php echo date('d M, h:i A', strtotime($booking->booking_date . ' ' . $booking->booking_time)); ?>
                                                     </small>
-                                                    <div class="small text-secondary">
+                                                    <div class="small text-secondary mb-2">
                                                         <i class="fas fa-map-marker-alt text-danger mr-1"></i> <?php echo $booking->customer_address; ?>
                                                     </div>
+                                                    <?php if(!empty($booking->latitude)): ?>
+                                                        <a href="https://www.google.com/maps/search/?api=1&query=<?php echo $booking->latitude; ?>,<?php echo $booking->longitude; ?>" target="_blank" class="btn btn-sm btn-outline-success border-0 px-0">
+                                                           <i class="fas fa-directions mr-1"></i> Navigate
+                                                        </a>
+                                                    <?php endif; ?>
                                                 </div>
                                                 <div class="ml-2">
                                                     <a href="<?php echo URLROOT; ?>/employees/tasks" class="btn btn-icon btn-light btn-sm rounded-circle shadow-sm">

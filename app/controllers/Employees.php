@@ -317,4 +317,61 @@
 
         $this->view('employees/leaves', $data);
     }
+
+    // New: Add Customer from Staff Portal
+    public function add_customer(){
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_SPECIAL_CHARS);
+
+            $data = [
+                'name' => trim($_POST['name']),
+                'email' => trim($_POST['email']),
+                'phone' => trim($_POST['phone']),
+                'address' => trim($_POST['address']),
+                'password' => trim($_POST['password']),
+                'confirm_password' => trim($_POST['password']),
+                'account_type' => 'customer',
+                'name_err' => '',
+                'email_err' => '',
+                'password_err' => ''
+            ];
+
+            // Manual Validation (Simplified for staff entry)
+            if(empty($data['email'])){
+                $data['email_err'] = 'Please enter email';
+            } else {
+                if($this->userModel->findUserByEmail($data['email'])){
+                    $data['email_err'] = 'Email is already registered';
+                }
+            }
+
+            if(empty($data['name_err']) && empty($data['email_err'])){
+                // Hash Password
+                $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+
+                // Register user
+                if($this->userModel->register($data)){
+                    flash('dashboard_message', 'Customer registered successfully');
+                    redirect('employees/dashboard');
+                } else {
+                    die('Something went wrong');
+                }
+            } else {
+                $this->view('employees/add_customer', $data);
+            }
+
+        } else {
+            $data = [
+                'name' => '',
+                'email' => '',
+                'phone' => '',
+                'address' => '',
+                'password' => '',
+                'name_err' => '',
+                'email_err' => '',
+                'password_err' => ''
+            ];
+            $this->view('employees/add_customer', $data);
+        }
+    }
   }

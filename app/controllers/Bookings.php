@@ -31,6 +31,51 @@
 
       $this->view('bookings/index', $data);
     }
+    public function confirm($id){
+        $service = $this->serviceModel->getServiceById($id);
+        if(!$service){ redirect('services'); }
+
+        $data = [
+            'service' => $service,
+            'user' => $this->userModel->getUserById($_SESSION['user_id'])
+        ];
+
+        $this->view('bookings/confirm', $data);
+    }
+
+    public function save_final(){
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_SPECIAL_CHARS);
+
+            $data = [
+                'user_id' => $_SESSION['user_id'],
+                'service_id' => trim($_POST['service_id']),
+                'booking_date' => trim($_POST['booking_date']),
+                'booking_time' => trim($_POST['booking_time']),
+                'latitude' => !empty($_POST['latitude']) ? $_POST['latitude'] : null,
+                'longitude' => !empty($_POST['longitude']) ? $_POST['longitude'] : null,
+                'formatted_address' => trim($_POST['formatted_address']),
+                'notes' => trim($_POST['notes']),
+                'status' => 'pending'
+            ];
+
+            // Simple validation
+            if(empty($data['booking_date']) || empty($data['booking_time'])){
+                flash('booking_message', 'Please select date and time', 'alert alert-danger');
+                redirect('bookings/confirm/' . $data['service_id']);
+                return;
+            }
+
+            if($this->bookingModel->addBookingWithLocation($data)){
+                flash('booking_message', 'Your service has been booked successfully! Our team will contact you soon.');
+                redirect('bookings/index');
+            } else {
+                die('Something went wrong');
+            }
+        } else {
+            redirect('services');
+        }
+    }
 
     public function add(){
         if($_SESSION['role_id'] != 1){

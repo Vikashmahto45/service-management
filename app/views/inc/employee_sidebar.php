@@ -14,6 +14,9 @@
         <a href="<?php echo URLROOT; ?>/employees/tasks" class="list-group-item list-group-item-action <?php echo isActive('tasks'); ?>">
             <i class="fas fa-tasks mr-2"></i> My Tasks
         </a>
+        <a href="<?php echo URLROOT; ?>/employees/add_customer" class="list-group-item list-group-item-action <?php echo isActive('add_customer'); ?>">
+            <i class="fas fa-user-plus mr-2 text-success"></i> Add New Customer
+        </a>
         
         <?php if($_SESSION['role_id'] == 3): // Internal Employee Only ?>
             <a href="<?php echo URLROOT; ?>/employees/attendance" class="list-group-item list-group-item-action <?php echo isActive('attendance'); ?>">

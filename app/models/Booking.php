@@ -37,6 +37,27 @@
       }
     }
 
+    public function addBookingWithLocation($data){
+      $this->db->query('INSERT INTO bookings (user_id, service_id, booking_date, booking_time, notes, latitude, longitude, formatted_address, `status`) 
+                        VALUES (:user_id, :service_id, :booking_date, :booking_time, :notes, :latitude, :longitude, :formatted_address, :status)');
+      
+      $this->db->bind(':user_id', $data['user_id']);
+      $this->db->bind(':service_id', $data['service_id']);
+      $this->db->bind(':booking_date', $data['booking_date']);
+      $this->db->bind(':booking_time', $data['booking_time']);
+      $this->db->bind(':notes', $data['notes']);
+      $this->db->bind(':latitude', $data['latitude']);
+      $this->db->bind(':longitude', $data['longitude']);
+      $this->db->bind(':formatted_address', $data['formatted_address']);
+      $this->db->bind(':status', $data['status']);
+
+      if($this->db->execute()){
+        return $this->db->lastInsertId();
+      } else {
+        return false;
+      }
+    }
+
     // Get user's bookings
     public function getBookingsByUserId($user_id){
       $this->db->query('SELECT bookings.*, services.name as service_name, users.name as assigned_name, parties.name as customer_name
@@ -109,9 +130,9 @@
 
     // Get Assigned Bookings (For Employee)
     public function getAssignedBookings($staff_id){
-        $this->db->query('SELECT bookings.*, services.name as service_name, 
-                                 parties.name as customer_name, parties.phone as customer_phone,
-                                 COALESCE(pa.address_line1, parties.state, "No Address Provided") as customer_address
+        $this->db->query('SELECT bookings.*, services.name as service_name,                                  parties.name as customer_name, parties.phone as customer_phone,
+                                 COALESCE(pa.address_line1, parties.state, "No Address Provided") as customer_address,
+                                 bookings.latitude, bookings.longitude, bookings.formatted_address
                           FROM bookings 
                           JOIN services ON bookings.service_id = services.id
                           LEFT JOIN parties ON bookings.user_id = parties.id
@@ -129,6 +150,7 @@
                                COALESCE(p.name, \'Guest Customer\') as customer_name, p.phone as customer_phone, p.email as customer_email,
                                COALESCE(pa.address_line1, p.state, \'No Address Provided\') as customer_address,
                                COALESCE(staff.name, \'Unassigned\') as assigned_technician_name,
+                               b.latitude, b.longitude, b.formatted_address,
                                COALESCE(at.name, \'Unknown Appliance\') as appliance_name,
                                COALESCE(cp.product_name, \'Generic Product\') as product_name, cp.model_no
                          FROM bookings b

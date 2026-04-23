@@ -14,6 +14,13 @@
         if(isLoggedIn()){
             $user = $this->userModel->getUserById($_SESSION['user_id']);
             $this->createUserSession($user);
+            
+            // Check for booking intent
+            if(isset($_SESSION['booking_intent'])){
+                $intent = $_SESSION['booking_intent'];
+                unset($_SESSION['booking_intent']);
+                redirect('bookings/confirm/' . $intent);
+            }
         } else {
             redirect('users/login');
         }
@@ -372,7 +379,14 @@
       $_SESSION['user_name'] = $user->name;
       $_SESSION['role_id'] = $user->role_id;
       
-      // Redirect based on role
+      // Check for booking intent
+      if(isset($_SESSION['booking_intent'])){
+          $service_id = $_SESSION['booking_intent'];
+          unset($_SESSION['booking_intent']);
+          redirect('bookings/confirm/' . $service_id);
+          return;
+      }
+
       // Redirect based on role
       if($user->role_id == 1){
           redirect('admin');

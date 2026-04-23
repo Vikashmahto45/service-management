@@ -79,7 +79,7 @@
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div class="service-price-h">₹<?php echo number_format($service->price); ?></div>
-                                    <a href="<?php echo URLROOT; ?>/bookings/create/<?php echo $service->id; ?>" class="btn btn-primary btn-sm rounded-pill px-3">Book</a>
+                                    <a href="<?php echo URLROOT; ?>/services/book/<?php echo $service->id; ?>" class="btn btn-primary btn-block shadow-sm">Book Now</a>
                                 </div>
                             </div>
                         </div>

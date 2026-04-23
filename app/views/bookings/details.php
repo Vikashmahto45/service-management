@@ -190,7 +190,7 @@
             </form>
         </div>
 
-        <div class="card-box">
+        <div class="card-box mb-4">
             <h6 class="font-weight-bold small uppercase text-muted mb-3">Costing Info</h6>
             <div class="d-flex justify-content-between mb-2">
                 <span class="small text-muted">Service Price:</span>
@@ -202,6 +202,33 @@
             </div>
             <a href="<?php echo URLROOT; ?>/invoices/create/<?php echo $data['booking']->id; ?>" class="btn btn-outline-primary btn-sm btn-block">Generate Invoice</a>
         </div>
+
+        <!-- NEW: Customer Location Map -->
+        <?php if(!empty($data['booking']->latitude)): ?>
+        <div class="card-box">
+             <h6 class="font-weight-bold small uppercase text-muted mb-3"><i class="fas fa-map-marked-alt mr-2"></i> Service Location</h6>
+             <div id="adminDetailMap" style="height: 250px; border-radius: 8px; margin-bottom: 10px;" class="border shadow-sm"></div>
+             <p class="small text-dark mb-1"><strong>Address:</strong> <?php echo $data['booking']->formatted_address; ?></p>
+             <a href="https://www.google.com/maps/search/?api=1&query=<?php echo $data['booking']->latitude; ?>,<?php echo $data['booking']->longitude; ?>" target="_blank" class="btn btn-light btn-sm btn-block border">
+                <i class="fas fa-external-link-alt mr-1"></i> Open in Google Maps
+             </a>
+        </div>
+        
+        <!-- Map Script -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var lat = <?php echo $data['booking']->latitude; ?>;
+                var lng = <?php echo $data['booking']->longitude; ?>;
+                var map = L.map('adminDetailMap').setView([lat, lng], 16);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: 'OSM'
+                }).addTo(map);
+                L.marker([lat, lng]).addTo(map).bindPopup("Customer Location").openPopup();
+            });
+        </script>
+        <?php endif; ?>
     </div>
 </div>
 
