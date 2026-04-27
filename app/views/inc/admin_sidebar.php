@@ -101,6 +101,9 @@
         </a>
         <ul class="collapse list-unstyled pl-4" id="settingsSubmenu">
             <li>
+                <a href="<?php echo URLROOT; ?>/services/add" class="list-group-item list-group-item-action bg-transparent second-text fw-normal small">Add New Service</a>
+            </li>
+            <li>
                 <a href="<?php echo URLROOT; ?>/services/manage" class="list-group-item list-group-item-action bg-transparent second-text fw-normal small">All Services List</a>
             </li>
             <li>
