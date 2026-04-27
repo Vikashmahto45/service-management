@@ -100,18 +100,10 @@
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Default coordinates (can be centralized in config later) - Default to a central point in India or User's current location
         var defaultLat = 20.5937;
         var defaultLng = 78.9629;
         var zoom = 5;
-
-        // Try to get user's current location to center map
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                map.setView([position.coords.latitude, position.coords.longitude], 15);
-                updateMarker(position.coords.latitude, position.coords.longitude);
-            });
-        }
+        var marker;
 
         var map = L.map('map').setView([defaultLat, defaultLng], zoom);
 
@@ -119,42 +111,55 @@
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
-        var marker = L.marker([defaultLat, defaultLng], {
-            draggable: true
-        }).addTo(map);
+        const addressBox = document.getElementById('formatted_address');
 
-        function updateMarker(lat, lng) {
-            marker.setLatLng([lat, lng]);
+        function updateMarkerAndAddress(lat, lng, isAuto = false) {
+            if (!marker) {
+                marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+            } else {
+                marker.setLatLng([lat, lng]);
+            }
+            
             document.getElementById('lat').value = lat;
             document.getElementById('lng').value = lng;
-            
-            // Auto-fill address using Reverse Geocoding (Nominatim)
-            reverseGeocode(lat, lng);
-        }
+            map.setView([lat, lng], 16);
 
-        function reverseGeocode(lat, lng) {
-            const addressBox = document.getElementById('formatted_address');
-            // Show a "loading" message while we fetch
-            const originalVal = addressBox.value;
-            if(!originalVal) addressBox.placeholder = "Locating your address...";
+            if(isAuto) addressBox.placeholder = "Detecting your live location...";
 
             fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data && data.display_name) {
                         addressBox.value = data.display_name;
+                        if(isAuto) {
+                            addressBox.style.backgroundColor = "#e8f5e9"; // Visual confirmation of live detection
+                            setTimeout(() => addressBox.style.backgroundColor = "", 2000);
+                        }
                     }
                 })
                 .catch(err => console.error("Geocoding failed:", err));
         }
 
-        marker.on('dragend', function(e) {
+        // AGGRESSIVE AUTO-LOCATE: Fire immediately with high accuracy
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                updateMarkerAndAddress(position.coords.latitude, position.coords.longitude, true);
+            }, function(error) {
+                console.warn("Location error: " + error.message);
+            }, {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            });
+        }
+
+        marker?.on('dragend', function(e) {
             var position = marker.getLatLng();
-            updateMarker(position.lat, position.lng);
+            updateMarkerAndAddress(position.lat, position.lng);
         });
 
         map.on('click', function(e) {
-            updateMarker(e.latlng.lat, e.latlng.lng);
+            updateMarkerAndAddress(e.latlng.lat, e.latlng.lng);
         });
     });
 </script>

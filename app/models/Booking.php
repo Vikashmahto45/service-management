@@ -79,6 +79,7 @@
                        COALESCE(staff.name, \'Unassigned\') as assigned_technician_name
                 FROM bookings b
                 LEFT JOIN services s ON b.service_id = s.id
+                LEFT JOIN users u ON b.user_id = u.id AND u.role_id = 5
                 LEFT JOIN parties p ON b.user_id = p.id
                 LEFT JOIN users staff ON b.assigned_to = staff.id';
         
