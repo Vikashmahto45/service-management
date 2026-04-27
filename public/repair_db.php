@@ -2,17 +2,42 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Adjusted paths for public folder
-require '../app/config/config.php';
-require '../app/libraries/Database.php';
+echo "<h1>Ultimate Smart Repair Tool</h1>";
+
+// Try different paths to find config
+$paths = [
+    '../app/config/config.php',
+    '../../app/config/config.php',
+    './app/config/config.php'
+];
+
+$configPath = "";
+foreach($paths as $p){
+    if(file_exists($p)){
+        $configPath = $p;
+        echo "Found Config at: $p<br>";
+        break;
+    }
+}
+
+if(!$configPath){
+    die("FATAL ERROR: Could not locate app/config/config.php anywhere. Please check your folder structure.");
+}
+
+require $configPath;
+
+// Adjust library paths based on found config
+$libPath = dirname($configPath) . '/../libraries/Database.php';
+if(!file_exists($libPath)){
+    die("FATAL ERROR: Found config, but matching Database.php not at: $libPath");
+}
+require $libPath;
 
 $db = new Database();
 
 $email = 'admin@test.com';
 $password_plain = '123456';
 $password_hashed = password_hash($password_plain, PASSWORD_DEFAULT);
-
-echo "<h1>Supreme Admin Repair Tool (v2)</h1>";
 
 // 1. Wipe old admin attempts
 echo "Cleaning up database...<br>";
