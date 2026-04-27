@@ -2,8 +2,9 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-require 'app/config/config.php';
-require 'app/libraries/Database.php';
+// Adjusted paths for public folder
+require '../app/config/config.php';
+require '../app/libraries/Database.php';
 
 $db = new Database();
 
@@ -11,7 +12,7 @@ $email = 'admin@test.com';
 $password_plain = '123456';
 $password_hashed = password_hash($password_plain, PASSWORD_DEFAULT);
 
-echo "<h1>Supreme Admin Repair Tool</h1>";
+echo "<h1>Supreme Admin Repair Tool (v2)</h1>";
 
 // 1. Wipe old admin attempts
 echo "Cleaning up database...<br>";
