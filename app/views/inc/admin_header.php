@@ -81,7 +81,7 @@
                             <?php echo $_SESSION['user_name']; ?>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right glass-card border-0 shadow">
-                            <a class="dropdown-item" href="#"><i class="far fa-user mr-2 text-muted"></i> Profile</a>
+                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#adminProfileModal"><i class="far fa-user mr-2 text-muted"></i> Profile</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item text-danger" href="<?php echo URLROOT; ?>/users/logout"><i class="fas fa-sign-out-alt mr-2"></i> Logout</a>
                         </div>
@@ -89,4 +89,42 @@
                 </ul>
             </div>
         </nav>
+
+        <!-- Admin Profile Modal -->
+        <div class="modal fade shadow-lg" id="adminProfileModal" tabindex="-1" role="dialog" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content shadow border-0" style="border-radius: 12px; overflow: hidden;">
+              <div class="modal-header bg-primary text-white border-0">
+                <h5 class="modal-title font-weight-bold"><i class="fas fa-user-shield mr-2"></i> Admin Settings</h5>
+                <button type="button" class="close text-white" data-dismiss="modal">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <form action="<?php echo URLROOT; ?>/admin/profile" method="post">
+                <div class="modal-body p-4">
+                  <div class="form-group mb-4">
+                    <label class="font-weight-bold text-dark">Superadmin Email</label>
+                    <input type="email" name="email" class="form-control form-control-lg bg-light" value="<?php echo $_SESSION['user_email']; ?>" required>
+                    <small class="text-muted">Use this to change your login email.</small>
+                  </div>
+                  <hr>
+                  <p class="text-muted small mt-2">To change your password, fill both fields below. Otherwise leave blank.</p>
+                  <div class="form-group mb-3">
+                    <label class="font-weight-bold text-dark">New Password</label>
+                    <input type="password" name="password" class="form-control form-control-lg bg-light" placeholder="Min 6 characters">
+                  </div>
+                  <div class="form-group mb-0">
+                    <label class="font-weight-bold text-dark">Confirm Password</label>
+                    <input type="password" name="confirm_password" class="form-control form-control-lg bg-light" placeholder="Confirm new password">
+                  </div>
+                </div>
+                <div class="modal-footer border-0 p-3 bg-light">
+                  <button type="button" class="btn btn-secondary px-4 shadow-sm" data-dismiss="modal">Cancel</button>
+                  <button type="submit" class="btn btn-primary px-5 shadow-sm font-weight-bold">Update Account</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
         <div class="container-fluid">
