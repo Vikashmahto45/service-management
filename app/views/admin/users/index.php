@@ -20,7 +20,16 @@
                 <a class="nav-link active font-weight-bold" id="all-tab" data-toggle="tab" href="#all" role="tab">All Users</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link font-weight-bold" id="vendors-tab" data-toggle="tab" href="#vendors" role="tab">Vendors</a>
+                <a class="nav-link font-weight-bold text-warning" id="pending-tab" data-toggle="tab" href="#pending" role="tab">
+                    Pending Verification 
+                    <?php 
+                        $pendingCount = count(array_filter($data['users'], function($u) { return $u->status == 'inactive'; }));
+                        if($pendingCount > 0) echo '<span class="badge badge-warning ml-1">'.$pendingCount.'</span>';
+                    ?>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link font-weight-bold" id="vendors-tab" data-toggle="tab" href="#vendors" role="tab">Vendors/Technicians</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link font-weight-bold" id="employees-tab" data-toggle="tab" href="#employees" role="tab">Employees</a>
@@ -87,16 +96,23 @@
                                         <span class="badge badge-danger">Banned</span>
                                     <?php endif; ?>
                                 </td>
-                                <td>
-                                    <div class="btn-group">
+                                 <td>
+                                    <?php if($user->status == 'inactive'): ?>
+                                        <a class="btn btn-sm btn-success btn-block mb-1" href="<?php echo URLROOT; ?>/adminUsers/verify/<?php echo $user->id; ?>">
+                                            <i class="fas fa-check-circle"></i> APPROVE
+                                        </a>
+                                    <?php endif; ?>
+                                    <div class="btn-group w-100">
                                         <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-toggle="dropdown">
                                             Action
                                         </button>
-                                        <div class="dropdown-menu">
+                                        <div class="dropdown-menu dropdown-menu-right">
                                             <?php if($user->status == 'active') : ?>
                                                 <a class="dropdown-item text-danger" href="<?php echo URLROOT; ?>/adminUsers/ban/<?php echo $user->id; ?>">Ban User</a>
-                                            <?php else : ?>
+                                            <?php elseif($user->status == 'inactive') : ?>
                                                 <a class="dropdown-item text-success" href="<?php echo URLROOT; ?>/adminUsers/verify/<?php echo $user->id; ?>">Activate User</a>
+                                            <?php else : ?>
+                                                <a class="dropdown-item text-success" href="<?php echo URLROOT; ?>/adminUsers/verify/<?php echo $user->id; ?>">Unban User</a>
                                             <?php endif; ?>
     
                                             <?php if($user->kyc_status == 'pending' && !empty($user->kyc_document)): ?>
@@ -135,7 +151,7 @@
                         <?php 
                             $vendorFound = false;
                             foreach($data['users'] as $user): 
-                                if($user->role_name != 'Vendor') continue;
+                                if($user->role_name != 'Technician') continue;
                                 $vendorFound = true;
                         ?>
                             <tr>
@@ -294,6 +310,59 @@
                         <?php endforeach; ?>
                         <?php if(!$empFound): ?>
                             <tr><td colspan="5" class="text-center text-muted py-3">No employees found.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PENDING TAB -->
+        <div class="tab-pane fade" id="pending" role="tabpanel">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Profile</th>
+                            <th>Name/Info</th>
+                            <th>Role</th>
+                            <th>KYC</th>
+                            <th>Quick Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php 
+                            $pendingFound = false;
+                            foreach($data['users'] as $user): 
+                                if($user->status != 'inactive') continue;
+                                $pendingFound = true;
+                        ?>
+                            <tr>
+                                <td>
+                                    <div class="rounded-circle bg-warning text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                        <?php echo strtoupper(substr($user->name, 0, 1)); ?>
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong><?php echo $user->name; ?></strong><br>
+                                    <small class="text-muted"><?php echo $user->email; ?></small>
+                                </td>
+                                <td><span class="badge badge-info"><?php echo $user->role_name; ?></span></td>
+                                <td>
+                                    <?php if(!empty($user->kyc_document)): ?>
+                                        <span class="badge badge-primary">Submitted</span>
+                                    <?php else: ?>
+                                        <span class="badge badge-secondary">No KYC</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <a class="btn btn-success btn-sm btn-block" href="<?php echo URLROOT; ?>/adminUsers/verify/<?php echo $user->id; ?>">
+                                        <i class="fas fa-check"></i> APPROVE ACCOUNT
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        <?php if(!$pendingFound): ?>
+                            <tr><td colspan="5" class="text-center text-muted py-5">Excellent! No users are currently pending verification.</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
