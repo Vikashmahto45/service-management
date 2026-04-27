@@ -12,7 +12,7 @@
             <?php flash('dashboard_message'); ?>
 
             <!-- WELCOME HEADER -->
-            <div class="card shadow-sm border-0 mb-4 bg-primary text-white overflow-hidden">
+            <div class="card shadow-sm border-0 mb-4 bg-primary text-white overflow-hidden" style="border-radius: 15px;">
                 <div class="card-body p-4 position-relative">
                     <div style="z-index: 2; position: relative;">
                         <h2 class="font-weight-bold mb-1 text-white">Welcome, <?php echo $_SESSION['user_name']; ?>!</h2>
@@ -103,8 +103,8 @@
             <!-- TASK SECTIONS -->
             <div class="row">
                 <!-- RECENT BOOKINGS -->
-                <div class="col-md-6 mb-4">
-                    <div class="card shadow-sm border-0 h-100">
+                <div class="col-12 mb-4">
+                    <div class="card shadow-sm border-0">
                         <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                             <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-calendar-check text-primary mr-2"></i>Recent Bookings</h5>
                             <a href="<?php echo URLROOT; ?>/employees/tasks" class="btn btn-sm btn-link text-primary p-0">View All</a>
@@ -118,25 +118,54 @@
                                 <div class="list-group list-group-flush">
                                     <?php foreach($data['bookings'] as $booking) : ?>
                                         <div class="list-group-item p-3 border-0 border-bottom">
-                                            <div class="d-flex justify-content-between">
-                                                <div>
-                                                    <h6 class="font-weight-bold mb-1"><?php echo $booking->service_name; ?></h6>
-                                                    <small class="text-muted d-block mb-2">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-7">
+                                                    <h6 class="font-weight-bold mb-1 text-primary"><?php echo $booking->service_name; ?></h6>
+                                                    <p class="text-muted small mb-3">
                                                         <i class="fas fa-clock mr-1"></i> <?php echo date('d M, h:i A', strtotime($booking->booking_date . ' ' . $booking->booking_time)); ?>
-                                                    </small>
-                                                    <div class="small text-secondary mb-2">
-                                                        <i class="fas fa-map-marker-alt text-danger mr-1"></i> <?php echo $booking->customer_address; ?>
+                                                    </p>
+                                                    
+                                                    <div class="p-2 bg-light rounded border mb-3">
+                                                        <h6 class="font-weight-bold small uppercase text-muted mb-2"><i class="fas fa-map-marker-alt mr-1 text-danger"></i> Service Location</h6>
+                                                        <?php if(!empty($booking->latitude)): ?>
+                                                            <div id="dashboard_map_<?php echo $booking->id; ?>" style="height: 180px; border-radius: 8px;" class="mb-2 border shadow-sm"></div>
+                                                            <p class="small text-dark mb-2" style="font-size: 0.75rem;"><?php echo $booking->customer_address; ?></p>
+                                                            <a href="https://www.google.com/maps/search/?api=1&query=<?php echo $booking->latitude; ?>,<?php echo $booking->longitude; ?>" target="_blank" class="btn btn-primary btn-sm btn-block shadow-sm">
+                                                                <i class="fas fa-directions mr-1"></i> Open in Google Maps
+                                                            </a>
+                                                            <!-- Leaflet is already included in header.php -->
+                                                            <script>
+                                                                document.addEventListener('DOMContentLoaded', function() {
+                                                                    var lat = <?php echo $booking->latitude; ?>;
+                                                                    var lng = <?php echo $booking->longitude; ?>;
+                                                                    var map = L.map('dashboard_map_<?php echo $booking->id; ?>').setView([lat, lng], 15);
+                                                                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                                                        attribution: 'OSM'
+                                                                    }).addTo(map);
+                                                                    L.marker([lat, lng]).addTo(map);
+                                                                    setTimeout(function(){ map.invalidateSize(); }, 500);
+                                                                });
+                                                            </script>
+                                                        <?php else: ?>
+                                                            <div class="text-center py-4">
+                                                                <i class="fas fa-map-marked fa-2x text-muted mb-2"></i>
+                                                                <p class="small text-muted mb-0"><?php echo $booking->customer_address; ?></p>
+                                                            </div>
+                                                        <?php endif; ?>
                                                     </div>
-                                                    <?php if(!empty($booking->latitude)): ?>
-                                                        <a href="https://www.google.com/maps/search/?api=1&query=<?php echo $booking->latitude; ?>,<?php echo $booking->longitude; ?>" target="_blank" class="btn btn-sm btn-outline-success border-0 px-0">
-                                                           <i class="fas fa-directions mr-1"></i> Navigate
-                                                        </a>
-                                                    <?php endif; ?>
                                                 </div>
-                                                <div class="ml-2">
-                                                    <a href="<?php echo URLROOT; ?>/employees/tasks" class="btn btn-icon btn-light btn-sm rounded-circle shadow-sm">
-                                                        <i class="fas fa-chevron-right"></i>
+                                                <div class="col-md-5 text-right">
+                                                    <a href="<?php echo URLROOT; ?>/employees/complete_task/booking/<?php echo $booking->id; ?>" class="btn btn-success btn-sm px-3 shadow-sm rounded-pill font-weight-bold">
+                                                        Start Job <i class="fas fa-play ml-1 small"></i>
                                                     </a>
+                                                    <div class="mt-3">
+                                                        <a href="tel:<?php echo $booking->customer_phone; ?>" class="btn btn-outline-secondary btn-icon rounded-circle d-inline-flex mr-2">
+                                                            <i class="fas fa-phone small"></i>
+                                                        </a>
+                                                        <a href="https://wa.me/<?php echo $booking->customer_phone; ?>" target="_blank" class="btn btn-outline-success btn-icon rounded-circle d-inline-flex">
+                                                            <i class="fab fa-whatsapp small"></i>
+                                                        </a>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -148,7 +177,7 @@
                 </div>
 
                 <!-- RECENT COMPLAINTS -->
-                <div class="col-md-6 mb-4">
+                <div class="col-12 mb-4">
                     <div class="card shadow-sm border-0 h-100">
                         <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                             <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-exclamation-circle text-danger mr-2"></i>Recent Complaints</h5>
@@ -165,13 +194,13 @@
                                         <div class="list-group-item p-3 border-0 border-bottom">
                                             <div class="d-flex justify-content-between">
                                                 <div>
-                                                    <h6 class="font-weight-bold mb-1"><?php echo $complaint->subject; ?></h6>
+                                                    <h6 class="font-weight-bold mb-1 text-danger"><?php echo $complaint->subject; ?></h6>
                                                     <p class="text-muted small mb-0 line-clamp-1">
-                                                        <?php echo substr($complaint->description, 0, 80) . '...'; ?>
+                                                        <?php echo substr($complaint->description, 0, 150) . '...'; ?>
                                                     </p>
                                                 </div>
                                                 <div class="ml-2">
-                                                    <a href="<?php echo URLROOT; ?>/employees/tasks" class="btn btn-icon btn-light btn-sm rounded-circle shadow-sm">
+                                                    <a href="<?php echo URLROOT; ?>/employees/complete_task/complaint/<?php echo $complaint->id; ?>" class="btn btn-icon btn-light btn-sm rounded-circle shadow-sm">
                                                         <i class="fas fa-chevron-right"></i>
                                                     </a>
                                                 </div>
@@ -191,9 +220,9 @@
 <style>
 .font-size-lg { font-size: 1.5rem; }
 .opacity-8 { opacity: 0.8; }
-.btn-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+.btn-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
 .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
-.stat-card { transition: all 0.3s ease; }
+.stat-card { transition: all 0.3s ease; border-radius: 12px; }
 .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
 </style>
 
