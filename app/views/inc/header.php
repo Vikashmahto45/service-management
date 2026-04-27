@@ -19,20 +19,20 @@
         <i class="fas fa-cube text-primary mr-2"></i><?php echo SITENAME; ?>
       </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span> <!-- Standard Bootstrap icon, may need styling adjustment for white bg -->
         <i class="fas fa-bars text-dark"></i>
       </button>
 
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto ml-4">
           <?php 
-            $is_employee = (isset($_SESSION['role_id']) && ($_SESSION['role_id'] == 3 || $_SESSION['role_id'] == 4));
+            $is_staff = (isset($_SESSION['role_id']) && ($_SESSION['role_id'] == 3 || $_SESSION['role_id'] == 4));
           ?>
           
-          <?php if(!$is_employee): ?>
-            <li class="nav-item">
-              <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>">Home</a>
-            </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>">Home</a>
+          </li>
+          
+          <?php if(!$is_staff): ?>
             <li class="nav-item">
               <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/pages/about">About</a>
             </li>
@@ -43,40 +43,31 @@
               <li class="nav-item">
                   <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/bookings">Bookings</a>
               </li>
-              <li class="nav-item">
-                  <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/complaints">Complaints</a>
-              </li>
             <?php endif; ?>
           <?php else: ?>
-            <!-- Employee/Staff Navigation (Only visible inside Mobile Menu toggle on Phones) -->
-            <li class="nav-item d-lg-none mt-2 border-top pt-2">
-                <p class="small font-weight-bold text-muted ml-2 mb-1">WORK TABS</p>
+            <li class="nav-item">
+                <a class="nav-link nav-link-modern font-weight-bold text-primary" href="<?php echo URLROOT; ?>/employees/dashboard"><i class="fas fa-th-large mr-1"></i> DASHBOARD</a>
             </li>
-            <li class="nav-item d-lg-none">
-                <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/employees/dashboard"><i class="fas fa-th-large mr-2"></i> Dashboard</a>
-            </li>
-            <li class="nav-item d-lg-none">
-                <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/employees/tasks"><i class="fas fa-tasks mr-2"></i> My Tasks</a>
-            </li>
-            <?php if($_SESSION['role_id'] == 3): ?>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/employees/attendance"><i class="fas fa-user-clock mr-2"></i> Attendance</a>
-                </li>
-            <?php endif; ?>
-            <li class="nav-item d-lg-none">
-                <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/employees/history"><i class="fas fa-history mr-2"></i> Task History</a>
-            </li>
-            <li class="nav-item d-lg-none">
-                <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/employees/profile"><i class="fas fa-user-circle mr-2"></i> My Profile</a>
-            </li>
-             <li class="nav-item d-lg-none border-top mt-1 pt-1">
-                <a class="nav-link text-danger" href="<?php echo URLROOT; ?>/users/logout"><i class="fas fa-sign-out-alt mr-2"></i> Logout</a>
+            <li class="nav-item">
+                <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/employees/tasks">My Tasks</a>
             </li>
           <?php endif; ?>
         </ul>
         
         <ul class="navbar-nav ml-auto align-items-center">
           <?php if(isset($_SESSION['user_id'])) : ?>
+            
+            <!-- Persistent Dashboard Link for Everyone -->
+            <li class="nav-item mr-3 d-none d-lg-block">
+                <a class="btn btn-sm btn-outline-primary font-weight-bold" href="<?php 
+                    if($_SESSION['role_id'] == 1) echo URLROOT.'/admin';
+                    elseif($_SESSION['role_id'] == 5) echo URLROOT.'/users/dashboard';
+                    else echo URLROOT.'/employees/dashboard';
+                ?>">
+                   <i class="fas fa-tachometer-alt mr-1"></i> Dashboard
+                </a>
+            </li>
+
              <!-- Notifications -->
             <li class="nav-item dropdown mr-3">
                 <?php 
@@ -132,13 +123,11 @@
                         <small class="text-muted"><?php echo $_SESSION['user_email']; ?></small>
                     </div>
                     
-                    <?php if(isset($_SESSION['role_id']) && $_SESSION['role_id'] == 1) : ?>
-                        <a class="dropdown-item dropdown-item-modern" href="<?php echo URLROOT; ?>/admin"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                    <?php elseif(isset($_SESSION['role_id']) && $_SESSION['role_id'] == 3) : ?>
-                        <a class="dropdown-item dropdown-item-modern" href="<?php echo URLROOT; ?>/employees/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                    <?php elseif(isset($_SESSION['role_id']) && $_SESSION['role_id'] == 5) : ?>
-                        <a class="dropdown-item dropdown-item-modern" href="<?php echo URLROOT; ?>/bookings"><i class="fas fa-tachometer-alt"></i> My Dashboard</a>
-                    <?php endif; ?>
+                    <a class="dropdown-item dropdown-item-modern mr-2" href="<?php 
+                        if($_SESSION['role_id'] == 1) echo URLROOT.'/admin';
+                        elseif($_SESSION['role_id'] == 5) echo URLROOT.'/users/dashboard';
+                        else echo URLROOT.'/employees/dashboard';
+                    ?>"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                     
                     <a class="dropdown-item dropdown-item-modern" href="<?php echo URLROOT; ?>/users/profile"><i class="far fa-user"></i> My Profile</a>
                     <a class="dropdown-item dropdown-item-modern" href="<?php echo URLROOT; ?>/invoices"><i class="far fa-file-alt"></i> Invoices</a>
