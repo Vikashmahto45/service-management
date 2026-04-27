@@ -15,29 +15,6 @@
     </div>
 </div>
 
-<!-- PENDING VERIFICATIONS ALERT -->
-<?php 
-    $pendingUsersGlobal = array_filter($this->userModel->getAllUsers(), function($u) { return $u->status == 'inactive'; });
-    if(count($pendingUsersGlobal) > 0): 
-?>
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="alert alert-warning border-0 shadow-sm d-flex align-items-center justify-content-between p-4" style="border-radius: 12px; background: #fff3cd;">
-            <div class="d-flex align-items-center">
-                <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center mr-3" style="width: 50px; height: 50px;">
-                    <i class="fas fa-user-clock fa-lg"></i>
-                </div>
-                <div>
-                    <h5 class="alert-heading font-weight-bold mb-1" style="color: #856404;"><?php echo count($pendingUsersGlobal); ?> Accounts Waiting for Your Approval</h5>
-                    <p class="mb-0" style="color: #856404; opacity: 0.8;">New vendor/technician accounts are pending verification. They cannot log in until you approve them.</p>
-                </div>
-            </div>
-            <a href="<?php echo URLROOT; ?>/admin/users" class="btn btn-warning font-weight-bold px-4 py-2 rounded-pill shadow-sm">APPROVE NOW</a>
-        </div>
-    </div>
-</div>
-<?php endif; ?>
-
 <!-- TOP STATS: Ticket Statistics -->
 <div class="row">
     <div class="col-xl-3 col-md-6">
