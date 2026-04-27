@@ -128,8 +128,24 @@
             document.getElementById('lat').value = lat;
             document.getElementById('lng').value = lng;
             
-            // Reverse Geocoding would go here if you have an API key (like Nominatim - but it has usage limits)
-            // For now we just set the coordinates and allow manual address entry
+            // Auto-fill address using Reverse Geocoding (Nominatim)
+            reverseGeocode(lat, lng);
+        }
+
+        function reverseGeocode(lat, lng) {
+            const addressBox = document.getElementById('formatted_address');
+            // Show a "loading" message while we fetch
+            const originalVal = addressBox.value;
+            if(!originalVal) addressBox.placeholder = "Locating your address...";
+
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.display_name) {
+                        addressBox.value = data.display_name;
+                    }
+                })
+                .catch(err => console.error("Geocoding failed:", err));
         }
 
         marker.on('dragend', function(e) {
