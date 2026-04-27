@@ -136,7 +136,7 @@
         $this->db->query('SELECT bookings.*, services.name as service_name, 
                                  COALESCE(u.name, p.name, "Guest Customer") as customer_name, 
                                  COALESCE(u.phone, p.phone) as customer_phone,
-                                 COALESCE(pa.address_line1, p.state, "No Address Provided") as customer_address,
+                                 COALESCE(bookings.formatted_address, pa.address_line1, p.state, "No Address Provided") as customer_address,
                                  bookings.latitude, bookings.longitude, bookings.formatted_address
                           FROM bookings 
                           JOIN services ON bookings.service_id = services.id
@@ -156,7 +156,7 @@
                                COALESCE(u.name, p.name, \'Guest Customer\') as customer_name, 
                                COALESCE(u.phone, p.phone) as customer_phone, 
                                COALESCE(u.email, p.email) as customer_email,
-                               COALESCE(pa.address_line1, p.state, \'No Address Provided\') as customer_address,
+                               COALESCE(b.formatted_address, pa.address_line1, p.state, \'No Address Provided\') as customer_address,
                                COALESCE(staff.name, \'Unassigned\') as assigned_technician_name,
                                b.latitude, b.longitude, b.formatted_address,
                                COALESCE(at.name, \'Unknown Appliance\') as appliance_name,
