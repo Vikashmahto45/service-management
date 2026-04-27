@@ -75,11 +75,12 @@
         $sql = 'SELECT b.id, b.user_id, b.service_id, b.booking_date, b.booking_time, b.notes, b.appliance_type_id, b.customer_product_id, b.complaint_description, b.priority, b.estimated_cost, b.is_warranty, b.assigned_to, b.created_at,
                        COALESCE(NULLIF(TRIM(b.status), \'\'), \'pending\') as booking_current_status, 
                        COALESCE(s.name, \'General Service\') as service_name, 
-                       COALESCE(p.name, \'Guest Customer\') as customer_name, p.email as user_email, 
+                       COALESCE(u.name, p.name, \'Guest Customer\') as customer_name, 
+                       COALESCE(u.email, p.email) as user_email, 
                        COALESCE(staff.name, \'Unassigned\') as assigned_technician_name
                 FROM bookings b
                 LEFT JOIN services s ON b.service_id = s.id
-                LEFT JOIN users u ON b.user_id = u.id AND u.role_id = 5
+                LEFT JOIN users u ON b.user_id = u.id
                 LEFT JOIN parties p ON b.user_id = p.id
                 LEFT JOIN users staff ON b.assigned_to = staff.id';
         
@@ -104,10 +105,11 @@
     }
 
     public function getRecentBookings($limit = 5){
-        $this->db->query('SELECT bookings.*, services.name as service_name, parties.name as customer_name
+        $this->db->query('SELECT bookings.*, services.name as service_name, COALESCE(u.name, p.name, "Guest Customer") as customer_name
                           FROM bookings 
                           JOIN services ON bookings.service_id = services.id
-                          LEFT JOIN parties ON bookings.user_id = parties.id
+                          LEFT JOIN users u ON bookings.user_id = u.id
+                          LEFT JOIN parties p ON bookings.user_id = p.id
                           ORDER BY bookings.created_at DESC 
                           LIMIT :limit');
         $this->db->bind(':limit', $limit);
@@ -130,14 +132,16 @@
     }
 
     // Get Assigned Bookings (For Employee)
-    public function getAssignedBookings($staff_id){
-        $this->db->query('SELECT bookings.*, services.name as service_name,                                  parties.name as customer_name, parties.phone as customer_phone,
-                                 COALESCE(pa.address_line1, parties.state, "No Address Provided") as customer_address,
+        $this->db->query('SELECT bookings.*, services.name as service_name, 
+                                 COALESCE(u.name, p.name, "Guest Customer") as customer_name, 
+                                 COALESCE(u.phone, p.phone) as customer_phone,
+                                 COALESCE(pa.address_line1, p.state, "No Address Provided") as customer_address,
                                  bookings.latitude, bookings.longitude, bookings.formatted_address
                           FROM bookings 
                           JOIN services ON bookings.service_id = services.id
-                          LEFT JOIN parties ON bookings.user_id = parties.id
-                          LEFT JOIN party_addresses pa ON parties.id = pa.party_id AND pa.is_default = 1
+                          LEFT JOIN users u ON bookings.user_id = u.id
+                          LEFT JOIN parties p ON bookings.user_id = p.id
+                          LEFT JOIN party_addresses pa ON p.id = pa.party_id AND pa.is_default = 1
                           WHERE bookings.assigned_to = :staff_id AND bookings.status != "completed" AND bookings.status != "cancelled"
                           ORDER BY bookings.booking_date ASC');
         $this->db->bind(':staff_id', $staff_id);
@@ -148,7 +152,9 @@
       $this->db->query('SELECT b.id, b.user_id, b.service_id, b.booking_date, b.booking_time, b.notes, b.appliance_type_id, b.customer_product_id, b.complaint_description, b.priority, b.estimated_cost, b.is_warranty, b.assigned_to, b.created_at,
                                COALESCE(NULLIF(TRIM(b.status), \'\'), \'pending\') as booking_current_status,
                                COALESCE(s.name, \'General Service\') as service_name, s.price as service_price, s.description as service_description,
-                               COALESCE(p.name, \'Guest Customer\') as customer_name, p.phone as customer_phone, p.email as customer_email,
+                               COALESCE(u.name, p.name, \'Guest Customer\') as customer_name, 
+                               COALESCE(u.phone, p.phone) as customer_phone, 
+                               COALESCE(u.email, p.email) as customer_email,
                                COALESCE(pa.address_line1, p.state, \'No Address Provided\') as customer_address,
                                COALESCE(staff.name, \'Unassigned\') as assigned_technician_name,
                                b.latitude, b.longitude, b.formatted_address,
@@ -156,6 +162,7 @@
                                COALESCE(cp.product_name, \'Generic Product\') as product_name, cp.model_no
                          FROM bookings b
                          LEFT JOIN services s ON b.service_id = s.id 
+                         LEFT JOIN users u ON b.user_id = u.id
                          LEFT JOIN parties p ON b.user_id = p.id
                          LEFT JOIN party_addresses pa ON p.id = pa.party_id AND pa.is_default = 1
                          LEFT JOIN users staff ON b.assigned_to = staff.id
@@ -255,9 +262,10 @@
     }
 
     public function getTodaySchedule(){
-        $this->db->query("SELECT b.*, s.name as service_name, p.name as customer_name, staff.name as staff_name 
+        $this->db->query("SELECT b.*, s.name as service_name, COALESCE(u.name, p.name, 'Guest Customer') as customer_name, staff.name as staff_name 
                           FROM bookings b 
                           JOIN services s ON b.service_id = s.id
+                          LEFT JOIN users u ON b.user_id = u.id
                           LEFT JOIN parties p ON b.user_id = p.id
                           LEFT JOIN users staff ON b.assigned_to = staff.id
                           WHERE b.booking_date = CURRENT_DATE()
