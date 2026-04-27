@@ -46,6 +46,14 @@
               <li class="nav-item">
                   <a class="nav-link nav-link-modern" href="<?php echo URLROOT; ?>/complaints">Complaints</a>
               </li>
+              <li class="nav-item">
+                  <a class="nav-link nav-link-modern font-weight-bold text-primary" href="<?php 
+                    if($_SESSION['role_id'] == 1) echo URLROOT.'/admin/index';
+                    elseif($_SESSION['role_id'] == 3) echo URLROOT.'/employees/dashboard';
+                    elseif($_SESSION['role_id'] == 4) echo URLROOT.'/technicians/dashboard';
+                    else echo URLROOT.'/bookings/index';
+                  ?>"><i class="fas fa-th-large mr-1"></i> MY DASHBOARD</a>
+              </li>
             <?php endif; ?>
           <?php else: ?>
             <!-- Employee/Staff Navigation (Only visible inside Mobile Menu toggle on Phones) -->
