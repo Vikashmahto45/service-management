@@ -132,6 +132,7 @@
     }
 
     // Get Assigned Bookings (For Employee)
+    public function getAssignedBookings($staff_id){
         $this->db->query('SELECT bookings.*, services.name as service_name, 
                                  COALESCE(u.name, p.name, "Guest Customer") as customer_name, 
                                  COALESCE(u.phone, p.phone) as customer_phone,
