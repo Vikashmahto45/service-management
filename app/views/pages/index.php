@@ -192,7 +192,7 @@
                             <div class="service-price-h">₹ <?php echo $service->price; ?></div>
                         </div>
                          <div style="padding: 0 12px 12px;">
-                            <a href="<?php echo URLROOT; ?>/bookings/create/<?php echo $service->id; ?>" class="btn btn-primary btn-block rounded-pill" style="float:none; margin-top:0; width:100%;">Book Now</a>
+                            <a href="<?php echo URLROOT; ?>/services/book/<?php echo $service->id; ?>" class="btn btn-primary btn-block rounded-pill" style="float:none; margin-top:0; width:100%;">Book Now</a>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -234,7 +234,7 @@
                             <div class="service-price-h">₹ <?php echo $service->price; ?></div>
                         </div>
                          <div style="padding: 0 12px 12px;">
-                            <a href="<?php echo URLROOT; ?>/bookings/create/<?php echo $service->id; ?>" class="btn btn-primary btn-block rounded-pill" style="float:none; margin-top:0; width:100%;">Book Now</a>
+                            <a href="<?php echo URLROOT; ?>/services/book/<?php echo $service->id; ?>" class="btn btn-primary btn-block rounded-pill" style="float:none; margin-top:0; width:100%;">Book Now</a>
                         </div>
                     </div>
                 <?php endforeach; ?>

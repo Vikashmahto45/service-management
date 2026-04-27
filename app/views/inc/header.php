@@ -136,6 +136,8 @@
                         <a class="dropdown-item dropdown-item-modern" href="<?php echo URLROOT; ?>/admin"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                     <?php elseif(isset($_SESSION['role_id']) && $_SESSION['role_id'] == 3) : ?>
                         <a class="dropdown-item dropdown-item-modern" href="<?php echo URLROOT; ?>/employees/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    <?php elseif(isset($_SESSION['role_id']) && $_SESSION['role_id'] == 5) : ?>
+                        <a class="dropdown-item dropdown-item-modern" href="<?php echo URLROOT; ?>/bookings"><i class="fas fa-tachometer-alt"></i> My Dashboard</a>
                     <?php endif; ?>
                     
                     <a class="dropdown-item dropdown-item-modern" href="<?php echo URLROOT; ?>/users/profile"><i class="far fa-user"></i> My Profile</a>
