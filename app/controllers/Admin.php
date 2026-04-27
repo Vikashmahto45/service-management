@@ -85,16 +85,15 @@
     }
 
     public function profile(){
-        $user = $this->userModel->getUserById($_SESSION['user_id']);
-        
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_SPECIAL_CHARS);
+            $user = $this->userModel->getUserById($_SESSION['user_id']);
             
             $data = [
+                'id' => $_SESSION['user_id'],
                 'email' => trim($_POST['email']),
                 'password' => trim($_POST['password']),
                 'confirm_password' => trim($_POST['confirm_password']),
-                'user' => $user,
                 'email_err' => '',
                 'password_err' => '',
                 'confirm_password_err' => ''
@@ -129,21 +128,18 @@
                 }
 
                 if($this->userModel->updateProfile($updateData)){
-                    flash('admin_message', 'Profile Updated Successfully');
-                    redirect('admin/profile');
+                    $_SESSION['user_email'] = $data['email'];
+                    flash('admin_message', 'Account Updated Successfully');
+                    redirect('admin/index');
                 }
             } else {
-                $this->view('admin/profile', $data);
+                $error = !empty($data['email_err']) ? $data['email_err'] : (!empty($data['password_err']) ? $data['password_err'] : $data['confirm_password_err']);
+                flash('admin_message', $error, 'alert alert-danger');
+                redirect('admin/index');
             }
         } else {
-            $data = [
-                'user' => $user,
-                'email' => $user->email,
-                'email_err' => '',
-                'password_err' => '',
-                'confirm_password_err' => ''
-            ];
-            $this->view('admin/profile', $data);
+            // Redirect manual visits back to dashboard
+            redirect('admin/index');
         }
     }
   }
