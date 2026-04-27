@@ -5,6 +5,7 @@
     private $attendanceModel;
     private $expenseModel;
     private $userModel;
+    private $financeModel;
 
     public function __construct(){
       if(!isLoggedIn() || ($_SESSION['role_id'] != 3 && $_SESSION['role_id'] != 4)){
@@ -16,6 +17,7 @@
       $this->attendanceModel = $this->model('Attendance');
       $this->expenseModel = $this->model('Expense');
       $this->userModel = $this->model('User');
+      $this->financeModel = $this->model('Finance');
     }
 
     // Role Guard for internal staff only
@@ -85,7 +87,7 @@
         $this->view('employees/complete_task', $data);
     }
 
-    // Process Task Completion With Upload
+    // Process Task Completion With Upload & Payment
     public function process_completion(){
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_SPECIAL_CHARS);
@@ -93,6 +95,8 @@
             $type = $_POST['type'];
             $id = $_POST['id'];
             $notes = trim($_POST['completion_notes']);
+            $amount = trim($_POST['amount_collected'] ?? 0);
+            $payment_method = $_POST['payment_method'] ?? 'Cash';
 
             // Handle Image Upload
             $image = '';
@@ -112,12 +116,24 @@
             $success = false;
             if($type == 'booking'){
                 $success = $this->bookingModel->completeBooking($id, $notes, $image);
+                
+                // Automate Finance Record (Paid Invoice)
+                if($success){
+                    $booking = $this->bookingModel->getBookingById($id);
+                    $financeData = [
+                        'booking_id' => $id,
+                        'customer_id' => $booking->user_id,
+                        'amount' => $amount,
+                        'payment_method' => $payment_method
+                    ];
+                    $this->financeModel->createInvoice($financeData);
+                }
             } else {
                 $success = $this->complaintModel->completeComplaint($id, $notes, $image);
             }
 
             if($success){
-                flash('task_message', 'Task marked as completed successfully!');
+                flash('task_message', 'Task finalized and payment recorded successfully!');
             } else {
                 flash('task_message', 'Something went wrong', 'alert alert-danger');
             }

@@ -85,4 +85,21 @@
         $this->db->bind(':notes', $data['notes']);
         return $this->db->execute();
     }
+
+    // Auto-Generate Invoice upon completion
+    public function createInvoice($data){
+        // Generate a simple invoice number
+        $invoice_no = 'INV-' . strtoupper(substr(uniqid(), -6)) . rand(10,99);
+        
+        $this->db->query('INSERT INTO invoices (booking_id, customer_id, invoice_number, total_amount, status) 
+                          VALUES (:booking_id, :customer_id, :invoice_number, :amount, :status)');
+        
+        $this->db->bind(':booking_id', $data['booking_id']);
+        $this->db->bind(':customer_id', $data['customer_id']);
+        $this->db->bind(':invoice_number', $invoice_no);
+        $this->db->bind(':amount', $data['amount']);
+        $this->db->bind(':status', 'paid');
+        
+        return $this->db->execute();
+    }
   }
