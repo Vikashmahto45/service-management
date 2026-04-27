@@ -123,6 +123,7 @@
                     $financeData = [
                         'booking_id' => $id,
                         'customer_id' => $booking->user_id,
+                        'collected_by' => $_SESSION['user_id'],
                         'amount' => $amount,
                         'payment_method' => $payment_method
                     ];

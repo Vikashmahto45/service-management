@@ -91,15 +91,31 @@
         // Generate a simple invoice number
         $invoice_no = 'INV-' . strtoupper(substr(uniqid(), -6)) . rand(10,99);
         
-        $this->db->query('INSERT INTO invoices (booking_id, customer_id, invoice_number, total_amount, status) 
-                          VALUES (:booking_id, :customer_id, :invoice_number, :amount, :status)');
+        $this->db->query('INSERT INTO invoices (booking_id, customer_id, collected_by, invoice_number, total_amount, status) 
+                          VALUES (:booking_id, :customer_id, :collected_by, :invoice_number, :amount, :status)');
         
         $this->db->bind(':booking_id', $data['booking_id']);
         $this->db->bind(':customer_id', $data['customer_id']);
+        $this->db->bind(':collected_by', $data['collected_by'] ?? null);
         $this->db->bind(':invoice_number', $invoice_no);
         $this->db->bind(':amount', $data['amount']);
         $this->db->bind(':status', 'paid');
         
         return $this->db->execute();
+    }
+
+    // Get Detailed Income Records for Admin
+    public function getDetailedIncome(){
+        $this->db->query('SELECT i.*, 
+                                 c.name as customer_name,
+                                 s.name as staff_name,
+                                 b.booking_date
+                          FROM invoices i
+                          JOIN users c ON i.customer_id = c.id
+                          LEFT JOIN users s ON i.collected_by = s.id
+                          LEFT JOIN bookings b ON i.booking_id = b.id
+                          WHERE i.status = "paid"
+                          ORDER BY i.created_at DESC');
+        return $this->db->resultSet();
     }
   }

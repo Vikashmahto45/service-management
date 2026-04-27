@@ -103,6 +103,62 @@
 </div>
 
 <div class="row">
+    <!-- Income Details Table -->
+    <div class="col-12 mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 font-weight-bold"><i class="fas fa-list-ul mr-2 text-primary"></i>Detailed Transaction History</h5>
+                <span class="badge badge-pill badge-primary"><?php echo count($data['detailed_income']); ?> Payments Recorded</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="pl-4">Invoice #</th>
+                                <th>Booking Date</th>
+                                <th>Customer</th>
+                                <th>Collected By (Staff)</th>
+                                <th>Amount</th>
+                                <th class="pr-4 text-right">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if(empty($data['detailed_income'])): ?>
+                                <tr>
+                                    <td colspan="6" class="text-center py-5 text-muted">
+                                        <i class="fas fa-receipt fa-3x mb-3 d-block opacity-25"></i>
+                                        No paid invoices found.
+                                    </td>
+                                </tr>
+                            <?php else: ?>
+                                <?php foreach($data['detailed_income'] as $income): ?>
+                                    <tr>
+                                        <td class="pl-4 font-weight-bold"><?php echo $income->invoice_number; ?></td>
+                                        <td><?php echo date('d M, Y', strtotime($income->booking_date)); ?></td>
+                                        <td><?php echo $income->customer_name; ?></td>
+                                        <td>
+                                            <span class="badge badge-light p-2 text-dark font-weight-normal border">
+                                                <i class="fas fa-user-check text-success mr-1"></i>
+                                                <?php echo $income->staff_name ?? 'N/A'; ?>
+                                            </span>
+                                        </td>
+                                        <td class="font-weight-bold text-dark">₹<?php echo number_format($income->total_amount, 2); ?></td>
+                                        <td class="pr-4 text-right">
+                                            <span class="badge badge-success px-3 py-2 text-uppercase">Paid</span>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
     <!-- Charts Section -->
     <div class="col-md-8 mb-4">
         <div class="card shadow-sm border-0 h-100">

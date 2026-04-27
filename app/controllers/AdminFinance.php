@@ -22,6 +22,7 @@
             $net_profit = $revenue - $total_out;
 
             $monthly_data = $this->financeModel->getMonthlyBreakdown();
+            $detailed_income = $this->financeModel->getDetailedIncome();
 
             $data = [
                 'total_revenue' => $revenue,
@@ -31,10 +32,10 @@
                 'total_outflow' => $total_out,
                 'net_profit' => $net_profit,
                 'monthly_data' => $monthly_data,
+                'detailed_income' => $detailed_income,
                 'db_error' => false
             ];
         } catch (Exception $e) {
-            // If query fails, likely due to missing tables on live server
             $data = [
                 'db_error' => true,
                 'error_msg' => $e->getMessage()
@@ -45,20 +46,14 @@
     }
 
     public function payouts(){
-        // Get all vendors (Role 4)
         $vendors = $this->userModel->getUsersByRole(4);
-        
-        $data = [
-            'vendors' => $vendors
-        ];
-
+        $data = ['vendors' => $vendors];
         $this->view('admin/finance/payouts', $data);
     }
 
     public function add_payout($vendor_id){
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_SPECIAL_CHARS);
-
             $data = [
                 'vendor_id' => $vendor_id,
                 'amount' => trim($_POST['amount']),
@@ -67,7 +62,6 @@
                 'transaction_id' => trim($_POST['transaction_id']),
                 'notes' => trim($_POST['notes'])
             ];
-
             try {
                 if($this->financeModel->addVendorPayout($data)){
                     flash('finance_message', 'Vendor Payout Recorded Successfully');
@@ -77,30 +71,18 @@
                     $this->view('admin/finance/add_payout', $data);
                 }
             } catch (Exception $e) {
-                $data['error'] = 'Could not save payout. Please ensure your database tables are updated.';
+                $data['error'] = 'Could not save payout.';
                 $this->view('admin/finance/add_payout', $data);
             }
         } else {
             try {
                 $vendor = $this->userModel->getUserById($vendor_id);
                 $ledger = $this->financeModel->getAccountLedger($vendor_id);
-                
-                $data = [
-                    'vendor' => $vendor,
-                    'ledger' => $ledger,
-                    'db_error' => false
-                ];
-
+                $data = ['vendor' => $vendor, 'ledger' => $ledger, 'db_error' => false];
                 $this->view('admin/finance/add_payout', $data);
             } catch (Exception $e) {
-                // Handle missing tables gracefully
                 $vendor = $this->userModel->getUserById($vendor_id);
-                $data = [
-                    'vendor' => $vendor,
-                    'ledger' => [],
-                    'db_error' => true,
-                    'error_msg' => 'Financial tables are missing. Please run finance_fix.sql in your database.'
-                ];
+                $data = ['vendor' => $vendor, 'ledger' => [], 'db_error' => true, 'error_msg' => 'Financial tables missing.'];
                 $this->view('admin/finance/add_payout', $data);
             }
         }
@@ -109,19 +91,10 @@
     public function ledgers(){
         try {
             $users = $this->userModel->getAllUsers();
-            
-            $data = [
-                'users' => $users,
-                'db_error' => false
-            ];
+            $data = ['users' => $users, 'db_error' => false];
         } catch (Exception $e) {
-            $data = [
-                'db_error' => true,
-                'error_msg' => $e->getMessage(),
-                'users' => []
-            ];
+            $data = ['db_error' => true, 'error_msg' => $e->getMessage(), 'users' => []];
         }
-
         $this->view('admin/finance/ledgers', $data);
     }
 }
