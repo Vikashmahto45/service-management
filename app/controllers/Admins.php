@@ -12,7 +12,6 @@ class Admins extends Controller {
 
     public function login(){
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
-            // Sanitize POST data
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_SPECIAL_CHARS);
             
             $data = [
@@ -22,12 +21,10 @@ class Admins extends Controller {
                 'password_err' => '',      
             ];
 
-            // Validate Email
             if(empty($data['email'])){
                 $data['email_err'] = 'Please enter email';
             }
 
-            // Validate Password
             if(empty($data['password'])){
                 $data['password_err'] = 'Please enter password';
             }
@@ -38,33 +35,26 @@ class Admins extends Controller {
                 $data['email_err'] = 'Access Denied: Administrative Portal Only';
             }
 
-            // Make sure errors are empty
             if(empty($data['email_err']) && empty($data['password_err'])){
-                // Check and set logged in user
                 $loggedInUser = $this->userModel->login($data['email'], $data['password']);
 
                 if($loggedInUser){
-                    // Create Session (Using the existing helper in Users or directly here)
                     $this->createUserSession($loggedInUser);
                 } else {
                     $data['password_err'] = 'Password incorrect';
                     $this->view('admins/login', $data);
                 }
             } else {
-                // Load view with errors
                 $this->view('admins/login', $data);
             }
 
         } else {
-            // Init data
             $data = [    
                 'email' => '',
                 'password' => '',
                 'email_err' => '',
                 'password_err' => '',        
             ];
-
-            // Load view
             $this->view('admins/login', $data);
         }
     }
@@ -74,7 +64,7 @@ class Admins extends Controller {
         $_SESSION['user_email'] = $user->email;
         $_SESSION['user_name'] = $user->name;
         $_SESSION['role_id'] = $user->role_id;
-        redirect('admin'); // Redirect to Super Admin dashboard
+        redirect('admin');
     }
 
     public function logout(){
@@ -84,5 +74,36 @@ class Admins extends Controller {
         unset($_SESSION['role_id']);
         session_destroy();
         redirect('admins/login');
+    }
+
+    // New Secure Admin Creator (Bypasses User-only limits)
+    public function register(){
+        if(!isset($_SESSION['role_id']) || $_SESSION['role_id'] != 1){
+            redirect('users/login');
+        }
+
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_SPECIAL_CHARS);
+
+            $data = [
+                'name' => trim($_POST['name']),
+                'email' => trim($_POST['email']),
+                'password' => trim($_POST['password']),
+                'role_id' => 1, // HARD-CODED AS SUPERADMIN
+                'status' => 'active'
+            ];
+
+            // Hash Password
+            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+
+            if($this->userModel->register($data)){
+                flash('admin_message', 'New Superadmin Created Successfully');
+                redirect('admin/index');
+            } else {
+                die('Something went wrong');
+            }
+        } else {
+            redirect('admin/index');
+        }
     }
 }
