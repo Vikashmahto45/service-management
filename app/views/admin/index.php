@@ -120,9 +120,7 @@
                     <span>Customer Rating</span>
                     <span class="text-warning"><?php echo $data['avg_rating']; ?>/5.0</span>
                 </div>
-                <div class="progress" style="height: 6px;">
-                    <div class="progress-bar bg-warning" style="width: <?php echo ($data['avg_rating'] / 5) * 100; ?>%;"></div>
-                </div>
+            </div>
             </div>
 
             <hr>
