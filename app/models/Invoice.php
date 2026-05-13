@@ -87,4 +87,33 @@
         $this->db->bind(':total_amount', $data['total_amount']);
         return $this->db->execute();
     }
+
+    // Get count and total amount of pending/unpaid invoices
+    public function getPendingStats(){
+        $this->db->query('SELECT COUNT(*) as count, SUM(total_amount) as total FROM invoices WHERE status IN ("unpaid", "payment_pending")');
+        $row = $this->db->single();
+        return $row;
+    }
+
+    // Get list of all pending/unpaid invoices with customer name
+    public function getPendingInvoices(){
+        $this->db->query('SELECT invoices.*, users.name as customer_name 
+                          FROM invoices 
+                          JOIN users ON invoices.customer_id = users.id 
+                          WHERE invoices.status IN ("unpaid", "payment_pending")
+                          ORDER BY invoices.created_at DESC');
+        return $this->db->resultSet();
+    }
+
+    // Get bookings that do NOT have an invoice yet (for Generate Invoice pop-up)
+    public function getBookingsWithoutInvoice(){
+        $this->db->query('SELECT bookings.id, bookings.booking_date, users.name as customer_name, services.name as service_name, services.price
+                          FROM bookings
+                          JOIN users ON bookings.user_id = users.id
+                          JOIN services ON bookings.service_id = services.id
+                          LEFT JOIN invoices ON invoices.booking_id = bookings.id
+                          WHERE invoices.id IS NULL
+                          ORDER BY bookings.created_at DESC');
+        return $this->db->resultSet();
+    }
   }

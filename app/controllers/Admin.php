@@ -71,18 +71,32 @@
 
       // Real Average Rating from services table
       $avgRating = $this->serviceModel->getAvgRating();
+
+      // Pending Invoices
+      try {
+          $pendingStats   = $this->invoiceModel->getPendingStats();
+          $pendingInvoices = $this->invoiceModel->getPendingInvoices();
+          $bookingsWithoutInvoice = $this->invoiceModel->getBookingsWithoutInvoice();
+      } catch(\Throwable $e) {
+          $pendingStats = (object)['count'=>0,'total'=>0];
+          $pendingInvoices = [];
+          $bookingsWithoutInvoice = [];
+      }
       
       $data = [
-        'ticket_stats' => $ticketStats,
-        'total_revenue' => $totalRevenue,
-        'total_expenses' => $totalExpenses,
-        'attendance_percent' => $attendancePercent,
-        'avg_rating' => $avgRating,
-        'revenue_target' => $revenueTarget,
-        'performance_data' => $performanceData,
-        'top_staff' => $topStaff,
-        'today_schedule' => $todaySchedule,
-        'recent_bookings' => $recentBookings
+        'ticket_stats'           => $ticketStats,
+        'total_revenue'          => $totalRevenue,
+        'total_expenses'         => $totalExpenses,
+        'attendance_percent'     => $attendancePercent,
+        'avg_rating'             => $avgRating,
+        'revenue_target'         => $revenueTarget,
+        'pending_stats'          => $pendingStats,
+        'pending_invoices'       => $pendingInvoices,
+        'bookings_no_invoice'    => $bookingsWithoutInvoice,
+        'performance_data'       => $performanceData,
+        'top_staff'              => $topStaff,
+        'today_schedule'         => $todaySchedule,
+        'recent_bookings'        => $recentBookings
       ];
 
       $this->view('admin/index', $data);
@@ -174,6 +188,64 @@
                 flash('admin_message', 'Monthly Revenue Target Updated');
             } else {
                 flash('admin_message', 'Invalid target amount', 'alert alert-danger');
+            }
+        }
+        redirect('admin/index');
+    }
+
+    public function editInvoice(){
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_SPECIAL_CHARS);
+            $id         = trim($_POST['invoice_id']);
+            $amount     = trim($_POST['amount']);
+            $tax        = trim($_POST['tax_amount']);
+            $total      = $amount + $tax - (float)($_POST['discount'] ?? 0);
+
+            $data = [
+                'amount'      => $amount,
+                'tax_amount'  => $tax,
+                'total_amount'=> $total
+            ];
+
+            if($this->invoiceModel->updateInvoice($id, $data)){
+                flash('admin_message', 'Invoice updated successfully');
+            } else {
+                flash('admin_message', 'Failed to update invoice', 'alert alert-danger');
+            }
+        }
+        redirect('admin/index');
+    }
+
+    public function generateInvoice(){
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_SPECIAL_CHARS);
+            $bookingId = trim($_POST['booking_id']);
+            $amount    = (float)trim($_POST['amount']);
+            $tax       = (float)trim($_POST['tax_amount']);
+            $discount  = (float)trim($_POST['discount'] ?? 0);
+            $total     = $amount + $tax - $discount;
+
+            // Get booking to find customer
+            $booking = $this->bookingModel->getBookingById($bookingId);
+
+            if($booking){
+                $invoiceNumber = 'INV-' . strtoupper(uniqid());
+                $data = [
+                    'booking_id'     => $bookingId,
+                    'customer_id'    => $booking->user_id,
+                    'invoice_number' => $invoiceNumber,
+                    'amount'         => $amount,
+                    'tax_amount'     => $tax,
+                    'discount'       => $discount,
+                    'total_amount'   => $total,
+                ];
+                if($this->invoiceModel->create($data)){
+                    flash('admin_message', 'Invoice ' . $invoiceNumber . ' generated successfully');
+                } else {
+                    flash('admin_message', 'Failed to generate invoice', 'alert alert-danger');
+                }
+            } else {
+                flash('admin_message', 'Booking not found', 'alert alert-danger');
             }
         }
         redirect('admin/index');

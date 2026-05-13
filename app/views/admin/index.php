@@ -115,30 +115,56 @@
                 </div>
             </div>
 
-            <div class="mb-4">
+            <!-- Net Profit -->
+            <div class="mb-3">
                 <div class="d-flex justify-content-between small font-weight-bold text-muted mb-1">
-                    <span>Customer Rating</span>
-                    <span class="text-warning"><?php echo $data['avg_rating']; ?>/5.0</span>
+                    <span>Net Profit</span>
+                    <?php $netProfit = $data['total_revenue'] - $data['total_expenses']; ?>
+                    <span class="<?php echo $netProfit >= 0 ? 'text-success' : 'text-danger'; ?>">
+                        ₹<?php echo number_format($netProfit, 2); ?>
+                    </span>
                 </div>
-            </div>
             </div>
 
             <hr>
 
-            <h6 class="font-weight-bold mb-3 small uppercase text-muted">Top Technicians</h6>
-            <?php foreach($data['top_staff'] as $staff): ?>
-            <div class="d-flex align-items-center mb-3">
-                <div class="user-avatar-sm mr-3" style="background:var(--gradient-info); width:32px; height:32px; font-size:12px;"><?php echo strtoupper(substr($staff->name, 0, 1)); ?></div>
-                <div class="flex-grow-1">
-                    <div class="small font-weight-bold"><?php echo $staff->name; ?></div>
-                    <div class="text-muted" style="font-size: 0.7rem;"><?php echo $staff->jobs_done; ?> Jobs Completed</div>
+            <!-- Pending Invoices -->
+            <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="small font-weight-bold text-muted">Pending Invoices</span>
+                    <span class="badge badge-warning"><?php echo $data['pending_stats']->count ?? 0; ?> Pending</span>
                 </div>
-                <i class="fas fa-medal text-warning"></i>
+                <div class="d-flex justify-content-between small text-muted mb-2">
+                    <span>Total Unpaid</span>
+                    <span class="text-danger font-weight-bold">₹<?php echo number_format($data['pending_stats']->total ?? 0, 2); ?></span>
+                </div>
+                <?php if(!empty($data['pending_invoices'])): ?>
+                <div style="max-height: 120px; overflow-y: auto;">
+                    <?php foreach($data['pending_invoices'] as $inv): ?>
+                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom" style="font-size:0.75rem;">
+                        <span class="text-truncate" style="max-width:120px;"><?php echo $inv->customer_name; ?></span>
+                        <span>₹<?php echo number_format($inv->total_amount, 2); ?></span>
+                        <a href="#" class="text-primary ml-1" title="Edit Invoice"
+                           data-toggle="modal" data-target="#editInvoiceModal"
+                           data-id="<?php echo $inv->id; ?>"
+                           data-amount="<?php echo $inv->amount; ?>"
+                           data-tax="<?php echo $inv->tax_amount; ?>"
+                           data-discount="<?php echo $inv->discount ?? 0; ?>">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
             </div>
-            <?php endforeach; ?>
-            <?php if(empty($data['top_staff'])): ?>
-                <p class="text-center text-muted small py-3">No performance data yet</p>
-            <?php endif; ?>
+
+            <hr>
+
+            <!-- Generate Invoice Button -->
+            <button class="btn btn-sm btn-outline-primary btn-block" data-toggle="modal" data-target="#generateInvoiceModal">
+                <i class="fas fa-file-invoice mr-1"></i> Generate Invoice for Order
+            </button>
+
         </div>
     </div>
 </div>
@@ -278,7 +304,103 @@
             }
         });
     });
+
+    // Pre-fill Edit Invoice Modal
+    document.getElementById('editInvoiceModal').addEventListener('show.bs.modal', function(e){
+        var btn = e.relatedTarget;
+        document.getElementById('editInvoiceId').value    = btn.getAttribute('data-id');
+        document.getElementById('editAmount').value       = btn.getAttribute('data-amount');
+        document.getElementById('editTax').value          = btn.getAttribute('data-tax');
+        document.getElementById('editDiscount').value     = btn.getAttribute('data-discount');
+    });
+    // Bootstrap 4 fallback
+    $('#editInvoiceModal').on('show.bs.modal', function(e){
+        var btn = e.relatedTarget;
+        $('#editInvoiceId').val($(btn).data('id'));
+        $('#editAmount').val($(btn).data('amount'));
+        $('#editTax').val($(btn).data('tax'));
+        $('#editDiscount').val($(btn).data('discount'));
+    });
 </script>
+
+<!-- Edit Invoice Modal -->
+<div class="modal fade" id="editInvoiceModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <h6 class="modal-title font-weight-bold"><i class="fas fa-edit mr-1"></i> Edit Invoice</h6>
+        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+      </div>
+      <form action="<?php echo URLROOT; ?>/admin/editInvoice" method="POST">
+        <div class="modal-body">
+          <input type="hidden" name="invoice_id" id="editInvoiceId">
+          <div class="form-group">
+            <label class="small text-muted">Amount (₹)</label>
+            <input type="number" step="0.01" name="amount" id="editAmount" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="small text-muted">Tax Amount (₹)</label>
+            <input type="number" step="0.01" name="tax_amount" id="editTax" class="form-control" required>
+          </div>
+          <div class="form-group mb-0">
+            <label class="small text-muted">Discount (₹)</label>
+            <input type="number" step="0.01" name="discount" id="editDiscount" class="form-control" value="0">
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-sm btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Generate Invoice Modal -->
+<div class="modal fade" id="generateInvoiceModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <h6 class="modal-title font-weight-bold"><i class="fas fa-file-invoice mr-1"></i> Generate Invoice for Order</h6>
+        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+      </div>
+      <form action="<?php echo URLROOT; ?>/admin/generateInvoice" method="POST">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="small text-muted">Select Booking / Order</label>
+            <select name="booking_id" class="form-control" required>
+              <option value="">-- Select a Booking --</option>
+              <?php foreach($data['bookings_no_invoice'] as $b): ?>
+              <option value="<?php echo $b->id; ?>">
+                #<?php echo $b->id; ?> — <?php echo $b->customer_name; ?> (<?php echo $b->service_name; ?>) — ₹<?php echo number_format($b->price, 2); ?>
+              </option>
+              <?php endforeach; ?>
+              <?php if(empty($data['bookings_no_invoice'])): ?>
+              <option disabled>No bookings without an invoice</option>
+              <?php endif; ?>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="small text-muted">Amount (₹)</label>
+            <input type="number" step="0.01" name="amount" class="form-control" required min="0">
+          </div>
+          <div class="form-group">
+            <label class="small text-muted">Tax Amount (₹)</label>
+            <input type="number" step="0.01" name="tax_amount" class="form-control" value="0" min="0">
+          </div>
+          <div class="form-group mb-0">
+            <label class="small text-muted">Discount (₹)</label>
+            <input type="number" step="0.01" name="discount" class="form-control" value="0" min="0">
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-sm btn-success">Generate Invoice</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <!-- Revenue Target Modal -->
 <div class="modal fade" id="targetModal" tabindex="-1" role="dialog" aria-hidden="true">
