@@ -1,4 +1,4 @@
-<?php require APPROOT . '/views/inc/header.php'; ?>
+﻿<?php require APPROOT . '/views/inc/header.php'; ?>
 <div class="row mb-3">
     <div class="col-md-8">
         <h1>Welcome, <?php echo $_SESSION['user_name']; ?></h1>
@@ -45,7 +45,7 @@
                  <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h5 class="card-title">Total Spent</h5>
-                        <h2 class="mb-0">$<?php echo number_format($data['stats']['total_spent'], 2); ?></h2>
+                        <h2 class="mb-0">&#8377;<?php echo number_format($data['stats']['total_spent'], 2); ?></h2>
                     </div>
                     <i class="fas fa-wallet fa-3x opacity-50"></i>
                 </div>
