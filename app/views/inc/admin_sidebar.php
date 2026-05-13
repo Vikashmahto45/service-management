@@ -70,6 +70,9 @@
                 <a href="<?php echo URLROOT; ?>/adminFinance" class="list-group-item list-group-item-action bg-transparent second-text fw-normal small">Finance Dashboard</a>
             </li>
             <li>
+                <a href="<?php echo URLROOT; ?>/invoices/index" class="list-group-item list-group-item-action bg-transparent second-text fw-normal small">All Invoices</a>
+            </li>
+            <li>
                 <a href="<?php echo URLROOT; ?>/adminFinance/payouts" class="list-group-item list-group-item-action bg-transparent second-text fw-normal small">Vendor Payouts</a>
             </li>
             <li>

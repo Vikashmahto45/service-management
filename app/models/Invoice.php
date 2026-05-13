@@ -116,4 +116,11 @@
                           ORDER BY bookings.created_at DESC');
         return $this->db->resultSet();
     }
+
+    // Delete Invoice
+    public function deleteInvoice($id){
+        $this->db->query('DELETE FROM invoices WHERE id = :id');
+        $this->db->bind(':id', $id);
+        return $this->db->execute();
+    }
   }

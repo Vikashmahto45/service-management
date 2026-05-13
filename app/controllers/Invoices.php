@@ -12,10 +12,14 @@
     }
 
     public function index(){
-        $this->inventoryModel = $this->model('Inventory'); // Load Inventory Model
+        $this->inventoryModel = $this->model('Inventory');
         if($_SESSION['role_id'] == 1){
             $invoices = $this->invoiceModel->getAllInvoices();
-            $this->view('invoices/admin_index', ['invoices' => $invoices]);
+            $bookingsNoInvoice = $this->invoiceModel->getBookingsWithoutInvoice();
+            $this->view('invoices/admin_index', [
+                'invoices'           => $invoices,
+                'bookings_no_invoice'=> $bookingsNoInvoice
+            ]);
         } else {
             $invoices = $this->invoiceModel->getInvoicesByUserId($_SESSION['user_id']);
             $this->view('invoices/index', ['invoices' => $invoices]);
@@ -208,5 +212,33 @@
              flash('invoice_message', 'Something went wrong', 'alert alert-danger');
         }
         redirect('invoices/show/' . $id);
+    }
+
+    // Admin Edit Invoice from Invoice List Page
+    public function adminEdit(){
+        if($_SESSION['role_id'] != 1){ redirect('users/login'); }
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_SPECIAL_CHARS);
+            $id       = trim($_POST['invoice_id']);
+            $amount   = (float)trim($_POST['amount']);
+            $tax      = (float)trim($_POST['tax_amount']);
+            $discount = (float)trim($_POST['discount'] ?? 0);
+            $total    = $amount + $tax - $discount;
+            $data = ['amount' => $amount, 'tax_amount' => $tax, 'total_amount' => $total];
+            if($this->invoiceModel->updateInvoice($id, $data)){
+                flash('invoice_message', 'Invoice updated successfully');
+            } else {
+                flash('invoice_message', 'Failed to update invoice', 'alert alert-danger');
+            }
+        }
+        redirect('invoices/index');
+    }
+
+    // Delete Invoice (Admin only)
+    public function delete($id){
+        if($_SESSION['role_id'] != 1){ redirect('users/login'); }
+        $this->invoiceModel->deleteInvoice($id);
+        flash('invoice_message', 'Invoice deleted successfully');
+        redirect('invoices/index');
     }
   }

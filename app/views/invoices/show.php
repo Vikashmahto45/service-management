@@ -1,10 +1,21 @@
 <?php require APPROOT . '/views/inc/header.php'; ?>
 <style type="text/css" media="print">
-    @page { size: auto;  margin: 0mm; }
-    body { background-color: #fff; margin: 20px; }
-    #navbar, .btn, .no-print { display: none !important; }
-    #invoice-area { box-shadow: none !important; border: none !important; }
-    .card { border: none !important; }
+    @page { size: A4; margin: 10mm; }
+    /* Hide everything */
+    body * { visibility: hidden; }
+    /* Show ONLY the invoice area */
+    #invoice-area, #invoice-area * { visibility: visible; }
+    #invoice-area {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%;
+        box-shadow: none !important;
+        border: none !important;
+        margin: 0 !important;
+        padding: 10mm !important;
+    }
+    /* Hide buttons inside the invoice area */
+    .btn, .no-print { display: none !important; }
 </style>
 
 <div class="row mb-3 no-print">
