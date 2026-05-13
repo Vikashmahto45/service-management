@@ -153,7 +153,6 @@
             redirect('admin/index');
         }
     }
-    }
 
     public function updateTarget(){
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
