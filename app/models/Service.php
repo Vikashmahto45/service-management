@@ -203,4 +203,10 @@
             return false;
         }
     }
+    // Get Average Rating across all services
+    public function getAvgRating(){
+        $this->db->query('SELECT ROUND(AVG(rating), 1) as avg_rating FROM services WHERE rating > 0');
+        $row = $this->db->single();
+        return $row->avg_rating ?? 0;
+    }
   }

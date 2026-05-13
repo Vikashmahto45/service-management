@@ -68,13 +68,16 @@
               $revenueTarget = (float)$settings['revenue_target'];
           }
       }
+
+      // Real Average Rating from services table
+      $avgRating = $this->serviceModel->getAvgRating();
       
       $data = [
         'ticket_stats' => $ticketStats,
         'total_revenue' => $totalRevenue,
         'total_expenses' => $totalExpenses,
         'attendance_percent' => $attendancePercent,
-        'avg_rating' => 4.8, 
+        'avg_rating' => $avgRating,
         'revenue_target' => $revenueTarget,
         'performance_data' => $performanceData,
         'top_staff' => $topStaff,
