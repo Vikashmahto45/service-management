@@ -92,7 +92,16 @@
                     <span class="text-success">₹<?php echo number_format($data['total_revenue'], 2); ?></span>
                 </div>
                 <div class="progress" style="height: 6px;">
-                    <div class="progress-bar bg-success" style="width: 75%;"></div>
+                    <?php 
+                        $revPercent = ($data['total_revenue'] > 0 && $data['revenue_target'] > 0) ? ($data['total_revenue'] / $data['revenue_target']) * 100 : 0;
+                        $revPercent = min(100, $revPercent); // Cap at 100% for the bar
+                    ?>
+                    <div class="progress-bar bg-success" style="width: <?php echo $revPercent; ?>%;"></div>
+                </div>
+                <div class="text-right mt-1">
+                    <a href="#" class="small text-muted" data-toggle="modal" data-target="#targetModal" style="font-size: 0.7rem; text-decoration: none;">
+                        Target: ₹<?php echo number_format($data['revenue_target']); ?> <i class="fas fa-edit ml-1"></i>
+                    </a>
                 </div>
             </div>
 
@@ -112,7 +121,7 @@
                     <span class="text-warning"><?php echo $data['avg_rating']; ?>/5.0</span>
                 </div>
                 <div class="progress" style="height: 6px;">
-                    <div class="progress-bar bg-warning" style="width: 96%;"></div>
+                    <div class="progress-bar bg-warning" style="width: <?php echo ($data['avg_rating'] / 5) * 100; ?>%;"></div>
                 </div>
             </div>
 
@@ -272,5 +281,31 @@
         });
     });
 </script>
+
+<!-- Revenue Target Modal -->
+<div class="modal fade" id="targetModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <h6 class="modal-title font-weight-bold">Set Revenue Target</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="<?php echo URLROOT; ?>/admin/updateTarget" method="POST">
+          <div class="modal-body">
+              <div class="form-group mb-0">
+                  <label class="small text-muted">Monthly Target Amount (₹)</label>
+                  <input type="number" name="revenue_target" class="form-control" value="<?php echo $data['revenue_target']; ?>" required min="1">
+              </div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-sm btn-primary">Save Target</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <?php require APPROOT . '/views/inc/admin_footer.php'; ?>

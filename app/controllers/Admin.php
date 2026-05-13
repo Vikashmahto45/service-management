@@ -58,6 +58,16 @@
         $totalExpenses = 0;
         $attendancePercent = 0;
       }
+
+      // Load Settings (Revenue Target)
+      $revenueTarget = 100000; // Default
+      $settingsFile = APPROOT . '/config/settings.json';
+      if(file_exists($settingsFile)){
+          $settings = json_decode(file_get_contents($settingsFile), true);
+          if(isset($settings['revenue_target'])){
+              $revenueTarget = (float)$settings['revenue_target'];
+          }
+      }
       
       $data = [
         'ticket_stats' => $ticketStats,
@@ -65,6 +75,7 @@
         'total_expenses' => $totalExpenses,
         'attendance_percent' => $attendancePercent,
         'avg_rating' => 4.8, 
+        'revenue_target' => $revenueTarget,
         'performance_data' => $performanceData,
         'top_staff' => $topStaff,
         'today_schedule' => $todaySchedule,
@@ -141,5 +152,28 @@
             // Redirect manual visits back to dashboard
             redirect('admin/index');
         }
+    }
+    }
+
+    public function updateTarget(){
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_SPECIAL_CHARS);
+            $newTarget = trim($_POST['revenue_target']);
+            
+            if(is_numeric($newTarget) && $newTarget > 0){
+                $settingsFile = APPROOT . '/config/settings.json';
+                $settings = [];
+                if(file_exists($settingsFile)){
+                    $settings = json_decode(file_get_contents($settingsFile), true) ?: [];
+                }
+                $settings['revenue_target'] = $newTarget;
+                file_put_contents($settingsFile, json_encode($settings));
+                
+                flash('admin_message', 'Monthly Revenue Target Updated');
+            } else {
+                flash('admin_message', 'Invalid target amount', 'alert alert-danger');
+            }
+        }
+        redirect('admin/index');
     }
   }
