@@ -242,7 +242,7 @@
                 'price' => trim($_POST['price']),
                 'duration' => trim($_POST['duration']),
                 'image' => $image_name,
-                'rating' => !empty($_POST['rating']) ? trim($_POST['rating']) : 4.5
+                'rating' => !empty($_POST['rating']) ? trim($_POST['rating']) : getSettings('default_service_rating', 4.5)
             ];
 
             if(!empty($data['name']) && !empty($data['price'])){
@@ -328,7 +328,7 @@
                 'price' => trim($_POST['price']),
                 'duration' => trim($_POST['duration']),
                 'image' => $image_name,
-                'rating' => !empty($_POST['rating']) ? trim($_POST['rating']) : 4.5
+                'rating' => !empty($_POST['rating']) ? trim($_POST['rating']) : getSettings('default_service_rating', 4.5)
             ];
 
             if(!empty($data['name']) && !empty($data['price'])){

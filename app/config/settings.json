@@ -1,1 +1,13 @@
-{"revenue_target": 100000}
+{
+    "revenue_target": 100000,
+    "company_name": "Service Management System",
+    "company_address": "123 Service Road, Tech City, TC 90210",
+    "company_email": "contact@sms.com",
+    "company_phone": "",
+    "bank_name": "SMS Bank",
+    "bank_account": "1234567890",
+    "bank_ifsc": "SMS0001234",
+    "gst_rate": 18,
+    "default_service_rating": 4.5,
+    "low_stock_threshold": 5
+}

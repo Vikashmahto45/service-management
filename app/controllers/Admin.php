@@ -250,4 +250,40 @@
         }
         redirect('admin/index');
     }
+
+    // System Settings Page
+    public function systemSettings(){
+        $data = ['settings' => getSettings()];
+        $this->view('admin/system_settings', $data);
+    }
+
+    // Save System Settings
+    public function saveSystemSettings(){
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_SPECIAL_CHARS);
+
+            $settingsFile = APPROOT . '/config/settings.json';
+            $settings = file_exists($settingsFile) ? (json_decode(file_get_contents($settingsFile), true) ?: []) : [];
+
+            // Merge new values
+            $settings['company_name']          = trim($_POST['company_name'] ?? '');
+            $settings['company_address']       = trim($_POST['company_address'] ?? '');
+            $settings['company_email']         = trim($_POST['company_email'] ?? '');
+            $settings['company_phone']         = trim($_POST['company_phone'] ?? '');
+            $settings['bank_name']             = trim($_POST['bank_name'] ?? '');
+            $settings['bank_account']          = trim($_POST['bank_account'] ?? '');
+            $settings['bank_ifsc']             = trim($_POST['bank_ifsc'] ?? '');
+            $settings['gst_rate']              = (float)trim($_POST['gst_rate'] ?? 18);
+            $settings['default_service_rating']= (float)trim($_POST['default_service_rating'] ?? 4.5);
+            $settings['low_stock_threshold']   = (int)trim($_POST['low_stock_threshold'] ?? 5);
+            $settings['revenue_target']        = (float)trim($_POST['revenue_target'] ?? 100000);
+
+            if(file_put_contents($settingsFile, json_encode($settings, JSON_PRETTY_PRINT))){
+                flash('admin_message', 'System settings saved successfully');
+            } else {
+                flash('admin_message', 'Could not save settings. Check file permissions.', 'alert alert-danger');
+            }
+        }
+        redirect('admin/systemSettings');
+    }
   }

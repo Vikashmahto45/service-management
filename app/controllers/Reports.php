@@ -35,8 +35,9 @@
       // 2. Inventory Low Stock
       $low_stock = [];
       $inventory = $this->inventoryModel->getProducts();
+      $lowStockThreshold = getSettings('low_stock_threshold', 5);
       foreach($inventory as $item){
-          if($item->stock <= 5){ // Threshold
+          if($item->stock <= $lowStockThreshold){
               $low_stock[] = $item;
           }
       }

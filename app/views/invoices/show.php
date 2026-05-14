@@ -62,10 +62,10 @@
             <?php endif; ?>
         </div>
         <div class="col-md-6 text-right">
-            <h4>Service Management System</h4>
-            <p>123 Service Road<br>
-            Tech City, TC 90210<br>
-            contact@sms.com</p>
+            <h4><?php echo getSettings('company_name', 'Service Management System'); ?></h4>
+            <p><?php echo nl2br(htmlspecialchars(getSettings('company_address', '123 Service Road'))); ?><br>
+            <?php echo htmlspecialchars(getSettings('company_email', 'contact@sms.com')); ?><br>
+            <?php if(getSettings('company_phone')): ?><?php echo htmlspecialchars(getSettings('company_phone')); ?><?php endif; ?></p>
         </div>
     </div>
 
@@ -148,9 +148,9 @@
         <div class="modal-body">
             <p>Please transfer the total amount (<strong>₹<?php echo number_format($data['invoice']->total_amount, 2); ?></strong>) to the bank account below and enter the transaction reference.</p>
             <div class="alert alert-secondary">
-                <strong>Bank:</strong> SMS Bank<br>
-                <strong>Acc No:</strong> 1234567890<br>
-                <strong>IFSC:</strong> SMS0001234
+                <strong>Bank:</strong> <?php echo htmlspecialchars(getSettings('bank_name', 'SMS Bank')); ?><br>
+                <strong>Acc No:</strong> <?php echo htmlspecialchars(getSettings('bank_account', '1234567890')); ?><br>
+                <strong>IFSC:</strong> <?php echo htmlspecialchars(getSettings('bank_ifsc', 'SMS0001234')); ?>
             </div>
             <div class="form-group">
                 <label for="transaction_id">Transaction ID / Reference Number <span class="text-danger">*</span></label>

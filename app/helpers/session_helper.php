@@ -28,3 +28,15 @@
       return false;
     }
   }
+
+  // Load system settings from settings.json
+  function getSettings($key = null, $default = null){
+    $settingsFile = APPROOT . '/config/settings.json';
+    $settings = [];
+    if(file_exists($settingsFile)){
+        $settings = json_decode(file_get_contents($settingsFile), true) ?: [];
+    }
+    if($key === null) return $settings;
+    return isset($settings[$key]) ? $settings[$key] : $default;
+  }
+

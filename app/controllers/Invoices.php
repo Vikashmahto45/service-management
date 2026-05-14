@@ -67,7 +67,8 @@
         }
         
         $subtotal = $amount + $parts_total;
-        $tax = $subtotal * 0.18; // 18% GST
+        $gstRate  = getSettings('gst_rate', 18) / 100;
+        $tax = $subtotal * $gstRate;
         $total = $subtotal + $tax;
 
         $data = [
