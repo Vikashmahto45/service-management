@@ -1,5 +1,10 @@
 <?php
   class Reports extends Controller {
+    private $invoiceModel;
+    private $expenseModel;
+    private $inventoryModel;
+    private $bookingModel;
+
     public function __construct(){
       if(!isLoggedIn() || $_SESSION['role_id'] != 1){
         redirect('users/login');
